@@ -76,7 +76,7 @@
 
 % The following can be used to specify keywords and classification of the paper:
 
-\keywords{relaatiotietokanta, tietokantakysely, optimointi}
+\keywords{Information systems → Query optimization}
 \classification{} % classification according to ACM Computing Classification System (http://www.acm.org/about/class/)
                   % This is probably mostly relevant for computer scientists
 
@@ -84,21 +84,6 @@
 % uncomment the following to manually set the number of pages displayed in the abstract page:
 %
 % \numberofpagesinformation{16 sivua + 10 sivua liitteissä}
-%
-% If you are not a computer scientist, you will want to uncomment the following by hand and specify
-% your department, faculty and subject by hand:
-%
-% \faculty{Matemaattis-luonnontieteellinen}
-% \department{Tietojenkäsittelytieteen laitos}
-% \subject{Tietojenkäsittelytiede}
-%
-% If you are not from the University of Helsinki, then you will most likely want to set these also:
-%
-% \university{Helsingin Yliopisto}
-% \universitylong{HELSINGIN YLIOPISTO --- HELSINGFORS UNIVERSITET --- UNIVERSITY OF HELSINKI} % displayed on the top of the abstract page
-% \city{Helsinki}
-%
-
 
 \begin{document}
 
@@ -113,12 +98,12 @@
 
 % --- Main matter ---
 
-\section{Introduction}
-todo: intro
+\section{Johdanto}
+Tietokantakyselyiden optimoinnilla viitataan tietokantakyselyn suorittamiseen mahdollisimman tehokkaasti. Optimoinnin tavoitteena on joko maksimoida suorituskyky annetuilla resursseilla tai minimodia resurssien käyttö. Mitattavia resursseja ovat suorittimen ja muistin käyttö sekä kommunikointikustannukset. Muistin käyttö jakautuu tallennuskustannukseen sekä ulkomuistiin pääsyn kustannukseen. Tallennuskustannuksella tarkoitetaan ulkomuistin sekä puskurimuistin käyttöä, ja se tulee aiheelliseksi kun muistin käyttö aiheutuu pullonkaulaksi. 
+
+Resurssin merkitys riippuu tietokantatyypistä. Hajautetuissa tietokannoissa hitailla yhteysväylillä kommunikointikustannukset hallitsevat kustannuksia~\cite{eka}. Paikallisesti hajautetuissa tietokannoissa kaikilla resursseilla on sama painoarvo. Keskitetyissä tietokannoissa ulkomuistiin pääsyn kustannus ja prosessorin käyttö ovat oleellisia. Tämän tutkielman aihepiiriin kuuluu vain keskitettyjen tietokantojen optimointi.
 
 % Write some science here.
-
-Esimerkkilause ja lähdeviite~\cite{esimerkki}.
 
 
 % --- Back matter ---
