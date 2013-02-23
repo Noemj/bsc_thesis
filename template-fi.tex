@@ -68,7 +68,7 @@
 % The following commands define the information used to generate title and
 % abstract pages. The following entries should be always specified:
 
-\title{Tietokantakyselyjen optimointi relaatiotietokannassa}
+\title{Tietokantakyselyjen optimointi relaatiotietokannassa (vai niiden hallintajärjestelmissä?)}
 \author{Olli Rissanen}
 \date{\today}
 \level{Kandidaatintutkielma}
@@ -100,10 +100,32 @@
 
 \section{Johdanto}
 
-todo: työn tarkoitus
-todo: työn tavoite
+Tietokannan hallintajärjestelmä on kokoelma ohjelmia tiedon tallentamiseen, muokkaamiseen sekä tiedon keräämiseen tietokannasta. Tietokannan rakenteen monimutkaistuessa tieto voidaan kerätä usealla eri tavalla, ja samankaltaisten kyselyjen erot voivat olla erittäin suuria. Kyselyoptimoija on hallintajärjestelmän automatisoitu komponentti jonka tehtävänä on löytää kyselylle suorituskykyisin ratkaisu mahdollisimman nopeasti. Kyselyoptimoijan haasteena on minimoida itse optimointiin käytetty aika ja maksimoida optimoinnista saatu hyöty.
 
-\section{workname: Pohjustus}
+Optimoinnilla saavutettu prosessorin ja muistin käytön vähentäminen kyselyjä suoritettaessa parantaa tietokannan suorituskykyä huomattavasti. 
+
+• Yleinen selostus tutkimusaiheen laajemmasta tutkimusalueesta,
+tutkimuksen kontekstista.
+• Ratkaistavan tutkimusongelman selostus (vaikeus, esteet, haasteet).
+• Lyhyt katsaus ongelman olemassa oleviin tai tavanomaisiin ratkaisuihin ja niiden rajoitteisiin.
+• Hahmotelma tai yhteenveto ehdotettavasta uudesta ratkaisusta.
+• Yhteenveto ratkaisun arvioimistavasta ja arvioinnin seurauksista.
+• Luonnehdinta artikkelin vartalon jäsennyksestä (ellei sisälly edellisiin)
+
+Johdanto sisältää välttämättä viittauksia relevanttiin kirjallisuuteen:
+keskeisen taustakirjallisuuden pitää käydä ilmi johdannosta.
+Johdantoa ei saa kuormittaa teknisellä terminologialla, käsitteiden määritelmillä, monimutkaisella matematiikalla eikä syvällisellä kirjallisuuden
+tarkastelulla; niiden paikka on muualla.
+Johdannon pitää olla artikkelin helppolukuisin kohta, eikä se saa olla
+kovin pitkä
+
+motivaatio: miksi ongelma on mielenkiintoinen? mitkä ovat merkittävät seikat
+
+todo: työn rakenne kuitenkaan toistamatta liikaa sisällysluetteloa
+
+\section{workname: Taustaluku}
+Tietokannan hallintajärjestelmien jako: query optimizer ja query execution engine.
+
 Tietokantakyselyiden optimoinnilla viitataan tietokantakyselyn suorittamiseen mahdollisimman tehokkaasti. Optimoinnin tavoitteena on joko maksimoida suorituskyky annetuilla resursseilla tai minimodia resurssien käyttö. Mitattavia resursseja ovat suorittimen ja muistin käyttö sekä kommunikointikustannukset. Muistin käyttö jakautuu tallennuskustannukseen sekä ulkomuistiin pääsyn kustannukseen. Tallennuskustannuksella tarkoitetaan ulkomuistin sekä puskurimuistin käyttöä, ja se tulee aiheelliseksi kun muistin käyttö aiheutuu pullonkaulaksi. 
 
 Resurssin merkitys riippuu tietokantatyypistä. Hajautetuissa tietokannoissa hitailla yhteysväylillä kommunikointikustannukset hallitsevat kustannuksia. Paikallisesti hajautetuissa tietokannoissa kaikilla resursseilla on sama painoarvo. Keskitetyissä tietokannoissa ulkomuistiin pääsyn kustannus ja prosessorin käyttö ovat oleellisia. Tämän tutkielman aihepiiriin kuuluu vain keskitettyjen tietokantojen optimointi.
