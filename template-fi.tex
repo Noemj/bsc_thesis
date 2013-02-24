@@ -72,7 +72,7 @@
 \author{Olli Rissanen}
 \date{\today}
 \level{Kandidaatintutkielma}
-\abstract{Tutkielmassa tutustutaan tietokantakyselyjen optimoinnin osa-alueisiin sekä optimoinnin vaikutukseen kyselyjen suorituskyvyssä. Tärkeimmät suorituskykymittarit ovat prosessorin ja muistin käyttö. }
+\abstract{Tutkielmassa tutustutaan tietokantakyselyjen optimointiin relaatiotietokantojen hallintajärjestelmien osalta sekä optimoinnin vaikutukseen kyselyjen suorituskyvyssä. Tärkeimmät suorituskykymittarit ovat prosessorin ja muistin käyttö. }
 
 % The following can be used to specify keywords and classification of the paper:
 
@@ -100,31 +100,32 @@
 
 \section{Johdanto}
 
-Tietokannan hallintajärjestelmä on kokoelma ohjelmia tiedon tallentamiseen, muokkaamiseen sekä tiedon keräämiseen tietokannasta. Tietokannan rakenteen monimutkaistuessa tieto voidaan kerätä usealla eri tavalla, ja samankaltaisten kyselyjen erot voivat olla erittäin suuria. Kyselyoptimoija on hallintajärjestelmän automatisoitu komponentti jonka tehtävänä on löytää kyselylle suorituskykyisin kyselysuunnitelma mahdollisimman nopeasti. Optimoinnilla saavutettu prosessorin ja muistin käytön väheneminen kyselyjä suoritettaessa parantaa tietokannan suorituskykyä huomattavasti.
+Tietokantojen suorituskyky on yhä tärkeämpää tiedon määrän kasvaessa. 
+
+Tietokannalla tarkoitetaan sen sisältämään dataa ja tietorakenteita. Tietokantajärjestelmä sisältää tietokannan hallintajärjestelmän sekä tietokannan.
+
+Tietokannan hallintajärjestelmä on kokoelma ohjelmia tiedon tallentamiseen, muokkaamiseen sekä tiedon keräämiseen tietokannasta. Tietokannan rakenteen monimutkaistuessa tieto voidaan kerätä usealla eri tavalla, ja samankaltaisten kyselyjen erot voivat olla erittäin suuria.Hallintajärjestelmän sisältämän kyselyoptimoijan tehtävänä on löytää kyselylle suorituskykyisin kyselysuunnitelma mahdollisimman nopeasti. Optimoinnilla saavutettu prosessorin ja muistin käytön väheneminen kyselyjä suoritettaessa parantaa tietokannan suorituskykyä huomattavasti.
 
 Kyselyoptimoijan tavoitteena on minimoida itse optimointiin käytetty aika ja maksimoida optimoinnista saatu hyöty. Kyselyoptimoija toimii etsien kyselyä vastaavat mahdolliset kyselysuunnitelmat ja valitsemalla niistä tehokkaimman. Tietokantakyselyä vastaavia kyselysuunnitelmia voi olla useita, sillä kyselyiden algebralliset esitykset voidaan usein esittää monena loogisesti vastaavana esityksenä. Algebrallista operaatiota kohden voi myös löytyä useita toteutuksia, kuten join-operaatiota toteuttavat merge join ja hash join.  Haasteena on tehokkaan kyselysuunnitelman luominen ja kyselysuunnitelmien suorituskyvyn etukäteinen ennustaminen. 
 
+%
+%• Yleinen selostus tutkimusaiheen laajemmasta tutkimusalueesta, tutkimuksen kontekstista.
+%• Ratkaistavan tutkimusongelman selostus (vaikeus, esteet, haasteet).
+%• Lyhyt katsaus ongelman olemassa oleviin tai tavanomaisiin ratkaisuihin ja niiden rajoitteisiin.
+%• Hahmotelma tai yhteenveto ehdotettavasta uudesta ratkaisusta.
+%• Yhteenveto ratkaisun arvioimistavasta ja arvioinnin seurauksista.
+%• Luonnehdinta artikkelin vartalon jäsennyksestä (ellei sisälly edellisiin)
+%
+%Johdanto sisältää välttämättä viittauksia relevanttiin kirjallisuuteen:
+%keskeisen taustakirjallisuuden pitää käydä ilmi johdannosta.
+%Johdantoa ei saa kuormittaa teknisellä terminologialla, käsitteiden määritelmillä, monimutkaisella matematiikalla eikä syvällisellä kirjallisuuden
+%tarkastelulla; niiden paikka on muualla.
+%Johdannon pitää olla artikkelin helppolukuisin kohta, eikä se saa olla
+%kovin pitkä
 
+%motivaatio: miksi ongelma on mielenkiintoinen? mitkä ovat merkittävät seikat
 
-
-• Yleinen selostus tutkimusaiheen laajemmasta tutkimusalueesta,
-tutkimuksen kontekstista.
-• Ratkaistavan tutkimusongelman selostus (vaikeus, esteet, haasteet).
-• Lyhyt katsaus ongelman olemassa oleviin tai tavanomaisiin ratkaisuihin ja niiden rajoitteisiin.
-• Hahmotelma tai yhteenveto ehdotettavasta uudesta ratkaisusta.
-• Yhteenveto ratkaisun arvioimistavasta ja arvioinnin seurauksista.
-• Luonnehdinta artikkelin vartalon jäsennyksestä (ellei sisälly edellisiin)
-
-Johdanto sisältää välttämättä viittauksia relevanttiin kirjallisuuteen:
-keskeisen taustakirjallisuuden pitää käydä ilmi johdannosta.
-Johdantoa ei saa kuormittaa teknisellä terminologialla, käsitteiden määritelmillä, monimutkaisella matematiikalla eikä syvällisellä kirjallisuuden
-tarkastelulla; niiden paikka on muualla.
-Johdannon pitää olla artikkelin helppolukuisin kohta, eikä se saa olla
-kovin pitkä
-
-motivaatio: miksi ongelma on mielenkiintoinen? mitkä ovat merkittävät seikat
-
-todo: työn rakenne kuitenkaan toistamatta liikaa sisällysluetteloa
+%todo: työn rakenne kuitenkaan toistamatta liikaa sisällysluetteloa
 
 \section{workname: Taustaluku}
 Tietokannan hallintajärjestelmien jako: query optimizer ja query execution engine.
@@ -144,6 +145,12 @@ todo: relaatiotietokanta vs no-sql
 todo: optimoi menee
 
 \cite{chaudhuri1998}
+
+\section{menetelmä 1}
+\section{menetelmä 2}
+\section{menetelmä n}
+\section{menetelmien vertailu}
+\section{yhteenveto}
 
 % Write some science here.
 
