@@ -72,7 +72,7 @@
 \author{Olli Rissanen}
 \date{\today}
 \level{Kandidaatintutkielma}
-\abstract{Tutkielmassa tutustutaan tietokantakyselyjen optimointiin relaatiotietokantojen hallintajärjestelmien osalta sekä optimoinnin vaikutukseen kyselyjen suorituskyvyssä. Tärkeimmät suorituskykymittarit ovat prosessorin ja muistin käyttö. }
+\abstract{Tutkielmassa tutustutaan tietokantakyselyjen optimointiin relaatiotietokantojen hallintajärjestelmien osalta sekä optimoinnin vaikutukseen kyselyjen suorituskyvyssä. }
 
 % The following can be used to specify keywords and classification of the paper:
 
@@ -99,13 +99,14 @@
 
 \section{Johdanto}
 %Konteksti
-Tietokantojen suorituskyky on yhä tärkeämpää tiedon määrän kasvaessa. Optimoimalla tietokantakyselyjen suoritusta voidaan helpottaa käyttäjien tiedonhakua sekä kasvattaa tietokannan suorituskykyä. Kyselyn optimointi on toteutettu automaattisena toimenpiteenä tietokannan hallintojärjestelmien sisällä, ja se on ydintekijä erityisesti relaatiomalliin pohjautuvien hallintajärjestelmien menestyksessä. 
+Tietokantojen suorituskyky on yhä tärkeämpää tiedon määrän kasvaessa. Optimoimalla tietokantakyselyjen suoritusta voidaan helpottaa käyttäjien tiedonhakua sekä kasvattaa tietokannan suorituskykyä.\cite{mor2012} Erityisesti olio-relaatiokuvausta (ORM, object-relational mapping) toteuttavissa ohjelmointikielissä puhtaan SQL-kyselyjen kirjoittaminen on siirretty käyttäjältä alemmalle tasolle. ORM luo relaatiotietokannan pohjalta käyttäjälle oliotietokannan, jonka suorituskyky on kuitenkin sidottu relaatiotietokantaan. Relaatiotietokannan kyselyjen optimoinnilla pystytään siten saavuttamaan .. [viite ois kiva]
 
-Tietokannan hallintajärjestelmä on kokoelma ohjelmia tiedon tallentamiseen, muokkaamiseen, analysointiin ja keräämiseen tietokannasta. Hallintajärjestelmää käytetään tietokantakyselyillä, ja tutkielman oletuskyselykielenä on SQL. Hallintajärjestelmän sisältämän kyselyoptimoijan tehtävänä on löytää kyselylle suorituskykyisin kyselysuunnitelma mahdollisimman nopeasti. Optimoinnilla voidaan saavuttaa merkittäviä säästöjä prosessorin ja muistin käytössä. 
+Kyselyn optimointi on toteutettu automaattisena toimenpiteenä tietokannan hallintojärjestelmän sisältämässä kyselyoptimoijassa, ja se on ydintekijä erityisesti relaatiomalliin pohjautuvien hallintajärjestelmien menestyksessä. Tietokannan hallintajärjestelmä on kokoelma ohjelmia tiedon tallentamiseen, muokkaamiseen, analysointiin ja keräämiseen tietokannasta. Hallintajärjestelmää käytetään kyselykielillä, joista esimerkiksi SQL on suunniteltu relaatiotietokantojen hallintajärjestelmille. Kyselyoptimoijan tavoitteena on minimoida itse optimointiin käytetty aika ja maksimoida optimoinnista saatu hyöty.\cite{jarke1984} 
 
-Kyselyoptimoijan tavoitteena on minimoida itse optimointiin käytetty aika ja maksimoida optimoinnista saatu hyöty. Kyselyoptimoija toimii etsien kyselyä vastaavat mahdolliset kyselysuunnitelmat ja valitsemalla niistä tehokkaimman. Kyselysuunnitelma sisältää sarjan algebrallisia operaatioita tietokannan relaatioille jotka tuottavat tulokseksi halutun vastauksen.  Tietokantakyselyä vastaavia kyselysuunnitelmia voi olla useita, sillä kyselyiden algebralliset esitykset voidaan usein esittää monena loogisesti vastaavana esityksenä. Algebrallista operaatiota kohden voi myös löytyä useita toteutuksia, kuten join-operaatiota toteuttavat merge join ja hash join. Toisiaan vastaavat esitykset voivat olla suorituskyvyltään jopa eri asteikolla.
+Kyselyoptimoija toimii etsien kyselyä vastaavat mahdolliset kyselysuunnitelmat ja valitsemalla niistä tehokkaimman. Kyselysuunnitelma sisältää sarjan algebrallisia operaatioita tietokannan relaatioille jotka tuottavat tulokseksi halutun vastauksen. Tietokantakyselyä vastaavia kyselysuunnitelmia voi olla useita, sillä kyselyiden algebralliset esitykset voidaan usein esittää monena loogisesti vastaavana esityksenä. Algebrallista operaatiota kohden voi myös löytyä useita toteutuksia, kuten join-operaatiota toteuttavat merge join ja hash join. Toisiaan vastaavat esitykset voivat olla suorituskyvyltään jopa eri asteikolla.
 %Ongelma
-Haasteeksi nousee kyselysuunnitelman luominen ja kyselysuunnitelmien suorituskyvyn ennustaminen. Optimointi on vaikea hakuongelma, jossa hakualue voi nousta erittäin suureksi kyselyn ollessa monimutkainen. Optimoijan tulee valita pienin mahdollinen hakualue, joka pitää sisällään halvimmat suunnitelmat. Suorituskyvyn ennustamisen ja hakualueen rajauksen lisäksi optimoija tarvitsee tehokkaan algoritmin koko hakualueen läpikäymiseen.
+
+Haasteeksi nousee kyselysuunnitelman luominen ja kyselysuunnitelmien suorituskyvyn ennustaminen. Optimointi on vaikea hakuongelma, jossa hakualue voi nousta erittäin suureksi kyselyn ollessa monimutkainen.\cite{chaudhuri1998} Optimoijan tulee valita pienin mahdollinen hakualue, joka pitää sisällään halvimmat suunnitelmat. Suorituskyvyn ennustamisen ja hakualueen rajauksen lisäksi optimoija tarvitsee tehokkaan algoritmin koko hakualueen läpikäymiseen.
 
 Tutkielman rakenteesta
 
@@ -129,15 +130,26 @@ Tutkielman rakenteesta
 %todo: työn rakenne kuitenkaan toistamatta liikaa sisällysluetteloa
 
 \section{workname: Taustaluku}
-Tietokannan hallintajärjestelmien jako: query optimizer ja query execution engine.
+\subsection{Relaatiomalli}
 
+Relaatiotietokanta on relaatiomalliin perustuva tietokanta. Relaatiomallin keskeinen piirre on kaiken datan esittäminen n-paikkaisen karteesisen tulon osajoukkona, ja se tarjoaa deklaratiivisen menetelmän datan ja kyselyjen määrittämiseen. Relaatiomalli koostuu attribuuteista, monikoista ja relaatioista. Matemaattisessa määritelmässä attribuutti on pari joka sisältää attribuutin nimen ja tyypin sekä jokaiseen attribuuttiin liittyy sen arvojoukko. Monikko on järjestetty joukko attribuuttien arvoja. Relaatio koostuu otsakkeesta ja sisällöstä(body?), jossa otsake on joukko attribuutteja ja keho on joukko monikkoja. Relaation otsake on myös jokaisen monikon otsake. Visuaalisessa esityksissä relaatio on taulukko ja monikko taulukon rivi. 
+
+\begin{figure}[h!]
+  \caption{Relaatiomalliin perustuva tietokanta}
+  \centering
+    \includegraphics[width=\textwidth]{rlt_wiki.png}
+\end{figure}
+
+\subsection{Kyselyoptimoijan toiminta}
 Tietokantakyselyiden optimoinnilla viitataan tietokantakyselyn suorittamiseen mahdollisimman tehokkaasti. Optimoinnin tavoitteena on joko maksimoida suorituskyky annetuilla resursseilla tai minimodia resurssien käyttö. Mitattavia resursseja ovat suorittimen ja muistin käyttö sekä kommunikointikustannukset. Muistin käyttö jakautuu tallennuskustannukseen sekä ulkomuistiin pääsyn kustannukseen. Tallennuskustannuksella tarkoitetaan ulkomuistin sekä puskurimuistin käyttöä, ja se tulee aiheelliseksi kun muistin käyttö aiheutuu pullonkaulaksi. 
 
 Resurssin merkitys riippuu tietokantatyypistä. Hajautetuissa tietokannoissa hitailla yhteysväylillä kommunikointikustannukset hallitsevat kustannuksia. Paikallisesti hajautetuissa tietokannoissa kaikilla resursseilla on sama painoarvo. Keskitetyissä tietokannoissa ulkomuistiin pääsyn kustannus ja prosessorin käyttö ovat oleellisia. Tämän tutkielman aihepiiriin kuuluu vain keskitettyjen tietokantojen optimointi.
 
-todo: liitoskohta
+Tietokannan hallintajärjestelmän suorittama SQL-kyselyn prosessointi sisältää useita vaiheita. Aluksi hallintajärjestelmä jäsentää kyselyn syntaktisen ja semanttisen tarkastelun mahdollistamiseksi. Tämän jälkeen kysely muutetaan jäsennetyksi puuksi, joka on kyselyn algebrallinen esitysmuoto. \cite{mahajan2012}
 
-Relaatiotietokanta on relaatiomalliin perustuva tietokanta. Relaatiomallin keskeinen piirre on kaiken datan esittäminen n-paikkaisen karteesisen tulon osajoukkona, ja se tarjoaa deklaratiivisen menetelmän datan ja kyselyjen määrittämiseen. Relaatiomalli koostuu attribuuteista, monikoista ja relaatioista. Matemaattisessa määritelmässä attribuutti on pari joka sisältää attribuutin nimen ja tyypin sekä jokaiseen attribuuttiin liittyy sen arvojoukko. Monikko on järjestetty joukko attribuuttien arvoja. Relaatio koostuu otsakkeesta ja sisällöstä(body?), jossa otsake on joukko attribuutteja ja keho on joukko monikkoja. Relaation otsake on myös jokaisen monikon otsake. Visuaalisessa esityksissä relaatio on taulukko ja monikko taulukon rivi. 
+todo:validoi ja siisti: Kysely uudelleenkirjoitetaan (rewrite) tämän jälkeen valitsemalla hakumetodit (access method), liittämisjärjestyksen (join orders) ja liittämistavat (join methods) tietokannan käyttämien heuristiikkojen pohjalta. Monimutkaisille kyselyille sovelletaan myös muunnossääntöjä. \cite{mahajan2012}
+
+Seuraava vaihe on kyselyn optimointi. Kyselyoptimoijan sisääntulo(input) sisältää kyselyn, tietokannan mallin sisältäen taulujen ja indeksien määritelmät sekä tietokannan tilastoja. Kyselystä haetaan predikaatit, indeksit ja liitokset (joins) kyselysuunnitelmaa varten. Tämän jälkeen luodaan kyselyä vastaavat kyselysuunnitelmat ja arvioidaan niistä paras. Seuraavassa vaiheessa kysely suoritetaan käyttämällä optimoijan tuottamaa kyselysuunnitelmaa.
 
 todo: SQL ja relaatiomalli
 
@@ -145,10 +157,25 @@ todo: relaatiotietokanta vs no-sql
 
 todo: optimoi menee
 
+%CITES
+\cite{jarke1984}
 \cite{chaudhuri1998}
+\cite{freytag1987rule}
+\cite{ono1990}
+\cite{graefe1993query}
+\cite{chu1999least}
+\cite{aho1979}
+\cite{cole1994}
+\cite{mahajan2012}
 
-\section{menetelmä 1}
-\section{menetelmä 2}
+\section{Tietohakemistoon tallennettu tilastotieto}
+todo: täsmennä ja siisti
+
+Tilastotiedoilla lasketaan kyselysuunnitelmien kustannusarvio ja valitaan pienimmän kustannusarvion omaava suunnitelma.
+Tietoa ei tallenneta jatkuvasti, sillä se aiheuttaisi esimerkiksi rinnakkaisuusongelmia. Tietokannan valvoja 
+triggeriöi päivityksen esim. komennolla optimize db. Tilastotiedon harvan päivityksen takia valituksi ei aina välttämättä tule 
+tehokkain suunnitelma.
+\section{Algebralliset muunnoslait} %kandi4
 \section{menetelmä n}
 \section{menetelmien vertailu}
 \section{case study?}
@@ -167,7 +194,7 @@ todo: optimoi menee
 %
 % instead.
 
-\bibliographystyle{babplain}
+\bibliographystyle{unsrt}
 \bibliography{references-fi}
 
 
