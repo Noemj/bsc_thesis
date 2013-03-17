@@ -102,7 +102,7 @@
 
 \section{Johdanto}
 %Konteksti
-Modernit järjestelmät lisäävät jatkuvasti tietokantojen työtaakkaa tiedon määrän kasvaessa. Vaikka tietokanta on vain yksi komponentti koko järjes- telmästä, on se usein kriittisin ja vaihtelevin sillä tiedon lukeminen massamuistista on erittäin hidas operaatio verrattuna rekistereiden tai välimuistin käyttöön. Optimoimalla tietokantakyselyjen suoritusta voidaan vaikuttaa suoritettujen operaatioiden määrään sekä muistialueen kokoon ja siten vähentää tietokannan vasteaikaa sekä resurssien käyttöä. \cite{mor2012}
+Modernit järjestelmät lisäävät jatkuvasti tietokantojen työtaakkaa tiedon määrän kasvaessa. Vaikka tietokanta on vain yksi komponentti koko järjes- telmästä, on se usein kriittisin ja vaihtelevin sillä tiedon lukeminen massamuistista on hidasta verrattuna rekistereiden tai välimuistin käyttöön. Optimoimalla tietokantakyselyjen suoritusta voidaan vaikuttaa suoritettujen operaatioiden määrään sekä muistialueen kokoon ja siten vähentää tietokannan vasteaikaa sekä resurssien käyttöä. \cite{mor2012}
 	
 %Tietokannan suorituskyky on ydintekijä olio-relaatiokuvausta (ORM, object-relational mapping) käyttävissä ohjelmointikielissä. ORM luo relaatiotietokannan pohjalta käyttäjälle oliotietokannan, jonka suorituskyky on kuitenkin sidottu relaatiotietokantaan.
 % 
@@ -152,13 +152,22 @@ Tietokantakyselyjen optimoinnilla viitataan tietokantakyselyn suorittamiseen mah
 
 Resurssin merkitys riippuu tietokantatyypistä. Hajautetuissa tietokannoissa hitailla yhteysväylillä kommunikointikustannukset hallitsevat kustannuksia. Paikallisesti hajautetuissa tietokannoissa kaikilla resursseilla on sama painoarvo. Keskitetyissä tietokannoissa ulkomuistiin pääsyn kustannus ja prosessorin käyttö ovat oleellisia. Tämän tutkielman aihepiiriin kuuluu vain keskitettyjen tietokantojen optimointi.
 \subsection{Kyselyoptimoijan toiminta}
-
-Tähän SQL-blokki: nested quotet erikseen.
-
 %Käy tässä käpi kyselyoptimoijan koko stäkki
-Tietokannan hallintajärjestelmän suorittama SQL-kyselyn prosessointi sisältää useita vaiheita. Aluksi hallintajärjestelmä jäsentää kyselyn syntaktisen ja semanttisen tarkastelun mahdollistamiseksi. Tämän jälkeen kysely muutetaan jäsennetyksi puuksi, joka on kyselyn algebrallinen esitysmuoto. Puun alkiolla on nolla tai enemmän aliisolmua, joiden ulostuloa (output) käytetään ylisolmun (parent node) syötteenä. Esimerkiksi join-operaatiossa solmulla on kaksi alisolmua, joille toteutetaan join-operaatio. Sort-operaatiolla on yksi alisolmu joka järjestetään. Lehtisolmut ovat solmuja jotka suorittavat hakuja (scan) levyltä ja palauttavat saadut tulokset. \cite{mahajan2012}
+Tietokannan hallintajärjestelmän suorittama SQL-kyselyn prosessointi sisältää useita vaiheita. 
+Aluksi hallintajärjestelmä jakaa kyselyn lohkoihin(block) siten, että yhdessä lohkossa on täsmälleen yksi SELECT-lause, yksi FROM-lause ja korkeintaan yksi WHERE-, GROUP BY- ja HAVING-lause. 
+Kyselyn mahdollisesti sisältämät alikyselyt muodostavat kukin oman lohkonsa. %WHERE-lause konjunktiivisessa normaalimuodossa eli n^n^n^..^n
+(Alikyselyistä enemmän kappaleessa n?)
 
-todo:validoi ja siisti: Seuraavaksi kysely uudelleenkirjoitetaan (rewrite) valitsemalla hakumetodit (access method), liittämisjärjestyksen (join orders) ja liittämistavat (join methods) tietokannan käyttämien heuristiikkojen pohjalta. Monimutkaisille kyselyille sovelletaan myös muunnossääntöjä. \cite{mahajan2012}
+Seuraavaksi jokainen lohko jäsennetään puuksi, joka on kyselyn algebrallinen esitysmuoto.
+Puun solmu sisältää yhden operaation kyselyn suorittamiseksi, ja sillä on nolla tai useampi alisolmua joiden ulostuloa(output) käytetään sen syötteenä.
+Esimerkiksi join-operaatiossa solmulla on kaksi alisolmua, joille toteutetaan join-operaatio ja sort-operaatiolla on yksi alisolmu joka järjestetään.
+Lehtisolmut ovat solmuja jotka suorittavat hakuja (scan) levyltä ja palauttavat saadut tulokset. \cite{mahajan2012}
+Puu suoritetaan lehtisolmuista juureen.
+
+Seuraavaksi kysely uudelleenkirjoitetaan (rewrite) valitsemalla hakumetodit (access method), liittämisjärjestyksen (join orders) ja liittämistavat (join methods) tietokannan käyttämien heuristiikkojen pohjalta. Monimutkaisille kyselyille sovelletaan myös muunnossääntöjä. \cite{mahajan2012}
+Uudelleenkirjoituksen tarkoitus on helpottaa optimoijan työtä parhaan kyselysuunnitelman valinnassa.
+%todo: http://docs.oracle.com/cd/A97630_01/server.920/a96520/qr.htm
+%http://www.budaconsulting.com/blog/bid/79324/Query-Rewrite-What-is-MySQL-Doing-To-My-Queries
 
 Seuraava vaihe on kyselyn optimointi. Kyselyoptimoijan sisääntulo(input) sisältää kyselyn, tietokannan mallin sisältäen taulujen ja indeksien määritelmät sekä tietokannan tilastoja. Kyselystä haetaan predikaatit, indeksit ja liitokset (joins) kyselysuunnitelmaa varten. Tämän jälkeen luodaan kyselyä vastaavat kyselysuunnitelmat ja arvioidaan niistä paras. Seuraavassa vaiheessa kysely suoritetaan käyttämällä optimoijan tuottamaa kyselysuunnitelmaa.
 
@@ -212,6 +221,9 @@ Tilastotiedoilla lasketaan kyselysuunnitelmien kustannusarvio ja valitaan pienim
 Tietoa ei tallenneta jatkuvasti, sillä se aiheuttaisi esimerkiksi rinnakkaisuusongelmia. Tietokannan valvoja 
 triggeriöi päivityksen esim. komennolla optimize db. Tilastotiedon harvan päivityksen takia valituksi ei aina välttämättä tule 
 tehokkain suunnitelma.
+
+%mielenkiintoisia aiheita:
+%NESTED SUBQUERIES
 \section{Algebralliset muunnoslait (logical optimization)} %kandi4
 \section{Fyysinen optimointi (physical optimization)}
 \section{Kyselyoptimoijan käyttäminen (hints)}
