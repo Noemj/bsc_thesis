@@ -141,7 +141,7 @@ Tutkielman rakenteesta
 
 Relaatiotietokanta on relaatiomalliin perustuva tietokanta. Relaatiomallin keskeinen piirre on kaiken datan esittäminen n-paikkaisen karteesisen tulon osajoukkona, ja se tarjoaa deklaratiivisen menetelmän datan ja kyselyjen määrittämiseen. Relaatiomalli koostuu attribuuteista, monikoista ja relaatioista. Matemaattisessa määritelmässä attribuutti on pari joka sisältää attribuutin nimen ja tyypin sekä jokaiseen attribuuttiin liittyy sen arvojoukko. Monikko on järjestetty joukko attribuuttien arvoja. Relaatio koostuu otsakkeesta ja sisällöstä, jossa otsake on joukko attribuutteja ja keho on joukko monikkoja. Relaation otsake on myös jokaisen monikon otsake. Visuaalisessa esityksissä relaatio on taulukko ja monikko taulukon rivi. 
 
-\begin{figure}[h!]
+\begin{figure}[!h]
   \caption{Relaatiomalliin perustuva tietokanta}
   \centering
     \includegraphics[width=\textwidth]{rlt_wiki.png}
@@ -152,20 +152,21 @@ Tietokantakyselyjen optimoinnilla viitataan tietokantakyselyn suorittamiseen mah
 
 Resurssin merkitys riippuu tietokantatyypistä. Hajautetuissa tietokannoissa hitailla yhteysväylillä kommunikointikustannukset hallitsevat kustannuksia. Paikallisesti hajautetuissa tietokannoissa kaikilla resursseilla on sama painoarvo. Keskitetyissä tietokannoissa ulkomuistiin pääsyn kustannus ja prosessorin käyttö ovat oleellisia. Tämän tutkielman aihepiiriin kuuluu vain keskitettyjen tietokantojen optimointi.
 \subsection{Kyselyoptimoijan toiminta}
+
 Tähän SQL-blokki: nested quotet erikseen.
 
 %Käy tässä käpi kyselyoptimoijan koko stäkki
 Tietokannan hallintajärjestelmän suorittama SQL-kyselyn prosessointi sisältää useita vaiheita. Aluksi hallintajärjestelmä jäsentää kyselyn syntaktisen ja semanttisen tarkastelun mahdollistamiseksi. Tämän jälkeen kysely muutetaan jäsennetyksi puuksi, joka on kyselyn algebrallinen esitysmuoto. Puun alkiolla on nolla tai enemmän aliisolmua, joiden ulostuloa (output) käytetään ylisolmun (parent node) syötteenä. Esimerkiksi join-operaatiossa solmulla on kaksi alisolmua, joille toteutetaan join-operaatio. Sort-operaatiolla on yksi alisolmu joka järjestetään. Lehtisolmut ovat solmuja jotka suorittavat hakuja (scan) levyltä ja palauttavat saadut tulokset. \cite{mahajan2012}
 
-todo:validoi ja siisti: Seuraavaksi ysely uudelleenkirjoitetaan (rewrite) valitsemalla hakumetodit (access method), liittämisjärjestyksen (join orders) ja liittämistavat (join methods) tietokannan käyttämien heuristiikkojen pohjalta. Monimutkaisille kyselyille sovelletaan myös muunnossääntöjä. \cite{mahajan2012}
+todo:validoi ja siisti: Seuraavaksi kysely uudelleenkirjoitetaan (rewrite) valitsemalla hakumetodit (access method), liittämisjärjestyksen (join orders) ja liittämistavat (join methods) tietokannan käyttämien heuristiikkojen pohjalta. Monimutkaisille kyselyille sovelletaan myös muunnossääntöjä. \cite{mahajan2012}
 
 Seuraava vaihe on kyselyn optimointi. Kyselyoptimoijan sisääntulo(input) sisältää kyselyn, tietokannan mallin sisältäen taulujen ja indeksien määritelmät sekä tietokannan tilastoja. Kyselystä haetaan predikaatit, indeksit ja liitokset (joins) kyselysuunnitelmaa varten. Tämän jälkeen luodaan kyselyä vastaavat kyselysuunnitelmat ja arvioidaan niistä paras. Seuraavassa vaiheessa kysely suoritetaan käyttämällä optimoijan tuottamaa kyselysuunnitelmaa.
 
-todo: SQL ja relaatiomalli
-
-todo: relaatiotietokanta vs no-sql
-
-todo: optimoi menee
+\begin{figure}[!h]
+  \caption{Kyselyn jäsentäminen, optimointi ja suoritus}
+  \centering
+    \includegraphics[width=\textwidth]{optimoija60.png}
+\end{figure}
 
 \section{Kyselysuunnitelman suorituskyvyn arviointi}
 Kyselyoptimoijan tulee arvioida kustannus jokaiselle kyselysuunnitelmalle. Kustannusarviointi koostuu kahdesta vaiheesta: ensiksi arvioidaan jäsennetyn puun jokaisen alkion operaation suorittamiseen kuluva aika. (pipelining, temppirelaatiot.)
@@ -188,7 +189,7 @@ WHERE ehto 1 $\wedge$ ehto 2 $\wedge$ ... $\wedge$ ehto n
 Kyselyn palauttamien monikkojen maksimimäärä on relaatioiden karteesinen tulo. Jokainen WHERE-ehto harventaa monikkojen määrää. WHERE-ehdon vaikutusta tulosjoukon kokoon voidaan mallintaa lisäämällä jokaiseen ehtoon vähennyskerroin, joka on oletettu suhde lähtöjoukosta tulosjoukkoon vain kyseisen ehdon osalta.
 Tulosjoukon koko voidaan siten arvioida kertomalla maksimijoukko vähennyskertoimien tulolla. \cite{ramakrishnan2003database}
 
-WHERE-lauseen ehtojen kertoimia voidaan laskea hyödyntämällä tietohakemistoon tallennettua tilastotietoa.
+WHERE-lauseen ehtojen kertoimia voidaan laskea hyödyntämällä systeemitaulustoon tallennettua tilastotietoa.
 
  %WHERE-ehtojen arviointi
 \begin{equation}
@@ -200,12 +201,12 @@ column = value
 \end{equation}
 jos sarakkeessa on indeksi I kyseiselle relaatiolle. Ilman indeksiä kyselyoptimoija käyttää kiinteää arvoa vähennyskertoimen arvioimiseen, kuten 1/10.
 
-\subsection{Tietohakemistoon tallennettu tilastotieto}
+\subsection{Systeemitaulustoon tallennettu tilastotieto}
 Kustannusten arviointi vaatii tilastotietoa. \cite{ramakrishnan2003database}
 
 %Eka osa tähän
 todo: täsmennä ja siisti
-(sis. tietohakemistoon tallennetun tilastotiedon käytön)
+(sis. systeemitaulustoon tallennetun tilastotiedon käytön)
 Tilastotieto on..
 Tilastotiedoilla lasketaan kyselysuunnitelmien kustannusarvio ja valitaan pienimmän kustannusarvion omaava suunnitelma.
 Tietoa ei tallenneta jatkuvasti, sillä se aiheuttaisi esimerkiksi rinnakkaisuusongelmia. Tietokannan valvoja 
