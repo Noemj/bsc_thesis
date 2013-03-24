@@ -110,12 +110,12 @@ Tietokannan suorituskyky on tärkeää koko järjestelmän suorituskyvyn osalta,
 
 Tietokantaa käytetään useimmiten tietokannan hallintajärjestelmällä. Hallintajärjestelmä on kokoelma ohjelmia tiedon tallentamiseen, muokkaamiseen, analysointiin ja keräämiseen tietokannasta. Hallintajärjestelmää käytetään kyselykielellä, joista esimerkiksi SQL on suunniteltu relaatiotietokantojen hallintajärjestelmille. Kyselyn optimointi on toteutettu automaattisena toimenpiteenä tietokannan hallintojärjestelmän sisältämässä kyselyn optimoijassa, ja kaikista hallintajärjestelmän komponenteista optimoijalla on suurin merkitys tietokannan suorituskykyyn. \cite{mor2012} Kyselyn optimoijan tavoitteena on minimoida itse optimointiin käytetty aika ja maksimoida optimoinnista saatu hyöty. \cite{jarke1984} 
 
-Optimoija toimii etsien kyselyä vastaavat kyselysuunnitelmat ja valitsemalla niistä tehokkaimman. Kyselysuunnitelma sisältää sarjan algebrallisia operaatioita tietokannan relaatioille jotka tuottavat tulokseksi halutun vastauksen. Tietokantakyselyä vastaavia kyselysuunnitelmia voi olla useita, sillä kyselyjen algebralliset esitykset voidaan usein esittää monena loogisesti vastaavana esityksenä. Algebrallista operaatiota kohden voi myös löytyä useita toteutuksia, kuten join-operaatiota toteuttavat merge join ja hash join. Saman kyselyn tuottamat kyselysuunnitelmat voivat olla suorituskyvyltään jopa eri suuruusluokassa. \cite{oracle2013refman}	
+Optimoija toimii etsien kyselyä vastaavat kyselysuunnitelmat ja valitsemalla niistä tehokkaimman. Kyselysuunnitelma sisältää sarjan algebrallisia operaatioita tietokannan relaatioille jotka tuottavat tulokseksi halutun vastauksen. Tietokantakyselyä vastaavia kyselysuunnitelmia voi olla useita, sillä kyselyjen algebralliset esitykset voidaan usein esittää monena loogisesti vastaavana esityksenä.  \cite{jarke1984} Algebrallista operaatiota kohden voi myös löytyä useita toteutuksia, kuten join-operaatiota toteuttavat merge join ja hash join. Saman kyselyn tuottamat kyselysuunnitelmat voivat olla suorituskyvyltään jopa eri suuruusluokassa. \cite{oracle2013refman}	
 %Ongelma
 
 Optimointi on vaikea hakuongelma, jossa hakualue voi nousta erittäin suureksi. \cite{chaudhuri1998} Haasteeksi nousee kyselysuunnitelmien luominen ja niiden suorituskyvyn ennustaminen. Kaikkien mahdollisten kyselysuunnitelmien luominen on usein liian hidasta, joten optimoijan tulee valita pienin mahdollinen hakualue joka pitää sisällään halvimmat suunnitelmat. Suorituskyvyn ennustamisen ja hakualueen rajauksen lisäksi optimoija tarvitsee tehokkaan algoritmin koko hakualueen läpikäymiseen. On epärealistista odottaa kyselyn optimoijan aina löytävän parhaan kyselysuunnitelman, ja onkin tärkeämpää välttää huonoimpia suunnitelmia ja löytää hyvä suunnitelma. \cite{ramakrishnan2003database}
 
-Kappale 2 sisältää esitiedot kyselyn optimoijan toiminnalle ja lyhyen kuvauksen optimointiprosessista. Kappaleessa 3 perehdytään kyselyn jäsentämiseen optimointia helpottavaan muotoon. Kappale 4 käsittelee optimointiprosessia yksityiskohtaisemmin. Kappaleissa 5 ja 6 esitellään kyselyn optimoijan käyttöä MySQL-hallintajärjestelmällä.
+Kappale 2 sisältää esitiedot kyselyn optimoijan toiminnalle, jonka lisäksi kappaleessa perehdytään optimoijan rakenteeseen hallintajärjestelmän sisällä.  Kappale 3 käsittelee optimointiprosessin vaiheita yksityiskohtaisesti. Kappaleissa 4 ja 5 esitellään kyselyn optimoijan käyttöä MySQL-hallintajärjestelmällä.
 
 %
 %• Yleinen selostus tutkimusaiheen laajemmasta tutkimusalueesta, tutkimuksen kontekstista.
@@ -148,20 +148,24 @@ Relaatiotietokanta on relaatiomalliin perustuva tietokanta. Relaatiomallin keske
 \end{figure}
 
 \subsection{Optimoijan tavoitteet}
-Tietokantakyselyjen optimoinnilla viitataan tietokantakyselyn suorittamiseen mahdollisimman tehokkaasti. Optimoinnin tavoitteena on joko maksimoida suorituskyky annetuilla resursseilla tai minimodia resurssien käyttö. Mitattavia resursseja ovat suorittimen ja muistin käyttö sekä kommunikointikustannukset. Muistin käyttö jakautuu tallennuskustannukseen sekä ulkomuistiin pääsyn kustannukseen. Tallennuskustannuksella tarkoitetaan ulkomuistin sekä puskurimuistin käyttöä, ja se tulee aiheelliseksi kun muistin käyttö aiheutuu pullonkaulaksi. 
+Tietokantakyselyjen optimoinnilla viitataan tietokantakyselyn suorittamiseen mahdollisimman tehokkaasti. Optimoinnin tavoitteena on joko maksimoida suorituskyky annetuilla resursseilla tai minimodia resurssien käyttö. Mitattavia resursseja ovat suorittimen ja muistin käyttö sekä kommunikointikustannukset. \cite{jarke1984} Muistin käyttö jakautuu tallennuskustannukseen sekä ulkomuistiin pääsyn kustannukseen. Tallennuskustannuksella tarkoitetaan ulkomuistin sekä puskurimuistin käyttöä, ja se tulee aiheelliseksi kun muistin käyttö aiheutuu pullonkaulaksi. Kommunikointikustannukset käsittävät tiedon viennin tallennuspaikasta laskentapaikkaan ja edelleen tulosten esityspaikkaan. Ne jakautuvat kommunikaatioväylän käyttökustannukseen ja tiedonsiirrosta aiheutuvaan suorittamisen viiveeseen.
 
-Resurssin merkitys riippuu tietokantatyypistä. Hajautetuissa tietokannoissa hitailla yhteysväylillä kommunikointikustannukset hallitsevat kustannuksia. Paikallisesti hajautetuissa tietokannoissa kaikilla resursseilla on sama painoarvo. Keskitetyissä tietokannoissa ulkomuistiin pääsyn kustannus ja prosessorin käyttö ovat oleellisia. \cite{jarke1984} Tämän tutkielman aihepiiriin kuuluu vain keskitettyjen tietokantojen optimointi.
+Resurssin merkitys riippuu tietokantatyypistä. Hajautetuissa tietokannoissa hitailla yhteysväylillä kommunikointikustannukset hallitsevat kustannuksia. Paikallisesti hajautetuissa tietokannoissa kaikilla resursseilla on sama painoarvo. Keskitetyissä tietokannoissa ulkomuistiin pääsyn kustannus ja prosessorin käyttö ovat oleellisia. \cite{jarke1984} Tässä tutkielmassa keskitymme erityisesti keskitettyjen tietokantojen optimointiin.
 \subsection{Optimoijan toiminta}
 %Käy tässä käpi kyselyn optimoijan koko stäkki
-Tietokannan hallintajärjestelmän suorittama SQL-kyselyn prosessointi sisältää useita vaiheita. 
-Aluksi hallintajärjestelmän sisältämä kyselyn jäsentäjä jakaa kyselyn lohkoihin(block) siten, että yhdessä lohkossa on täsmälleen yksi SELECT-lause, yksi FROM-lause ja korkeintaan yksi WHERE-, GROUP BY- ja HAVING-lause. \cite{ramakrishnan2003database}
+Tietokannan hallintajärjestelmän suorittama SQL-kyselyn prosessointi sisältää useita vaiheita. Kuva 2 esittää kyselyn optimoijan rakenteen hallintajärjestelmän sisällä.
+Kyselyn prosessointi alkaa kyselyn jäsentäjän suorittamalla kyselyn syntaksin ja semantiikan oikeellisuuden validoinnilla. \cite{oracle2009doc}
+Syntaksin validoinnissa jäsentäjä tarkastaa kyselyn lauseopin oikeellisuuden. Semantiikan validoinnissa tarkastetaan objektien aitous, kyselyn yksiselitteisyys, oikeus haettavaan tietoon ja muuttujien tyypin sopivuus sarakkeiden tyyppeihin. Useat hallintajärjestelmät myös
+tallentavat kyselyt validoinnin jälkeen talteen, jotta samaa kyselyä ei tarvitse jäsentää ja optimoida uudelleen. Yksi esimerkki kyselyjä tallentavasta hallintajärjestelmästä on Oracle Database, jossa tallennuspaikkaa kutsutaan nimellä Shared Pool. \cite{oracle2005doc}
+
+Seuraavaksi jäsentäjä jakaa kyselyn lohkoihin(block) siten, että yhdessä lohkossa on täsmälleen yksi SELECT-lause, yksi FROM-lause ja korkeintaan yksi WHERE-, GROUP BY- ja HAVING-lause. \cite{ramakrishnan2003database}
 Kyselyn mahdollisesti sisältämät alikyselyt muodostavat kukin oman lohkonsa. %WHERE-lause konjunktiivisessa normaalimuodossa eli n^n^n^..^n
 (Alikyselyistä enemmän kappaleessa n?)
 
-Seuraavaksi jokainen lohko jäsennetään puuksi, joka on kyselyn algebrallinen esitysmuoto.
+Jokainen lohko jäsennetään puuksi, joka on kyselyn algebrallinen esitysmuoto. \cite{mahajan2012}
 Puun solmu sisältää yhden operaation kyselyn suorittamiseksi, ja sillä on nolla tai useampi alisolmua joiden ulostuloa(output) käytetään sen syötteenä.
 Esimerkiksi join-operaatiossa solmulla on kaksi alisolmua, joille toteutetaan join-operaatio ja sort-operaatiolla on yksi alisolmu joka järjestetään.
-Lehtisolmut ovat solmuja jotka suorittavat hakuja (scan) levyltä ja palauttavat saadut tulokset. \cite{mahajan2012}
+Lehtisolmut ovat solmuja jotka suorittavat hakuja (scan) levyltä ja palauttavat saadut tulokset. 
 Puu suoritetaan lehtisolmuista juureen.
 
 Tämän jälkeen kysely uudelleenkirjoitetaan (rewrite) valitsemalla hakumetodit (access method), liittämisjärjestyksen (join orders) ja liittämistavat (join methods) tietokannan käyttämien heuristiikkojen pohjalta. Monimutkaisille kyselyille sovelletaan myös muunnossääntöjä. \cite{mahajan2012}
@@ -177,7 +181,10 @@ Kun kysely on uudelleenkirjoitettu, lähetetään se kyselyn optimoijalle. Kysel
     \includegraphics[width=\textwidth]{optimoija60.png}
 \end{figure}
 
-\section{Kyselyn jäsentäminen}
+%\section{Kyselyn jäsentäminen} Toistaiseksi skipataan koko kappale.
+%http://docs.oracle.com/cd/B28359_01/server.111/b28318/sqlplsql.htm#i1243
+%Kyselyn jäsentämisessä hallintajärjestelmä pyrkii validoimaan kyselyn syntaksin sekä semantiikan oikeellisuuden. 
+%Syntaksin validoinnissa jäsentäjä tarkastaa kyselyn lauseopin oikeellisuuden
 
 \section{Kyselyn optimointi}
 Kyselyn optimoijan tulee arvioida kustannus jokaiselle kyselysuunnitelmalle. Kustannusarviointi koostuu kahdesta vaiheesta: ensiksi arvioidaan jäsennetyn puun jokaisen alkion operaation suorittamiseen kuluva aika. (pipelining, temppirelaatiot.)
