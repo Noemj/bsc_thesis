@@ -238,22 +238,26 @@ Tulosjoukon koko voidaan siten arvioida kertomalla maksimijoukko vähennyskertoi
 
 WHERE-lauseen ehtojen kertoimia voidaan laskea hyödyntämällä systeemitaulustoon tallennettua tilastotietoa. Oletetaan seuraavat tiedot: %source: https://www.cs.duke.edu/courses/compsci516/cps216/spring03/papers/selinger-etal-1979.pdf
 \\\newline
-avaimia(I) = eri avainten lukumäärä indeksissä I
+NKeys(I) = eri avainten lukumäärä indeksissä I
 \\
-nindx(I) = sivujen lukumäärä indeksissä I
+F = vähennyskerroin
 \\\newline
 $sarake = arvo$ 
 \\
-tyyppiselle ehdolle vähennyskerroin voidaan arvioida kaavalla $\frac{1}{avaimia(I)}$, jos sarakkeessa on indeksi kyseiselle relaatiolle. \cite{selinger1979access} Ilman indeksiä kyselyn optimoija käyttää kiinteää arvoa vähennyskertoimen arvioimiseen, joka esimerkiksi System R-relaatiotietokantaohjelmassa on 1/10.
+tyyppiselle ehdolle vähennyskerroin voidaan arvioida kaavalla $F = \frac{1}{NKeys(I)}$, jos sarakkeessa on indeksi kyseiselle relaatiolle. \cite{selinger1979access} Ilman indeksiä kyselyn optimoija käyttää kiinteää arvoa vähennyskertoimen arvioimiseen, joka esimerkiksi System R-relaatiotietokantaohjelmassa on 1/10.
 \\\newline
 $sarake1 = sarake2$ 
 \\
-tapauksessa voidaan vähennyskerroin arvoida kaavalla $\frac{1}{MAX (avaimia(I1), avaimia(I2))}$ jos kummassakin sarakkeessa on indeksi. Lisäksi oletetaan, että jokaisesta pienemmän indeksin arvoa vastaa arvo toisesta indeksistä. Mikäli vain toisessa sarakkeessa on indeksi, 
+tapauksessa voidaan vähennyskerroin arvoida kaavalla $F = \frac{1}{MAX (NKeys(I1), NKeys(I2))}$ jos kummassakin sarakkeessa on indeksi. Lisäksi oletetaan, että jokaisesta pienemmän indeksin arvoa vastaa arvo toisesta indeksistä. Mikäli vain toisessa sarakkeessa on indeksi, 
 voidaan kustannus laskea aiemmalla kaavalla käyttäen indeksin omaavaa saraketta. Mikäli kummassakaan sarakkeessa ei ole indeksiä, arvioidaan arvoksi 1/10.
 \\\newline
 $sarake > arvo$
 \\
-tapauksessa voidaan käyttää kaavaa $\frac{suurin avain - arvo}{suurin avain - pienin avain}$. Mikäli sarake ei ole aritmeettinen tai arvoa ei tiedetä käytetään vakiona arvoa 1/3.
+tapauksessa voidaan käyttää kaavaa $F = \frac{\textit{suurin avain - arvo}}{\textit{suurin avain - pienin avain}}$. Mikäli sarake ei ole aritmeettinen tai arvoa ei tiedetä käytetään vakiona arvoa 1/3.
+\\\newline
+\textit{sarake IN (lista arvoja)}
+\\
+$F = koko(lista) \times (sarake = arvo)$
 
 \subsection{Systeemitaulustoon tallennettu tilastotieto}
 Kustannusten arviointi vaatii tilastotietoa. \cite{ramakrishnan2003database}
