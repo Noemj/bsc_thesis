@@ -108,7 +108,7 @@ Tietokannan suorituskyky on tärkeää koko järjestelmän suorituskyvyn osalta,
 % 
 %Erityisesti olio-relaatiokuvausta (ORM, object-relational mapping) toteuttavissa ohjelmointikielissä puhtaiden SQL-kyselyjen kirjoittaminen on siirretty käyttäjältä alemmalle tasolle.relaatiotietokantaan. Relaatiotietokannan kyselyjen optimoinnilla pystytään siten saavuttamaan .. [viite ois kiva]
 
-Tietokantaa käytetään tietokannan hallintajärjestelmällä, joka on kokoelma ohjelmia tiedon tallentamiseen, muokkaamiseen, analysointiin ja keräämiseen tietokannasta. Hallintajärjestelmää käytetään kyselykielellä, joista esimerkiksi SQL on suunniteltu relaatiotietokantojen hallintajärjestelmille. Hallintajärjestelmän vastuulla on kyselyn muuttaminen tietokannan ymmärtämään muotoon säilyttäen kyselyn alkuperäisen tarkoituksen. Kyselyn optimointi on toteutettu automaattisena toimenpiteenä tietokannan hallintojärjestelmän sisältämässä kyselyn optimoijassa, ja kaikista hallintajärjestelmän komponenteista optimoijalla on suurin merkitys tietokannan suorituskykyyn. \cite{mor2012} Kyselyn optimoijan tavoitteena on minimoida itse optimointiin käytetty aika ja maksimoida optimoinnista saatu hyöty. \cite{jarke1984} 
+Tietokantaa käytetään tietokannan hallintajärjestelmällä, joka on kokoelma ohjelmia tiedon tallentamiseen, muokkaamiseen, analysointiin ja keräämiseen tietokannasta. Hallintajärjestelmää käytetään kyselykielellä, joista esimerkiksi SQL \cite{5391051} on suunniteltu relaatiotietokantojen hallintajärjestelmille. Hallintajärjestelmän vastuulla on kyselyn muuttaminen tietokannan ymmärtämään muotoon säilyttäen kyselyn alkuperäisen tarkoituksen. Kyselyn optimointi on toteutettu automaattisena toimenpiteenä tietokannan hallintojärjestelmän sisältämässä kyselyn optimoijassa, ja kaikista hallintajärjestelmän komponenteista optimoijalla on suurin merkitys tietokannan suorituskykyyn. \cite{mor2012} Kyselyn optimoijan tavoitteena on minimoida itse optimointiin käytetty aika ja maksimoida optimoinnista saatu hyöty. \cite{jarke1984} 
 
 Optimoija toimii etsien kyselyä vastaavat kyselysuunnitelmat ja valitsemalla niistä tehokkaimman. Kyselysuunnitelma sisältää sarjan algebrallisia operaatioita tietokannan relaatioille jotka tuottavat tulokseksi halutun vastauksen. Tietokantakyselyä vastaavia kyselysuunnitelmia voi olla useita, sillä kyselyjen algebralliset esitykset voidaan usein esittää monena loogisesti vastaavana esityksenä.  \cite{jarke1984} Algebrallista operaatiota kohden voi myös löytyä useita toteutuksia, kuten join-operaatiota toteuttavat merge join ja hash join. Saman kyselyn tuottamat kyselysuunnitelmat voivat olla suorituskyvyltään jopa eri suuruusluokassa. \cite{oracle2013refman}	
 %Ongelma
@@ -159,7 +159,7 @@ Syntaksin validoinnissa jäsentäjä tarkastaa kyselyn lauseopin oikeellisuuden.
 tallentavat kyselyt validoinnin jälkeen talteen, jotta samaa kyselyä ei tarvitse jäsentää ja optimoida uudelleen. Yksi esimerkki kyselyjä tallentavasta hallintajärjestelmästä on Oracle Database, jossa tallennuspaikkaa kutsutaan nimellä Shared Pool. \cite{oracle2005doc}
 
 Seuraavaksi jäsentäjä jakaa kyselyn lohkoihin(block) siten, että yhdessä lohkossa on täsmälleen yksi SELECT-lause, yksi FROM-lause ja korkeintaan yksi WHERE-, GROUP BY- ja HAVING-lause. \cite{ramakrishnan2003database}
-Kyselyn mahdollisesti sisältämät alikyselyt muodostavat kukin oman lohkonsa. %WHERE-lause konjunktiivisessa normaalimuodossa eli n^n^n^..^n
+Kyselyn mahdollisesti sisältämät alikyselyt muodostavat kukin oman lohkonsa. %
 (Alikyselyistä enemmän kappaleessa n?)
 
 Jokainen lohko jäsennetään puuksi, joka on kyselyn algebrallinen esitysmuoto. \cite{mahajan2012}
@@ -173,7 +173,7 @@ Uudelleenkirjoituksen tarkoitus on helpottaa optimoijan työtä parhaan kyselysu
 %todo: http://docs.oracle.com/cd/A97630_01/server.920/a96520/qr.htm
 %http://www.budaconsulting.com/blog/bid/79324/Query-Rewrite-What-is-MySQL-Doing-To-My-Queries
 
-Kun kysely on uudelleenkirjoitettu, lähetetään se kyselyn optimoijalle. Kyselyn optimoijan sisääntulo(input) sisältää kyselyn, tietokannan mallin sisältäen taulujen ja indeksien määritelmät sekä tietokannan tilastoja. Kyselystä haetaan predikaatit, indeksit ja liitokset (joins) kyselysuunnitelmaa varten. Tämän jälkeen luodaan kyselyä vastaavat kyselysuunnitelmat ja arvioidaan niistä paras. Optimoija arvioi operaatioiden kustannukset käyttämällä systeemitaulustoon tallennettua tilastotietoa. Seuraavassa vaiheessa kysely suoritetaan käyttämällä optimoijan tuottamaa kyselysuunnitelmaa.
+Kun kysely on uudelleenkirjoitettu, lähetetään se kyselyn optimoijalle. Kyselyn optimoija hakee systeemitaulustosta tilastotietoa kyselyyn liittyvistä relaatioista ja relaatioita vastaavista kyselysuunnitelmista. Optimoija määrittää lohkojen suoritusjärjestyksen ja prosessoi jokaisen lohkon FROM-lauseeseen liittyvät relaatiot. Mikäli lohkossa on useampi relaatio, arvioi optimoija join-operandin permutaatioiden suorituskyvyt. Optimoija rakentaa lohkoja vastaavat kyselysuunnitelmat käyttäen systeemitauluston tilastotietoa ja valitsee niistä pienimmän kustannuksen sisältävän kyselysuunnitelman. Seuraavassa vaiheessa kysely suoritetaan käyttämällä optimoijan tuottamaa kyselysuunnitelmaa. Suorittamisessa kyselysuunnitelma muutetaan suoritettavaksi konekieleksi ja kyselyn lähteen mukaan joko suoritetaan tai tallennetaan muistiin myöhempää suorittamista varten. (Miten viitataan koko kappaleeseen?) (\cite{selinger1979access})
 
 \begin{figure}[!h]
   \caption{Kyselyn jäsentäminen, optimointi ja suoritus}
@@ -214,6 +214,12 @@ $\pi$$_{nimi}$(\sigma_{kid=5 \wedge arvosana \textgreater 3}(Kirjat$\Join$$ _{ti
 Kysely voidaan suorittaa esimerkiksi käyttäen join-operaatiossa nested loop join-algoritmia, jonka jälkeen jokaiselle riville suoritetaan 
 valinta ja projektio. Kyselyä vastaava kyselysuunnitelma on siten seuraava:
 
+\begin{figure}[!h]
+  \caption{Kyselysuunnitelma erimerkkikyselylle}
+  \centering
+    \includegraphics[width=\textwidth]{queryevalplan60.png}
+\end{figure}
+
 \subsection{Kyselysuunnitelmien kustannusarviointi}
 
 \subsection{Tulosjoukon koon arviointi}
@@ -233,7 +239,12 @@ WHERE ehto 1 $\wedge$ ehto 2 $\wedge$ ... $\wedge$ ehto n
 Kyselyn palauttamien monikkojen maksimimäärä on relaatioiden karteesinen tulo. Jokainen WHERE-ehto harventaa monikkojen määrää. WHERE-ehdon vaikutusta tulosjoukon kokoon voidaan mallintaa lisäämällä jokaiseen ehtoon vähennyskerroin, joka on oletettu suhde lähtöjoukosta tulosjoukkoon vain kyseisen ehdon osalta.
 Tulosjoukon koko voidaan siten arvioida kertomalla maksimijoukko vähennyskertoimien tulolla. \cite{ramakrishnan2003database}
 
-WHERE-lauseen ehtojen kertoimia voidaan laskea hyödyntämällä systeemitaulustoon tallennettua tilastotietoa.
+WHERE-lauseen ehtojen kertoimia voidaan laskea hyödyntämällä systeemitaulustoon tallennettua tilastotietoa. Oletetaan seuraavat tiedot:
+\\
+\newline
+avaimia(I) = eri avainten lukumäärä indeksissä I
+\\
+nindx(I) = sivujen lukumäärä indeksissä I
 
  %WHERE-ehtojen arviointi
 \begin{equation}
@@ -241,9 +252,20 @@ column = value
 \end{equation}
 -tyyppiselle ehdolle vähennyskerroin voidaan arvioida kaavalla
 \begin{equation}
-\frac{1}{NKeys(I)}
+\frac{1}{avaimia(I)}
 \end{equation}
-jos sarakkeessa on indeksi I kyseiselle relaatiolle. Ilman indeksiä kyselyn optimoija käyttää kiinteää arvoa vähennyskertoimen arvioimiseen, kuten 1/10.
+jos sarakkeessa on indeksi kyseiselle relaatiolle. \cite{selinger1979access} Ilman indeksiä kyselyn optimoija käyttää kiinteää arvoa vähennyskertoimen arvioimiseen, joka esimerkiksi System R-relaatiotietokantaohjelmassa on 1/10.
+
+ %WHERE-ehtojen arviointi
+\begin{equation}
+column1 = column2
+\end{equation}
+-tyyppiselle ehdolle vähennyskerroin voidaan arvioida kaavalla
+\begin{equation}
+\frac{1}{MAX (avaimia(I1), avaimia(I2))}
+\end{equation}
+jos kummassakin sarakkeessa on indeksi. Lisäksi oletetaan, että jokaisesta pienemmän indeksin arvoa vastaa arvo toisesta indeksistä. Mikäli vain toisessa sarakkeessa on indeksi, 
+voidaan kustannus laskea aiemmalla kaavalla käyttäen indeksin omaavaa saraketta. Mikäli kummassakaan sarakkeessa ei ole indeksiä, arvioidaan arvoksi 1/10.
 
 \subsection{Systeemitaulustoon tallennettu tilastotieto}
 Kustannusten arviointi vaatii tilastotietoa. \cite{ramakrishnan2003database}
