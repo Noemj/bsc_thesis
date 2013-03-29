@@ -201,16 +201,14 @@ FROM Kirjat K, Teokset T
 
 WHERE K.tid = T.tid AND K.kid = 5 AND T.arvosana $\textgreater$  3
 \end{frame}
-\\
-\newline
+\\\newline
 Kysely voidaan tulkita relaatioalgebrassa seuraavasti:
 
 \begin{frame}
 
 $\pi$$_{nimi}$(\sigma_{kid=5 \wedge arvosana \textgreater 3}(Kirjat$\Join$$ _{tid=tid}$Teokset))
 \end{frame}
-\\
-\newline
+\\\newline
 Kysely voidaan suorittaa esimerkiksi käyttäen join-operaatiossa nested loop join-algoritmia, jonka jälkeen jokaiselle riville suoritetaan 
 valinta ja projektio. Kyselyä vastaava kyselysuunnitelma on siten seuraava:
 
@@ -234,38 +232,28 @@ FROM relaatiot
 
 WHERE ehto 1 $\wedge$ ehto 2 $\wedge$ ... $\wedge$ ehto n
 \end{frame}
-\\
-\newline
+\\\newline
 Kyselyn palauttamien monikkojen maksimimäärä on relaatioiden karteesinen tulo. Jokainen WHERE-ehto harventaa monikkojen määrää. WHERE-ehdon vaikutusta tulosjoukon kokoon voidaan mallintaa lisäämällä jokaiseen ehtoon vähennyskerroin, joka on oletettu suhde lähtöjoukosta tulosjoukkoon vain kyseisen ehdon osalta.
 Tulosjoukon koko voidaan siten arvioida kertomalla maksimijoukko vähennyskertoimien tulolla. \cite{ramakrishnan2003database}
 
-WHERE-lauseen ehtojen kertoimia voidaan laskea hyödyntämällä systeemitaulustoon tallennettua tilastotietoa. Oletetaan seuraavat tiedot:
-\\
-\newline
+WHERE-lauseen ehtojen kertoimia voidaan laskea hyödyntämällä systeemitaulustoon tallennettua tilastotietoa. Oletetaan seuraavat tiedot: %source: https://www.cs.duke.edu/courses/compsci516/cps216/spring03/papers/selinger-etal-1979.pdf
+\\\newline
 avaimia(I) = eri avainten lukumäärä indeksissä I
 \\
 nindx(I) = sivujen lukumäärä indeksissä I
-
- %WHERE-ehtojen arviointi
-\begin{equation}
-column = value
-\end{equation}
--tyyppiselle ehdolle vähennyskerroin voidaan arvioida kaavalla
-\begin{equation}
-\frac{1}{avaimia(I)}
-\end{equation}
-jos sarakkeessa on indeksi kyseiselle relaatiolle. \cite{selinger1979access} Ilman indeksiä kyselyn optimoija käyttää kiinteää arvoa vähennyskertoimen arvioimiseen, joka esimerkiksi System R-relaatiotietokantaohjelmassa on 1/10.
-
- %WHERE-ehtojen arviointi
-\begin{equation}
-column1 = column2
-\end{equation}
--tyyppiselle ehdolle vähennyskerroin voidaan arvioida kaavalla
-\begin{equation}
-\frac{1}{MAX (avaimia(I1), avaimia(I2))}
-\end{equation}
-jos kummassakin sarakkeessa on indeksi. Lisäksi oletetaan, että jokaisesta pienemmän indeksin arvoa vastaa arvo toisesta indeksistä. Mikäli vain toisessa sarakkeessa on indeksi, 
+\\\newline
+$sarake = arvo$ 
+\\
+tyyppiselle ehdolle vähennyskerroin voidaan arvioida kaavalla $\frac{1}{avaimia(I)}$, jos sarakkeessa on indeksi kyseiselle relaatiolle. \cite{selinger1979access} Ilman indeksiä kyselyn optimoija käyttää kiinteää arvoa vähennyskertoimen arvioimiseen, joka esimerkiksi System R-relaatiotietokantaohjelmassa on 1/10.
+\\\newline
+$sarake1 = sarake2$ 
+\\
+tapauksessa voidaan vähennyskerroin arvoida kaavalla $\frac{1}{MAX (avaimia(I1), avaimia(I2))}$ jos kummassakin sarakkeessa on indeksi. Lisäksi oletetaan, että jokaisesta pienemmän indeksin arvoa vastaa arvo toisesta indeksistä. Mikäli vain toisessa sarakkeessa on indeksi, 
 voidaan kustannus laskea aiemmalla kaavalla käyttäen indeksin omaavaa saraketta. Mikäli kummassakaan sarakkeessa ei ole indeksiä, arvioidaan arvoksi 1/10.
+\\\newline
+$sarake > arvo$
+\\
+tapauksessa voidaan käyttää kaavaa $\frac{suurin avain - arvo}{suurin avain - pienin avain}$. Mikäli sarake ei ole aritmeettinen tai arvoa ei tiedetä käytetään vakiona arvoa 1/3.
 
 \subsection{Systeemitaulustoon tallennettu tilastotieto}
 Kustannusten arviointi vaatii tilastotietoa. \cite{ramakrishnan2003database}
