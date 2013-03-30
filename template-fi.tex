@@ -113,6 +113,8 @@ Tietokantaa käytetään tietokannan hallintajärjestelmällä, joka on kokoelma
 Optimoija toimii etsien kyselyä vastaavat kyselysuunnitelmat ja valitsemalla niistä tehokkaimman. Kyselysuunnitelma sisältää sarjan algebrallisia operaatioita tietokannan relaatioille jotka tuottavat tulokseksi halutun vastauksen. Tietokantakyselyä vastaavia kyselysuunnitelmia voi olla useita, sillä kyselyjen algebralliset esitykset voidaan usein esittää monena loogisesti vastaavana esityksenä.  \cite{jarke1984} Algebrallista operaatiota kohden voi myös löytyä useita toteutuksia, kuten join-operaatiota toteuttavat merge join ja hash join. Saman kyselyn tuottamat kyselysuunnitelmat voivat olla suorituskyvyltään jopa eri suuruusluokassa. \cite{oracle2013refman}	
 %Ongelma
 
+Pohjan nykyaikaisille kyselyn optimoijille loi System R-hallintajärjestelmän \cite{astrahan1976system} sisältämä optimoija, jonka esittelivät Selinger et al. vuoden 1979 artikkelissaan Access Path Selection in a Relational Database Management System \cite{selinger1979access}. System R oli ensimmäinen relaatiomalliin \cite{codd1970relational} perustuva hallintajärjestelmä, ja moni nykyinen hallintajärjestelmä pohjautuu osittain System R:ään.
+
 Optimointi on vaikea hakuongelma, jossa hakualue voi nousta erittäin suureksi. \cite{chaudhuri1998} Haasteeksi nousee kyselysuunnitelmien luominen ja niiden suorituskyvyn ennustaminen. Kaikkien mahdollisten kyselysuunnitelmien luominen on usein liian hidasta, joten optimoijan tulee valita pienin mahdollinen hakualue joka pitää sisällään halvimmat suunnitelmat. Suorituskyvyn ennustamisen ja hakualueen rajauksen lisäksi optimoija tarvitsee tehokkaan algoritmin koko hakualueen läpikäymiseen. On epärealistista odottaa kyselyn optimoijan aina löytävän parhaan kyselysuunnitelman, ja onkin tärkeämpää välttää huonoimpia suunnitelmia ja löytää hyvä suunnitelma. \cite{ramakrishnan2003database}
 
 Kappale 2 sisältää esitiedot kyselyn optimoijan toiminnalle, jonka lisäksi kappaleessa perehdytään optimoijan rakenteeseen hallintajärjestelmän sisällä.  Kappale 3 käsittelee optimointiprosessin vaiheita yksityiskohtaisesti. Kappaleissa 4 ja 5 esitellään kyselyn optimoijan käyttöä MySQL-hallintajärjestelmällä.
@@ -233,10 +235,10 @@ FROM relaatiot
 WHERE ehto 1 $\wedge$ ehto 2 $\wedge$ ... $\wedge$ ehto n
 \end{frame}
 \\\newline
-Kyselyn palauttamien monikkojen maksimimäärä on relaatioiden karteesinen tulo. Jokainen WHERE-ehto harventaa monikkojen määrää. WHERE-ehdon vaikutusta tulosjoukon kokoon voidaan mallintaa lisäämällä jokaiseen ehtoon vähennyskerroin, joka on oletettu suhde lähtöjoukosta tulosjoukkoon vain kyseisen ehdon osalta.
+Kyselyn palauttamien monikkojen maksimimäärä on relaatioiden karteesinen tulo. Jokainen WHERE-ehto harventaa monikkojen määrää. WHERE-ehdon vaikutusta tulosjoukon kokoon voidaan mallintaa lisäämällä jokaiseen ehtoon vähennyskerroin, joka on oletettu suhde lähtöjoukosta tulosjoukkoon vain kyseisen ehdon osalta. 
 Tulosjoukon koko voidaan siten arvioida kertomalla maksimijoukko vähennyskertoimien tulolla. \cite{ramakrishnan2003database}
 
-WHERE-lauseen ehtojen kertoimia voidaan laskea hyödyntämällä systeemitaulustoon tallennettua tilastotietoa. Oletetaan seuraavat tiedot: %source: https://www.cs.duke.edu/courses/compsci516/cps216/spring03/papers/selinger-etal-1979.pdf
+WHERE-lauseen ehtojen kertoimia voidaan laskea hyödyntämällä systeemitaulustoon tallennettua tilastotietoa. Mikäli relaatiolle ei ole tilastotietoa saatavilla, oletetaan relaation olevan pieni ja käytetään määriteltyä vakiota lasketun kertoimen sijaan. \cite{selinger1979access} Oletetaan seuraavat tiedot: %source: https://www.cs.duke.edu/courses/compsci516/cps216/spring03/papers/selinger-etal-1979.pdf
 \\\newline
 NKeys(I) = eri avainten lukumäärä indeksissä I
 \\
@@ -244,7 +246,7 @@ F = vähennyskerroin
 \\\newline
 $sarake = arvo$ 
 \\
-tyyppiselle ehdolle vähennyskerroin voidaan arvioida kaavalla $F = \frac{1}{NKeys(I)}$, jos sarakkeessa on indeksi kyseiselle relaatiolle. \cite{selinger1979access} Ilman indeksiä kyselyn optimoija käyttää kiinteää arvoa vähennyskertoimen arvioimiseen, joka esimerkiksi System R-relaatiotietokantaohjelmassa \cite{astrahan1976system} on 1/10.
+tyyppiselle ehdolle vähennyskerroin voidaan arvioida kaavalla $F = \frac{1}{NKeys(I)}$, jos sarakkeessa on indeksi kyseiselle relaatiolle. \cite{selinger1979access} Ilman indeksiä kyselyn optimoija käyttää kiinteää arvoa vähennyskertoimen arvioimiseen, joka esimerkiksi System R-relaatiotietokantaohjelmassa on 1/10.
 \\\newline
 $sarake1 = sarake2$ 
 \\
@@ -274,6 +276,48 @@ tehokkain suunnitelma.
 %mielenkiintoisia aiheita:
 %NESTED SUBQUERIES
 %\section{Fyysinen optimointi (physical optimization)}
+\section{Alikyselyt}
+
+Kyselyn predikaatin operandin ollessa toinen kysely puhutaan alikyselystä. Alikyselyt suoritetaan..
+
+Alikysely voi palauttaa yhden arvon tai listan arvoja riippuen sen operandista. Tutkitaan seuraavaa kyselyä:
+
+\newline
+
+\begin{frame}
+
+SELECT nimi
+
+FROM Kirjat
+
+WHERE hinta = (SELECT AVG(hinta)
+		
+	FROM Kirjat)
+\end{frame}
+\\\newline
+Esimerkkikyselyssä alikysely palauttaa yhden arvon, AVG(hinta). Tämä arvo lisätään ylikyselyyn predikaatiksi niinkuin se olisi ollut osa ylempää kyselyä. Esimerkkitapauksessa keskiarvon ollessa 10 predikaatti on "hinta = 10".
+
+Mikäli alikysely palauttaa useamman arvon, kuten seuraavassa tapauksessa:
+
+\newline
+
+\begin{frame}
+
+SELECT nimi
+
+FROM Kirjat
+
+WHERE hinta IN (SELECT hinta
+		
+	FROM Kirjat
+
+	WHERE genre = 'scifi')
+\end{frame}
+\\\newline
+
+käytetään alikyselyn palauttamaa listaa ylikyselyn predikaattina. Esimerkkikyselyn palauttaessa listan (5,15) vastaava ylikyselin predikaatti on "hinta IN (5,15).
+
+
 \section{Optimoijan käyttäminen (hints)}
 \section{Käyttöesimerkki, suorituskykyvertailu}
 \section{yhteenveto}
