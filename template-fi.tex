@@ -32,6 +32,7 @@
 \usepackage[pdftex,hidelinks]{hyperref}
 \usepackage{setspace}
 \doublespacing
+\newcommand{\tab}[1]{\hspace{.2\textwidth}\rlap{#1}}
 
 % Automatically set the PDF metadata fields
 \makeatletter
@@ -219,6 +220,8 @@ valinta ja projektio. Kyselyä vastaava kyselysuunnitelma on siten seuraava:
   \centering
     \includegraphics[width=\textwidth]{queryevalplan60.png}
 \end{figure}
+\\\newline
+Join-operaatiossa voidaan käyttää hyväksi putkitustekniikkaa (pipelining)  \cite{pipelining}, jossa operandi putkitetaan suorituksen aikana toiseen ilman väliaikaista taulua tuloksen tallentamiseen. Ilman putkitusta väliaikaiset tulokset tulee materialisoida. Putkitusta käytetään usein peräkkäisten join-operaatioiden toteuttamiseen, jolloin jokainen operaation palauttama operandi voidaan syöttää seuraavan operaation parametriksi. Putkitusta voidaan käyttää operaation suorittavan algoritmin salliessa sen.
 
 \subsection{Kyselysuunnitelmien kustannusarviointi}
 
@@ -290,9 +293,11 @@ SELECT nimi
 
 FROM Kirjat
 
-WHERE hinta = (SELECT AVG(hinta)
+WHERE hinta = 
+
+(SELECT AVG(hinta)
 		
-	FROM Kirjat)
+FROM Kirjat)
 \end{frame}
 \\\newline
 Esimerkkikyselyssä alikysely palauttaa yhden arvon, AVG(hinta). Tämä arvo lisätään ylikyselyyn predikaatiksi niinkuin se olisi ollut osa ylempää kyselyä. Esimerkkitapauksessa keskiarvon ollessa 10 predikaatti on "hinta = 10".
