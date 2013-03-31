@@ -32,7 +32,6 @@
 \usepackage[pdftex,hidelinks]{hyperref}
 \usepackage{setspace}
 \doublespacing
-\newcommand{\tab}[1]{\hspace{.2\textwidth}\rlap{#1}}
 
 % Automatically set the PDF metadata fields
 \makeatletter
@@ -109,16 +108,16 @@ Tietokannan suorituskyky on tärkeää koko järjestelmän suorituskyvyn osalta,
 % 
 %Erityisesti olio-relaatiokuvausta (ORM, object-relational mapping) toteuttavissa ohjelmointikielissä puhtaiden SQL-kyselyjen kirjoittaminen on siirretty käyttäjältä alemmalle tasolle.relaatiotietokantaan. Relaatiotietokannan kyselyjen optimoinnilla pystytään siten saavuttamaan .. [viite ois kiva]
 
-Tietokantaa käytetään tietokannan hallintajärjestelmällä, joka on kokoelma ohjelmia tiedon tallentamiseen, muokkaamiseen, analysointiin ja keräämiseen tietokannasta. Hallintajärjestelmää käytetään kyselykielellä, joista esimerkiksi SQL \cite{5391051} on suunniteltu relaatiotietokantojen hallintajärjestelmille. Hallintajärjestelmän vastuulla on kyselyn muuttaminen tietokannan ymmärtämään muotoon säilyttäen kyselyn alkuperäisen tarkoituksen. Kyselyn optimointi on toteutettu automaattisena toimenpiteenä tietokannan hallintojärjestelmän sisältämässä kyselyn optimoijassa, ja kaikista hallintajärjestelmän komponenteista optimoijalla on suurin merkitys tietokannan suorituskykyyn. \cite{mor2012} Kyselyn optimoijan tavoitteena on minimoida itse optimointiin käytetty aika ja maksimoida optimoinnista saatu hyöty. \cite{jarke1984} 
+Tietokantaa käytetään tietokannan hallintajärjestelmällä, joka on kokoelma ohjelmia tiedon tallentamiseen, muokkaamiseen, analysointiin ja keräämiseen tietokannasta. Hallintajärjestelmää käytetään kyselykielellä, joista esimerkiksi SQL \cite{5391051} on suunniteltu relaatiotietokantojen hallintajärjestelmille. Hallintajärjestelmän vastuulla on kyselyn muuttaminen tietokannan ymmärtämään muotoon säilyttäen kyselyn alkuperäisen tarkoituksen. Kyselyn optimointi on toteutettu automaattisena toimenpiteenä hallintojärjestelmän sisältämässä kyselyn optimoijassa, ja kaikista hallintajärjestelmän komponenteista optimoijalla on suurin merkitys tietokannan suorituskykyyn. \cite{mor2012} Kyselyn optimoijan tavoitteena on minimoida itse optimointiin käytetty aika ja maksimoida optimoinnista saatu hyöty. \cite{jarke1984} 
 
 Optimoija toimii etsien kyselyä vastaavat kyselysuunnitelmat ja valitsemalla niistä tehokkaimman. Kyselysuunnitelma sisältää sarjan algebrallisia operaatioita tietokannan relaatioille jotka tuottavat tulokseksi halutun vastauksen. Tietokantakyselyä vastaavia kyselysuunnitelmia voi olla useita, sillä kyselyjen algebralliset esitykset voidaan usein esittää monena loogisesti vastaavana esityksenä.  \cite{jarke1984} Algebrallista operaatiota kohden voi myös löytyä useita toteutuksia, kuten join-operaatiota toteuttavat merge join ja hash join. Saman kyselyn tuottamat kyselysuunnitelmat voivat olla suorituskyvyltään jopa eri suuruusluokassa. \cite{oracle2013refman}	
 %Ongelma
 
-Pohjan nykyaikaisille kyselyn optimoijille loi System R-hallintajärjestelmän \cite{astrahan1976system} sisältämä optimoija, jonka esittelivät Selinger et al. vuoden 1979 artikkelissaan Access Path Selection in a Relational Database Management System \cite{selinger1979access}. System R oli ensimmäinen relaatiomalliin \cite{codd1970relational} perustuva hallintajärjestelmä, ja moni nykyinen hallintajärjestelmä pohjautuu osittain System R:ään.
+%Pohjan nykyaikaisille kyselyn optimoijille loi System R-hallintajärjestelmän \cite{astrahan1976system} sisältämä optimoija, jonka esittelivät Selinger et al. vuoden 1979 artikkelissaan \cite{selinger1979access}. System R oli ensimmäinen relaatiomalliin \cite{codd1970relational} perustuva hallintajärjestelmä, ja moni nykyinen %hallintajärjestelmä pohjautuu osittain System R:ään.
 
-Optimointi on vaikea hakuongelma, jossa hakualue voi nousta erittäin suureksi. \cite{chaudhuri1998} Haasteeksi nousee kyselysuunnitelmien luominen ja niiden suorituskyvyn ennustaminen. Kaikkien mahdollisten kyselysuunnitelmien luominen on usein liian hidasta, joten optimoijan tulee valita pienin mahdollinen hakualue joka pitää sisällään halvimmat suunnitelmat. Suorituskyvyn ennustamisen ja hakualueen rajauksen lisäksi optimoija tarvitsee tehokkaan algoritmin koko hakualueen läpikäymiseen. On epärealistista odottaa kyselyn optimoijan aina löytävän parhaan kyselysuunnitelman, ja onkin tärkeämpää välttää huonoimpia suunnitelmia ja löytää hyvä suunnitelma. \cite{ramakrishnan2003database}
+Optimointi on vaikea hakuongelma, jossa hakualue voi nousta erittäin suureksi. Haasteeksi nousee kyselysuunnitelmien luominen ja niiden suorituskyvyn ennustaminen. Kaikkien mahdollisten kyselysuunnitelmien luominen on usein liian hidasta, joten optimoijan tulee valita pienin mahdollinen hakualue joka pitää sisällään halvimmat suunnitelmat. \cite{chaudhuri1998}  Suorituskyvyn ennustamisen ja hakualueen rajauksen lisäksi optimoija tarvitsee tehokkaan algoritmin koko hakualueen läpikäymiseen. On epärealistista odottaa kyselyn optimoijan aina löytävän parhaan kyselysuunnitelman, ja onkin tärkeämpää välttää huonoimpia suunnitelmia ja löytää hyvä suunnitelma. \cite{ramakrishnan2003database}
 
-Kappale 2 sisältää esitiedot kyselyn optimoijan toiminnalle, jonka lisäksi kappaleessa perehdytään optimoijan rakenteeseen hallintajärjestelmän sisällä.  Kappale 3 käsittelee optimointiprosessin vaiheita yksityiskohtaisesti. Kappaleissa 4 ja 5 esitellään kyselyn optimoijan käyttöä MySQL-hallintajärjestelmällä.
+Kappale 2 sisältää esitiedot kyselyn optimoijan toiminnalle, jonka lisäksi kappaleessa perehdytään optimoijan historiaan. Kappale 3 tiivistää tietokantakyselyn prosessoinnin hallintajärjestelmän sisällä ja esittelee optimoijan toiminnan pääpiirteittäin kyselyn prosessoinnissa. Optimoijan toimintaan tarkemmin syvennytään kappaleessa 4, jossa käsitellään kyselysuunnitelman luomista, kustannusarviointia ja parhaan kyselysuunnitelman valintaa. Alikyselyihin ja niiden aiheuttamiin erikoistapauksiin tutustutaan kappaleessa 5.
 
 %
 %• Yleinen selostus tutkimusaiheen laajemmasta tutkimusalueesta, tutkimuksen kontekstista.
@@ -151,12 +150,27 @@ Relaatiotietokanta on relaatiomalliin \cite{codd1970relational} perustuva tietok
 \end{figure}
 
 \subsection{Optimoijan tavoitteet}
-Tietokantakyselyjen optimoinnilla viitataan tietokantakyselyn suorittamiseen mahdollisimman tehokkaasti. Optimoinnin tavoitteena on joko maksimoida suorituskyky annetuilla resursseilla tai minimodia resurssien käyttö. Mitattavia resursseja ovat suorittimen ja muistin käyttö sekä kommunikointikustannukset. \cite{jarke1984} Muistin käyttö jakautuu tallennuskustannukseen sekä ulkomuistiin pääsyn kustannukseen. Tallennuskustannuksella tarkoitetaan ulkomuistin sekä puskurimuistin käyttöä, ja se tulee aiheelliseksi kun muistin käyttö aiheutuu pullonkaulaksi. Kommunikointikustannukset käsittävät tiedon viennin tallennuspaikasta laskentapaikkaan ja edelleen tulosten esityspaikkaan. Ne jakautuvat kommunikaatioväylän käyttökustannukseen ja tiedonsiirrosta aiheutuvaan suorittamisen viiveeseen.
+Tietokantakyselyjen optimoinnilla viitataan tietokantakyselyn suorittamiseen mahdollisimman tehokkaasti. Optimoinnin tavoitteena on joko maksimoida suorituskyky annetuilla resursseilla tai minimodia resurssien käyttö. Jarke ja Koch määrittelivät artikkelissaan \cite{jarke1984} mitattaviksi resursseiksi suorittimen ja muistin käytön sekä kommunikointikustannukset. Muistin käyttö jakautuu tallennuskustannukseen sekä ulkomuistiin pääsyn kustannukseen. Tallennuskustannuksella tarkoitetaan ulkomuistin sekä puskurimuistin käyttöä, ja se tulee aiheelliseksi kun muistin käyttö aiheutuu pullonkaulaksi. Kommunikointikustannukset käsittävät tiedon viennin tallennuspaikasta laskentapaikkaan ja edelleen tulosten esityspaikkaan. Ne jakautuvat kommunikaatioväylän käyttökustannukseen ja tiedonsiirrosta aiheutuvaan suorittamisen viiveeseen.
 
-Resurssin merkitys riippuu tietokantatyypistä. Hajautetuissa tietokannoissa hitailla yhteysväylillä kommunikointikustannukset hallitsevat kustannuksia. Paikallisesti hajautetuissa tietokannoissa kaikilla resursseilla on sama painoarvo. Keskitetyissä tietokannoissa ulkomuistiin pääsyn kustannus ja prosessorin käyttö ovat oleellisia. \cite{jarke1984} Tässä tutkielmassa keskitymme erityisesti keskitettyjen tietokantojen optimointiin.
-\subsection{Optimoijan toiminta}
-%Käy tässä käpi kyselyn optimoijan koko stäkki
-Tietokannan hallintajärjestelmän suorittama SQL-kyselyn prosessointi sisältää useita vaiheita. Kuva 2 esittää kyselyn optimoijan rakenteen hallintajärjestelmän sisällä.
+Resurssin merkitys riippuu tietokantatyypistä. Jarke ja Koch erittelivät hajautetuissa tietokannoissa kommunikointikustannukset hallitseviksi kustannuksiksi, kun taas paikallisesti hajautetuissa tietokannoissa kaikilla resursseilla on sama painoarvo. Jarken ja Kochin mukaan keskitetyissä tietokannoissa ulkomuistiin pääsyn kustannus ja prosessorin käyttö ovat oleellisia. Tässä tutkielmassa keskitymme erityisesti keskitettyjen tietokantojen optimointiin.
+
+\subsection{Optimoijan historia}
+Kun Coddin relaatiomallin pohjalle luotiin sitä toteuttavia kieliä, nousi vuonna 1974 kehitetty SQL nopeasti käytetyimmäksi. SQL:n myötä optimoinnista tuli osa järjestelmän toiminnallisuutta, sillä SQL tarjosi deklaratiivisuutensa vuoksi useita tapoja toteuttaa kukin kysely. Ennen relaatiomallin käyttöä optimointi tehtiin käsin.
+Selinger et al esittelivät artikkelissaan \cite{selinger1979access} System R-tietokantaohjelmiston OPTIMIZER-komponentin, joka on ensimmäisiä relaatiomalliin pohjautuvia kyselyn optimoijia.
+
+%\section{Kyselyn jäsentäminen} 
+%http://docs.oracle.com/cd/B28359_01/server.111/b28318/sqlplsql.htm#i1243
+
+\section{Tietokantakyselyn prosessointi}
+Tietokannan hallintajärjestelmän suorittama SQL-kyselyn prosessointi sisältää useita vaiheita. Kuva 2 esittää kyselyn optimointikerroksen ja suorituskerroksen hallintajärjestelmän sisällä.
+
+\begin{figure}[!h]
+  \caption{Kyselyn jäsentäminen, optimointi ja suoritus}
+  \centering
+    \includegraphics[width=\textwidth]{optimoija60.png}
+\end{figure}
+
+\subsection{Kyselyn jäsentäminen}
 Kyselyn prosessointi alkaa kyselyn jäsentäjän suorittamalla kyselyn syntaksin ja semantiikan oikeellisuuden validoinnilla. \cite{oracle2009doc}
 Syntaksin validoinnissa jäsentäjä tarkastaa kyselyn lauseopin oikeellisuuden. Semantiikan validoinnissa tarkastetaan objektien aitous, kyselyn yksiselitteisyys, oikeus haettavaan tietoon ja muuttujien tyypin sopivuus sarakkeiden tyyppeihin. Useat hallintajärjestelmät myös
 tallentavat kyselyt validoinnin jälkeen talteen, jotta samaa kyselyä ei tarvitse jäsentää ja optimoida uudelleen. Yksi esimerkki kyselyjä tallentavasta hallintajärjestelmästä on Oracle Database, jossa tallennuspaikkaa kutsutaan nimellä Shared Pool. \cite{oracle2005doc}
@@ -176,20 +190,13 @@ Uudelleenkirjoituksen tarkoitus on helpottaa optimoijan työtä parhaan kyselysu
 %todo: http://docs.oracle.com/cd/A97630_01/server.920/a96520/qr.htm
 %http://www.budaconsulting.com/blog/bid/79324/Query-Rewrite-What-is-MySQL-Doing-To-My-Queries
 
-Kun kysely on uudelleenkirjoitettu, lähetetään se kyselyn optimoijalle. Kyselyn optimoija hakee systeemitaulustosta tilastotietoa kyselyyn liittyvistä relaatioista ja relaatioita vastaavista kyselysuunnitelmista. Optimoija määrittää lohkojen suoritusjärjestyksen ja prosessoi jokaisen lohkon FROM-lauseeseen liittyvät relaatiot. Mikäli lohkossa on useampi relaatio, arvioi optimoija join-operandin permutaatioiden suorituskyvyt. Optimoija rakentaa lohkoja vastaavat kyselysuunnitelmat käyttäen systeemitauluston tilastotietoa ja valitsee niistä pienimmän kustannuksen sisältävän kyselysuunnitelman. Seuraavassa vaiheessa kysely suoritetaan käyttämällä optimoijan tuottamaa kyselysuunnitelmaa. Suorittamisessa kyselysuunnitelma muutetaan suoritettavaksi konekieleksi ja kyselyn lähteen mukaan joko suoritetaan tai tallennetaan muistiin myöhempää suorittamista varten. (Miten viitataan koko kappaleeseen?) (\cite{selinger1979access})
+\subsection{Kyselyn optimointi}
+Kun kysely on uudelleenkirjoitettu, lähetetään se kyselyn optimoijalle. Kyselyn optimoija hakee systeemitaulustosta tilastotietoa kyselyyn liittyvistä relaatioista ja relaatioita vastaavista kyselysuunnitelmista. Optimoija määrittää lohkojen suoritusjärjestyksen ja prosessoi jokaisen lohkon FROM-lauseeseen liittyvät relaatiot. Mikäli lohkossa on useampi relaatio, arvioi optimoija join-operaation permutaatioiden suorituskyvyt. Optimoija rakentaa lohkoja vastaavat kyselysuunnitelmat käyttäen systeemitauluston tilastotietoa ja valitsee niistä pienimmän kustannuksen sisältävän kyselysuunnitelman. (Miten viitataan koko kappaleeseen?) (\cite{selinger1979access})
 
-\begin{figure}[!h]
-  \caption{Kyselyn jäsentäminen, optimointi ja suoritus}
-  \centering
-    \includegraphics[width=\textwidth]{optimoija60.png}
-\end{figure}
+\subsection{Kyselyn suorittaminen}
+Seuraavassa vaiheessa kysely suoritetaan käyttämällä optimoijan tuottamaa kyselysuunnitelmaa. Suorittamisessa kyselysuunnitelma muutetaan suoritettavaksi konekieleksi ja kyselyn lähteen mukaan joko suoritetaan tai tallennetaan muistiin myöhempää suorittamista varten. 
 
-%\section{Kyselyn jäsentäminen} Toistaiseksi skipataan koko kappale.
-%http://docs.oracle.com/cd/B28359_01/server.111/b28318/sqlplsql.htm#i1243
-%Kyselyn jäsentämisessä hallintajärjestelmä pyrkii validoimaan kyselyn syntaksin sekä semantiikan oikeellisuuden. 
-%Syntaksin validoinnissa jäsentäjä tarkastaa kyselyn lauseopin oikeellisuuden
-
-\section{Kyselyn optimointi}
+\section{Optimoijan toiminta}
 Kyselyn optimoijan tulee arvioida kustannus jokaiselle kyselysuunnitelmalle. Kustannusarviointi koostuu kahdesta vaiheesta: ensiksi arvioidaan jäsennetyn puun jokaisen alkion operaation suorittamiseen kuluva aika. (pipelining, temppirelaatiot.)
 Tämän jälkeen arvioidaan jokaisen alkion tulosjoukon koko, sekä lisäksi tarkastetaan onko tulosjoukko järjestetty. Solmun tulosjoukko on ylisolmun syöte, joten sen koko ja järjestys vaikuttavat suoraan ylisolmun arviointiin.
 
@@ -319,13 +326,9 @@ WHERE hinta IN (SELECT hinta
 	WHERE genre = 'scifi')
 \end{frame}
 \\\newline
-
 käytetään alikyselyn palauttamaa listaa ylikyselyn predikaattina. Esimerkkikyselyn palauttaessa listan (5,15) vastaava ylikyselin predikaatti on "hinta IN (5,15).
 
-
-\section{Optimoijan käyttäminen (hints)}
-\section{Käyttöesimerkki, suorituskykyvertailu}
-\section{yhteenveto}
+\section{Yhteenveto}
 
 % Write some science here.
 
