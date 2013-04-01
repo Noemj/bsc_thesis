@@ -110,14 +110,14 @@ Tietokannan suorituskyky on tärkeää koko järjestelmän suorituskyvyn osalta,
 
 Tietokantaa käytetään tietokannan hallintajärjestelmällä, joka on kokoelma ohjelmia tiedon tallentamiseen, muokkaamiseen, analysointiin ja keräämiseen tietokannasta. Hallintajärjestelmää käytetään kyselykielellä, joista esimerkiksi SQL \cite{5391051} on suunniteltu relaatiotietokantojen hallintajärjestelmille. Hallintajärjestelmän vastuulla on kyselyn muuttaminen tietokannan ymmärtämään muotoon säilyttäen kyselyn alkuperäisen tarkoituksen. Kyselyn optimointi on toteutettu automaattisena toimenpiteenä hallintojärjestelmän sisältämässä kyselyn optimoijassa, ja kaikista hallintajärjestelmän komponenteista optimoijalla on suurin merkitys tietokannan suorituskykyyn. \cite{mor2012} Kyselyn optimoijan tavoitteena on minimoida itse optimointiin käytetty aika ja maksimoida optimoinnista saatu hyöty. \cite{jarke1984} 
 
-Optimoija toimii etsien kyselyä vastaavat kyselysuunnitelmat ja valitsemalla niistä tehokkaimman. Kyselysuunnitelma sisältää sarjan algebrallisia operaatioita tietokannan relaatioille jotka tuottavat tulokseksi halutun vastauksen. Tietokantakyselyä vastaavia kyselysuunnitelmia voi olla useita, sillä kyselyjen algebralliset esitykset voidaan usein esittää monena loogisesti vastaavana esityksenä.  \cite{jarke1984} Algebrallista operaatiota kohden voi myös löytyä useita toteutuksia, kuten join-operaatiota toteuttavat merge join ja hash join. Saman kyselyn tuottamat kyselysuunnitelmat voivat olla suorituskyvyltään jopa eri suuruusluokassa. \cite{oracle2013refman}	
+Optimoija toimii rakentaen kyselyä vastaavat kyselysuunnitelmat, arvioimalla niiden suorituskyvyn ja valitsemalla niistä tehokkaimman. \cite{ono1990} Kyselysuunnitelma sisältää sarjan algebrallisia operaatioita tietokannan relaatioille jotka tuottavat tulokseksi halutun vastauksen. Tietokantakyselyä vastaavia kyselysuunnitelmia voi olla useita, sillä kyselyjen algebralliset esitykset voidaan usein esittää monena loogisesti vastaavana esityksenä.  \cite{jarke1984} Algebrallista operaatiota kohden voi myös löytyä useita toteutuksia, kuten join-operaatiota toteuttavat merge join ja hash join. Saman kyselyn tuottamat kyselysuunnitelmat voivat olla suorituskyvyltään jopa eri suuruusluokassa. \cite{ioannidis1996query, oracle2013refman}
 %Ongelma
 
 %Pohjan nykyaikaisille kyselyn optimoijille loi System R-hallintajärjestelmän \cite{astrahan1976system} sisältämä optimoija, jonka esittelivät Selinger et al. vuoden 1979 artikkelissaan \cite{selinger1979access}. System R oli ensimmäinen relaatiomalliin \cite{codd1970relational} perustuva hallintajärjestelmä, ja moni nykyinen %hallintajärjestelmä pohjautuu osittain System R:ään.
 
 Optimointi on vaikea hakuongelma, jossa hakualue voi nousta erittäin suureksi. Haasteeksi nousee kyselysuunnitelmien luominen ja niiden suorituskyvyn ennustaminen. Kaikkien mahdollisten kyselysuunnitelmien luominen on usein liian hidasta, joten optimoijan tulee valita pienin mahdollinen hakualue joka pitää sisällään halvimmat suunnitelmat. \cite{chaudhuri1998}  Suorituskyvyn ennustamisen ja hakualueen rajauksen lisäksi optimoija tarvitsee tehokkaan algoritmin koko hakualueen läpikäymiseen. On epärealistista odottaa kyselyn optimoijan aina löytävän parhaan kyselysuunnitelman, ja onkin tärkeämpää välttää huonoimpia suunnitelmia ja löytää hyvä suunnitelma. \cite{ramakrishnan2003database}
 
-Kappale 2 sisältää esitiedot kyselyn optimoijan toiminnalle, jonka lisäksi kappaleessa perehdytään optimoijan historiaan. Kappale 3 tiivistää tietokantakyselyn prosessoinnin hallintajärjestelmän sisällä ja esittelee optimoijan toiminnan pääpiirteittäin kyselyn prosessoinnissa. Optimoijan toimintaan tarkemmin syvennytään kappaleessa 4, jossa käsitellään kyselysuunnitelman luomista, kustannusarviointia ja parhaan kyselysuunnitelman valintaa. Alikyselyihin ja niiden aiheuttamiin erikoistapauksiin tutustutaan kappaleessa 5.
+Kappale 2 sisältää esitiedot kyselyn optimoijan toiminnalle, jonka lisäksi kappaleessa perehdytään optimoijan historiaan. Kappale 3 tiivistää tietokantakyselyn prosessoinnin hallintajärjestelmän sisällä ja esittelee optimoijan toiminnan pääpiirteittäin kyselyn prosessoinnissa. Optimoijan toimintaan tarkemmin syvennytään kappaleessa 4, jossa käsitellään kyselysuunnitelman luomista, kustannusarviointia ja parhaan kyselysuunnitelman valintaa. Kyselyn sisältämien alikyselyjen prosessointi käydään läpi kappaleessa 5.
 
 %
 %• Yleinen selostus tutkimusaiheen laajemmasta tutkimusalueesta, tutkimuksen kontekstista.
@@ -156,7 +156,7 @@ Resurssin merkitys riippuu tietokantatyypistä. Jarke ja Koch erittelivät hajau
 
 \subsection{Optimoijan historia}
 Kun Coddin relaatiomallin pohjalle luotiin sitä toteuttavia kieliä, nousi vuonna 1974 kehitetty SQL nopeasti käytetyimmäksi. SQL:n myötä optimoinnista tuli osa järjestelmän toiminnallisuutta, sillä SQL tarjosi deklaratiivisuutensa vuoksi useita tapoja toteuttaa kukin kysely. Ennen relaatiomallin käyttöä optimointi tehtiin käsin.
-Selinger et al esittelivät artikkelissaan \cite{selinger1979access} System R-tietokantaohjelmiston OPTIMIZER-komponentin, joka on ensimmäisiä relaatiomalliin pohjautuvia kyselyn optimoijia.
+Selinger et al esittelivät artikkelissaan \cite{selinger1979access} System R-tietokantaohjelmiston OPTIMIZER-komponentin, joka on ensimmäisiä relaatiomalliin pohjautuvia kyselyn optimoijia. System R:n esittelemä dynaaminen ohjelmointi on käytössä eri muodoissa käytännössä kaikissa kaupallisissa järjestelmissä. \cite{ioannidis1996query}
 
 %\section{Kyselyn jäsentäminen} 
 %http://docs.oracle.com/cd/B28359_01/server.111/b28318/sqlplsql.htm#i1243
@@ -185,7 +185,7 @@ Esimerkiksi join-operaatiossa solmulla on kaksi alisolmua, joille toteutetaan jo
 Lehtisolmut ovat solmuja jotka suorittavat hakuja (scan) levyltä ja palauttavat saadut tulokset. 
 Puu suoritetaan lehtisolmuista juureen.
 
-Tämän jälkeen kysely uudelleenkirjoitetaan (rewrite) valitsemalla hakumetodit (access method), liittämisjärjestyksen (join orders) ja liittämistavat (join methods) tietokannan käyttämien heuristiikkojen pohjalta. Monimutkaisille kyselyille sovelletaan myös muunnossääntöjä. \cite{mahajan2012}
+Tämän jälkeen kysely uudelleenkirjoitetaan (rewrite)\cite{ioannidis1996query} valitsemalla hakumetodit (access method), liittämisjärjestyksen (join orders) ja liittämistavat (join methods) tietokannan käyttämien heuristiikkojen pohjalta. Monimutkaisille kyselyille sovelletaan myös muunnossääntöjä. \cite{mahajan2012}
 Uudelleenkirjoituksen tarkoitus on helpottaa optimoijan työtä parhaan kyselysuunnitelman valinnassa.
 %todo: http://docs.oracle.com/cd/A97630_01/server.920/a96520/qr.htm
 %http://www.budaconsulting.com/blog/bid/79324/Query-Rewrite-What-is-MySQL-Doing-To-My-Queries
@@ -229,6 +229,10 @@ valinta ja projektio. Kyselyä vastaava kyselysuunnitelma on siten seuraava:
 \end{figure}
 \\\newline
 Join-operaatiossa voidaan käyttää hyväksi putkitustekniikkaa (pipelining)  \cite{pipelining}, jossa operandi putkitetaan suorituksen aikana toiseen ilman väliaikaista taulua tuloksen tallentamiseen. Ilman putkitusta väliaikaiset tulokset tulee materialisoida. Putkitusta käytetään usein peräkkäisten join-operaatioiden toteuttamiseen, jolloin jokainen operaation palauttama operandi voidaan syöttää seuraavan operaation parametriksi. Putkitusta voidaan käyttää operaation suorittavan algoritmin salliessa sen.
+
+Optimoija voi suorittaa usean peräkkäisen join-operaation liittämisen monella eri tavalla. Tutkitaan kyselyä $A \Join B \Join C \Join D$. Left-deep puuksi kutsutaan tapaa liittää kyselyt seuraavasti: $(((A \Join B) \Join C) \Join D)$, jossa oikea lapsi on aina kantataulu. Optimoijat käyttävät usein pelkästään left-deep puita, sillä eri tapoja liittää join-operaatioita on join-operaatioiden määrän kasvaessa liikaa. Toinen syy on left-deep puiden mahdollistama putkitus. \cite{ramakrishnan2003database}
+
+Ionaddis tutki artikkelissaan \cite{ioannidis1991left} left-deep puiden ja lehtevien (bushy) puiden suorituskykyeroja, ja huomasi lehtevien puiden optimoinnin olevan helpompaa ja sen tuottavan parempia tuloksia.
 
 \subsection{Kyselysuunnitelmien kustannusarviointi}
 
