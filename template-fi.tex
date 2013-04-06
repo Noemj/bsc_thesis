@@ -110,7 +110,7 @@ Tietokannan suorituskyky on tärkeää koko järjestelmän suorituskyvyn osalta,
 
 Tietokantaa käytetään tietokannan hallintajärjestelmällä, joka on kokoelma ohjelmia tiedon tallentamiseen, muokkaamiseen, analysointiin ja keräämiseen tietokannasta. Hallintajärjestelmää käytetään kyselykielellä, joista esimerkiksi SQL \cite{5391051} on suunniteltu relaatiotietokantojen hallintajärjestelmille. Hallintajärjestelmän vastuulla on kyselyn muuttaminen tietokannan ymmärtämään muotoon säilyttäen kyselyn alkuperäisen tarkoituksen. Kyselyn optimointi on toteutettu automaattisena toimenpiteenä hallintojärjestelmän sisältämässä kyselyn optimoijassa, ja kaikista hallintajärjestelmän komponenteista optimoijalla on suurin merkitys tietokannan suorituskykyyn. \cite{mor2012} Kyselyn optimoijan tavoitteena on minimoida itse optimointiin käytetty aika ja maksimoida optimoinnista saatu hyöty. \cite{jarke1984} 
 
-Optimoija toimii rakentaen kyselyä vastaavat kyselysuunnitelmat, arvioimalla niiden suorituskyvyn ja valitsemalla niistä tehokkaimman. \cite{ono1990} Kyselysuunnitelma sisältää sarjan algebrallisia operaatioita tietokannan relaatioille jotka tuottavat tulokseksi halutun vastauksen. Tietokantakyselyä vastaavia kyselysuunnitelmia voi olla useita, sillä kyselyjen algebralliset esitykset voidaan usein esittää monena loogisesti vastaavana esityksenä.  \cite{jarke1984} Algebrallista operaatiota kohden voi myös löytyä useita toteutuksia, kuten join-operaatiota toteuttavat merge join ja hash join. Saman kyselyn tuottamat kyselysuunnitelmat voivat olla suorituskyvyltään jopa eri suuruusluokassa. \cite{ioannidis1996query, oracle2013refman}
+Optimoija toimii rakentaen kyselyä vastaavat kyselysuunnitelmat, arvioimalla niiden suorituskyvyn ja valitsemalla niistä tehokkaimman. \cite{ono1990} Kyselysuunnitelma sisältää sarjan algebrallisia operaatioita tietokannan relaatioille jotka tuottavat tulokseksi halutun vastauksen. Tietokantakyselyä vastaavia kyselysuunnitelmia voi olla useita, sillä kysely voidaan usein esittää monena algebrallisesti toisiaan vastaavana esityksenä. \cite{jarke1984} Algebrallista operaatiota kohden voi myös löytyä useita toteutuksia, kuten join-operaatiota toteuttavat merge join ja hash join. Saman kyselyn tuottamat kyselysuunnitelmat voivat olla suorituskyvyltään jopa eri suuruusluokassa. \cite{ioannidis1996query, oracle2013refman}
 %Ongelma
 
 %Pohjan nykyaikaisille kyselyn optimoijille loi System R-hallintajärjestelmän \cite{astrahan1976system} sisältämä optimoija, jonka esittelivät Selinger et al. vuoden 1979 artikkelissaan \cite{selinger1979access}. System R oli ensimmäinen relaatiomalliin \cite{codd1970relational} perustuva hallintajärjestelmä, ja moni nykyinen %hallintajärjestelmä pohjautuu osittain System R:ään.
@@ -150,7 +150,7 @@ Relaatiotietokanta on relaatiomalliin \cite{codd1970relational} perustuva tietok
 \end{figure}
 
 \subsection{Optimoijan tavoitteet}
-Tietokantakyselyjen optimoinnilla viitataan tietokantakyselyn suorittamiseen mahdollisimman tehokkaasti. Optimoinnin tavoitteena on joko maksimoida suorituskyky annetuilla resursseilla tai minimodia resurssien käyttö. Jarke ja Koch määrittelivät artikkelissaan \cite{jarke1984} mitattaviksi resursseiksi suorittimen ja muistin käytön sekä kommunikointikustannukset. Muistin käyttö jakautuu tallennuskustannukseen sekä ulkomuistiin pääsyn kustannukseen. Tallennuskustannuksella tarkoitetaan ulkomuistin sekä puskurimuistin käyttöä, ja se tulee aiheelliseksi kun muistin käyttö aiheutuu pullonkaulaksi. Kommunikointikustannukset käsittävät tiedon viennin tallennuspaikasta laskentapaikkaan ja edelleen tulosten esityspaikkaan. Ne jakautuvat kommunikaatioväylän käyttökustannukseen ja tiedonsiirrosta aiheutuvaan suorittamisen viiveeseen.
+Tietokantakyselyjen optimoinnilla viitataan tietokantakyselyn suorittamiseen mahdollisimman tehokkaasti. Optimoinnin tavoitteena on joko maksimoida suorituskyky annetuilla resursseilla tai minimodia resurssien käyttö. Jarke ja Koch määrittelivät artikkelissaan \cite{jarke1984} mitattaviksi resursseiksi suorittimen ja muistin käytön sekä kommunikointikustannukset. Teorey ja Fry \cite{teorey1982design} huomasivat optimoijan vaikuttavan suorittimen palveluaikaan (service time), suorittimen jonotusaikaan, I/O:n palveluaikaan, I/O:n jonotusaikaan ja lukittumisen viiveeseen. Muistin käyttö jakautuu tallennuskustannukseen sekä ulkomuistiin pääsyn kustannukseen. Tallennuskustannuksella tarkoitetaan ulkomuistin sekä puskurimuistin käyttöä, ja se tulee aiheelliseksi kun muistin käyttö aiheutuu pullonkaulaksi. Kommunikointikustannukset käsittävät tiedon viennin tallennuspaikasta laskentapaikkaan ja edelleen tulosten esityspaikkaan. Ne jakautuvat kommunikaatioväylän käyttökustannukseen ja tiedonsiirrosta aiheutuvaan suorittamisen viiveeseen.
 
 Resurssin merkitys riippuu tietokantatyypistä. Jarke ja Koch erittelivät hajautetuissa tietokannoissa kommunikointikustannukset hallitseviksi kustannuksiksi, kun taas paikallisesti hajautetuissa tietokannoissa kaikilla resursseilla on sama painoarvo. Jarken ja Kochin mukaan keskitetyissä tietokannoissa ulkomuistiin pääsyn kustannus ja prosessorin käyttö ovat oleellisia. Tässä tutkielmassa keskitymme erityisesti keskitettyjen tietokantojen optimointiin.
 
@@ -162,7 +162,7 @@ Selinger et al esittelivät artikkelissaan \cite{selinger1979access} System R-ti
 %http://docs.oracle.com/cd/B28359_01/server.111/b28318/sqlplsql.htm#i1243
 
 \section{Tietokantakyselyn prosessointi}
-Tietokannan hallintajärjestelmän suorittama SQL-kyselyn prosessointi sisältää useita vaiheita. Kuva 2 esittää kyselyn optimointikerroksen ja suorituskerroksen hallintajärjestelmän sisällä.
+Tietokannan hallintajärjestelmän suorittama SQL-kyselyn prosessointi sisältää useita vaiheita. Kuva 2 esittää kyselyn optimointikerroksen ja suorituskerroksen hallintajärjestelmän sisällä. Alempana analysoimme komponenttien toimintaa tarkemmin.
 
 \begin{figure}[!h]
   \caption{Kyselyn jäsentäminen, optimointi ja suoritus}
@@ -220,17 +220,36 @@ $\pi$$_{nimi}$(\sigma_{kid=5 \wedge arvosana \textgreater 3}(Kirjat$\Join$$ _{ti
 \end{frame}
 \\\newline
 Kysely voidaan suorittaa esimerkiksi käyttäen join-operaatiossa nested loop join-algoritmia, jonka jälkeen jokaiselle riville suoritetaan 
-valinta ja projektio. Kyselyä vastaava kyselysuunnitelma on siten seuraava:
+valinta ja projektio. Kyselyä vastaava esimerkkikyselysuunnitelma esitetään kuvassa 3.
 
-\begin{figure}[!h]
+\begin{figure}[!h] %Tottakai parempi tapa tähän olisi hakea vain kid = 5 ja arvosana > 3 matchaavat alkiot ENNEN joinia
   \caption{Kyselysuunnitelma erimerkkikyselylle}
   \centering
     \includegraphics[width=\textwidth]{queryevalplan60.png}
 \end{figure}
 \\\newline
-Join-operaatiossa voidaan käyttää hyväksi putkitustekniikkaa (pipelining)  \cite{pipelining}, jossa operandi putkitetaan suorituksen aikana toiseen ilman väliaikaista taulua tuloksen tallentamiseen. Ilman putkitusta väliaikaiset tulokset tulee materialisoida. Putkitusta käytetään usein peräkkäisten join-operaatioiden toteuttamiseen, jolloin jokainen operaation palauttama operandi voidaan syöttää seuraavan operaation parametriksi. Putkitusta voidaan käyttää operaation suorittavan algoritmin salliessa sen.
+Join-operaatiossa voidaan käyttää hyväksi putkitustekniikkaa (pipelining) \cite{pipelining}, jossa operandi putkitetaan suorituksen aikana toiseen ilman väliaikaista taulua tuloksen tallentamiseen, "lennossa". Ilman putkitusta väliaikaiset tulokset tulee materialisoida. Putkitusta käytetään usein peräkkäisten join-operaatioiden toteuttamiseen, jolloin jokainen operaation palauttama operandi voidaan syöttää seuraavan operaation parametriksi. Putkitusta voidaan käyttää operaation suorittavan algoritmin salliessa sen.
 
-Optimoija voi suorittaa usean peräkkäisen join-operaation liittämisen monella eri tavalla. Tutkitaan kyselyä $A \Join B \Join C \Join D$. Left-deep puuksi kutsutaan tapaa liittää kyselyt seuraavasti: $(((A \Join B) \Join C) \Join D)$, jossa oikea lapsi on aina kantataulu. Optimoijat käyttävät usein pelkästään left-deep puita, sillä eri tapoja liittää join-operaatioita on join-operaatioiden määrän kasvaessa liikaa. Toinen syy on left-deep puiden mahdollistama putkitus. \cite{ramakrishnan2003database}
+Usein tehokkaampi tapa esimerkkikyselyn suorittamiseen on suorittaa valinnat mahdollisimman aikaisessa vaiheessa. Esimerkkikyselyssä tauluille suoritetaan kullekin valinta erikseen, joten suorittamalla ne ennen join-operaatiota voidaan vähentää yhdistettävien alkioiden määrää. Tehokkaampi kyselysuunnitelma aikaisilla valinnoilla, tallentaen valinnat väliaikaismuuttujiin T1 ja T2, esitetään kuvassa 4.
+
+ \begin{figure}[!h] %Tottakai parempi tapa tähän olisi hakea vain kid = 5 ja arvosana > 3 matchaavat alkiot ENNEN joinia
+  \caption{Toinen kyselysuunnitelma erimerkkikyselylle}
+  \centering
+    \includegraphics[width=\textwidth]{queryevalplan60better.png}
+\end{figure}
+\\\newline
+%
+%Optimoijan tulee arvioida tulosjoukon koko valintojen jälkeen. Kappaleessa 4.3 tutkitaan tarkemmin tulosjoukon koon arviointia.
+
+Valinnan suorittaminen mahdollisimman aikaisin ei kuitenkaan aina tuota parasta tulosta. \cite{ramakrishnan2003database} Mikäli taulut on indeksoitu, voi valinta kadottaa tärkeät indeksit jolloin join-operaation suorittaminen hidastuu. Paras kyselysuunnitelma riippuu siten täysin taulujen koosta ja niiden indeksoinnista.
+
+Optimoija voi suorittaa usean peräkkäisen join-operaation liittämisen monella eri tavalla. Tutkitaan kyselyä $A \Join B \Join C \Join D$. Vasemmalta syväksy (left-deep) puuksi kutsutaan tapaa liittää kyselyt seuraavasti: $(((A \Join B) \Join C) \Join D)$, jossa oikea lapsi on aina kantataulu. Optimoijat käyttävät usein pelkästään vasemmalta syviä puita, sillä eri tapoja liittää join-operaatioita on join-operaatioiden määrän kasvaessa liikaa. Toinen syy on vasemmalta syvien puiden mahdollistama putkitus. \cite{ramakrishnan2003database} Kuva 5 havainnollistaa vasemmalta syvät ja lehtevät puut.
+
+\begin{figure}[!h]
+  \caption{Vasemmalta syvät ja lehtevät puut}
+  \centering
+    \includegraphics[width=\textwidth]{leftdeepbushytrees.png}
+\end{figure}
 
 Ionaddis tutki artikkelissaan \cite{ioannidis1991left} left-deep puiden ja lehtevien (bushy) puiden suorituskykyeroja, ja huomasi lehtevien puiden optimoinnin olevan helpompaa ja sen tuottavan parempia tuloksia.
 
