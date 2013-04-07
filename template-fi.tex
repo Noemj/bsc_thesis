@@ -180,7 +180,7 @@ Mikäli kyselyn semantiikkaa ei ole vielä tarkastettu, tarkastaa optimoija kyse
 \subsection{Kyselyn suorittaminen}
 Seuraavassa vaiheessa kysely suoritetaan käyttämällä optimoijan tuottamaa kyselysuunnitelmaa. Suorittamisessa kyselysuunnitelma muutetaan suoritettavaksi konekieleksi ja kyselyn lähteen mukaan joko suoritetaan tai tallennetaan muistiin myöhempää suorittamista varten. 
 
-\section{Optimoijan toiminta}
+\section{Optimoijan toiminta} %Komponenteittain? Kyselysuunnitelman kustannusarvioijan tulee . . .
 Kyselyn optimoijan tulee arvioida kustannus jokaiselle kyselysuunnitelmalle. Kustannusarviointi koostuu kahdesta vaiheesta: ensiksi arvioidaan jäsennetyn puun jokaisen alkion operaation suorittamiseen kuluva aika. (pipelining, temppirelaatiot.)
 Tämän jälkeen arvioidaan jokaisen alkion tulosjoukon koko, sekä lisäksi tarkastetaan onko tulosjoukko järjestetty. Solmun tulosjoukko on ylisolmun syöte, joten sen koko ja järjestys vaikuttavat suoraan ylisolmun arviointiin.
 
@@ -225,7 +225,7 @@ Usein tehokkaampi tapa kyselyn suorittamiseen on suorittaa valinnat mahdollisimm
 %
 %Optimoijan tulee arvioida tulosjoukon koko valintojen jälkeen. Kappaleessa 4.3 tutkitaan tarkemmin tulosjoukon koon arviointia.
 
-Edelleen tehokkaampi tapa olisi väliaikaisen muuttujan käytön sijaan putkittaa valinta-operaatiosta alkiot suoraan join-operaatioon. Valinnan suorittaminen mahdollisimman aikaisin ei kuitenkaan aina tuota parasta tulosta. \cite{ramakrishnan2003database} Mikäli taulut on indeksoitu, voi valinta kadottaa tärkeät indeksit jolloin join-operaation suorittaminen hidastuu. Paras kyselysuunnitelma riippuu siten täysin taulujen koosta ja niiden indeksoinnista.
+Edelleen tehokkaampi tapa olisi väliaikaisen muuttujan käytön sijaan putkittaa valinta-operaatiosta alkiot suoraan join-operaatioon. Valinnan suorittaminen mahdollisimman aikaisin ei kuitenkaan aina tuota suorituskykyisintä tulosta. \cite{ramakrishnan2003database} Mikäli taulut on indeksoitu, voi valinta kadottaa tärkeät indeksit jolloin join-operaation suorittaminen hidastuu. Paras kyselysuunnitelma riippuu siten täysin taulujen koosta ja niiden indeksoinnista.
 
 \subsubsection{Join-operaation toteutustavat}
 Optimoija voi suorittaa usean peräkkäisen join-operaation liittämisen monella eri tavalla. Ono ja Lohman tutkivat join-operaation suorittamisjärjestysten vaikutusta tarkemmin artikkelissaan \cite{ono1990}, ja huomasivat join-operaation järjestyksen olevan hallitseva kustannus kyselyn optimoinnissa. 
@@ -241,8 +241,10 @@ Tutkitaan kyselyä $Kirjat \Join Teokset \Join Kirjailijat \Join Maat$. Vasemmal
 Ionaddis tutki artikkelissaan \cite{ioannidis1991left} left-deep puiden ja lehtevien (bushy) puiden suorituskykyeroja, ja huomasi lehtevien puiden optimoinnin olevan helpompaa ja sen tuottavan parempia tuloksia. 
 
 \subsection{Kyselysuunnitelmien kustannusarviointi}
-\subsubsection{Indeksien käyttö}
-
+Kyselysuunnitelman kustannusarvioijan tulee arvioida mahdollisten kyselysuunnitelmien joukko. Hakualueen läpikäymiseen on useita algoritmeja, joista kuitenkin System R:lle Selinger et al:n esittelemä dynaaminen hakualgoritmi \cite{selinger1979access}on käytetyin. 
+\subsubsection{Dynaamiset algoritmit}
+Selinger et al:n esittelemä algoritmi on dynaaminen karsiva ja tyhjentävä (exhaustive) hakualgoritmi. Algoritmi rakentaa kaikki mahdolliset join-puut ja karsii alioptimaalisiksi tiedetyt puut.
+\subsubsection{Muut algoritmit}
 
 \subsection{Tulosjoukon koon arviointi}
 Operaation kustannus riippuu syötteen koosta. Tutkitaan seuraavaa tapausta:
