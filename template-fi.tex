@@ -110,35 +110,18 @@ Tietokannan suorituskyky on tärkeää koko järjestelmän suorituskyvyn osalta,
 
 Tietokantaa käytetään tietokannan hallintajärjestelmällä, joka on kokoelma ohjelmia tiedon tallentamiseen, muokkaamiseen, analysointiin ja keräämiseen tietokannasta. Hallintajärjestelmää käytetään kyselykielellä, joista esimerkiksi SQL \cite{5391051} on suunniteltu relaatiotietokantojen hallintajärjestelmille. Hallintajärjestelmän vastuulla on kyselyn muuttaminen tietokannan ymmärtämään muotoon säilyttäen kyselyn alkuperäisen tarkoituksen. Kyselyn optimointi on toteutettu automaattisena toimenpiteenä hallintojärjestelmän sisältämässä kyselyn optimoijassa, ja kaikista hallintajärjestelmän komponenteista optimoijalla on suurin merkitys tietokannan suorituskykyyn. \cite{mor2012} Kyselyn optimoijan tavoitteena on minimoida itse optimointiin käytetty aika ja maksimoida optimoinnista saatu hyöty. \cite{jarke1984} 
 
-Optimoija toimii rakentaen kyselyä vastaavat kyselysuunnitelmat, arvioimalla niiden suorituskyvyn ja valitsemalla niistä tehokkaimman. \cite{ono1990} Kyselysuunnitelma sisältää sarjan algebrallisia operaatioita tietokannan relaatioille jotka tuottavat tulokseksi halutun vastauksen. Tietokantakyselyä vastaavia kyselysuunnitelmia voi olla useita, sillä kysely voidaan usein esittää monena algebrallisesti toisiaan vastaavana esityksenä. \cite{jarke1984} Algebrallista operaatiota kohden voi myös löytyä useita toteutuksia, kuten join-operaatiota toteuttavat merge join ja hash join. Saman kyselyn tuottamat kyselysuunnitelmat voivat olla suorituskyvyltään jopa eri suuruusluokassa. \cite{ioannidis1996query, oracle2013refman}
+Optimoija toimii arvioimalla mahdolliset menetelmät kyselyn suorittamiseen ja valitsemalla niistä tehokkaimman. \cite{selinger1979access} Menetelmää kyselyn suorittamiseksi sanotaan kyselysuunnitelmaksi, ja se sisältää sarjan algebrallisia operaatioita tietokannan relaatioille jotka tuottavat tulokseksi halutun vastauksen. Tietokantakyselyä vastaavia kyselysuunnitelmia voi olla useita, sillä kysely voidaan usein esittää monena algebrallisesti toisiaan vastaavana esityksenä. \cite{jarke1984} Algebrallista operaatiota kohden voi myös löytyä useita toteutuksia, kuten join-operaatiota toteuttavat merge join, hash join ja nested loop join. Kyselysuunnitelma sisältää operaatioiden lisäksi tiedon ne toteuttavista algoritmeista. Saman kyselyn sisältämät mahdolliset kyselysuunnitelmat voivat olla suorituskyvyltään jopa eri suuruusluokassa. \cite{ioannidis1996query, oracle2013refman}
 %Ongelma
 
 %Pohjan nykyaikaisille kyselyn optimoijille loi System R-hallintajärjestelmän \cite{astrahan1976system} sisältämä optimoija, jonka esittelivät Selinger et al. vuoden 1979 artikkelissaan \cite{selinger1979access}. System R oli ensimmäinen relaatiomalliin \cite{codd1970relational} perustuva hallintajärjestelmä, ja moni nykyinen %hallintajärjestelmä pohjautuu osittain System R:ään.
 
-Optimointi on vaikea hakuongelma, jossa hakualue voi nousta erittäin suureksi. Haasteeksi nousee kyselysuunnitelmien luominen ja niiden suorituskyvyn ennustaminen. Kaikkien mahdollisten kyselysuunnitelmien luominen on usein liian hidasta, joten optimoijan tulee valita pienin mahdollinen hakualue joka pitää sisällään halvimmat suunnitelmat. \cite{chaudhuri1998}  Suorituskyvyn ennustamisen ja hakualueen rajauksen lisäksi optimoija tarvitsee tehokkaan algoritmin koko hakualueen läpikäymiseen. On epärealistista odottaa kyselyn optimoijan aina löytävän parhaan kyselysuunnitelman, ja onkin tärkeämpää välttää huonoimpia suunnitelmia ja löytää hyvä suunnitelma. \cite{ramakrishnan2003database}
+Tutkielmassa keskitymme kyselyn optimoijan toimintaan ja ongelmiin yleisellä tasolla. Jokainen kaupallinen optimoija on osittain erilainen kokonaisuus komponentteja, jotka kuitenkin pohjautuvat samoihin yleisiin malleihin. Yksittäistä hallintajärjestelmää käsiteltäessä mainitaan siitä erikseen. Tutkielman tavoitteena on tutustuttaa lukija optimoijan toiminnan perusteisiin ja optimoijan ajankohtaisiin ongelmiin.
+
+Optimointi on vaikea hakuongelma, jossa hakualue voi nousta erittäin suureksi. Haasteeksi nousee kyselysuunnitelmien hakeminen ja niiden suorituskyvyn ennustaminen. Kaikkien mahdollisten kyselysuunnitelmien arvioiminen on usein liian hidasta, joten optimoijan tulee valita pienin mahdollinen hakualue joka pitää sisällään halvimmat suunnitelmat. \cite{chaudhuri1998}  Suorituskyvyn ennustamisen ja hakualueen rajauksen lisäksi optimoija tarvitsee tehokkaan algoritmin koko hakualueen läpikäymiseen. On epärealistista odottaa kyselyn optimoijan aina löytävän parhaan kyselysuunnitelman, ja onkin tärkeämpää välttää huonoimpia suunnitelmia ja löytää hyvä suunnitelma. \cite{ramakrishnan2003database}
 
 Kappale 2 sisältää esitiedot kyselyn optimoijan toiminnalle, jonka lisäksi kappaleessa perehdytään optimoijan historiaan. Kappale 3 tiivistää tietokantakyselyn prosessoinnin hallintajärjestelmän sisällä ja esittelee optimoijan toiminnan pääpiirteittäin kyselyn prosessoinnissa. Optimoijan toimintaan tarkemmin syvennytään kappaleessa 4, jossa käsitellään kyselysuunnitelman luomista, kustannusarviointia ja parhaan kyselysuunnitelman valintaa. Kyselyn sisältämien alikyselyjen prosessointi käydään läpi kappaleessa 5.
 
-%
-%• Yleinen selostus tutkimusaiheen laajemmasta tutkimusalueesta, tutkimuksen kontekstista.
-%• Ratkaistavan tutkimusongelman selostus (vaikeus, esteet, haasteet).
-%• Lyhyt katsaus ongelman olemassa oleviin tai tavanomaisiin ratkaisuihin ja niiden rajoitteisiin.
-%• Hahmotelma tai yhteenveto ehdotettavasta uudesta ratkaisusta.
-%• Yhteenveto ratkaisun arvioimistavasta ja arvioinnin seurauksista.
-%• Luonnehdinta artikkelin vartalon jäsennyksestä (ellei sisälly edellisiin)
-%
-%Johdanto sisältää välttämättä viittauksia relevanttiin kirjallisuuteen:
-%keskeisen taustakirjallisuuden pitää käydä ilmi johdannosta.
-%Johdantoa ei saa kuormittaa teknisellä terminologialla, käsitteiden määritelmillä, monimutkaisella matematiikalla eikä syvällisellä kirjallisuuden
-%tarkastelulla; niiden paikka on muualla.
-%Johdannon pitää olla artikkelin helppolukuisin kohta, eikä se saa olla
-%kovin pitkä
-
-%motivaatio: miksi ongelma on mielenkiintoinen? mitkä ovat merkittävät seikat
-
-%todo: työn rakenne kuitenkaan toistamatta liikaa sisällysluetteloa
-
-\section{workname: Taustaluku}
+\section{Taustaluku}
 \subsection{Relaatiomalli}
 
 Relaatiotietokanta on relaatiomalliin \cite{codd1970relational} perustuva tietokanta. Relaatiomallin keskeinen piirre on kaiken datan esittäminen n-paikkaisen karteesisen tulon osajoukkona, ja se tarjoaa deklaratiivisen menetelmän datan ja kyselyjen määrittämiseen. Relaatiomalli koostuu attribuuteista, monikoista ja relaatioista. Matemaattisessa määritelmässä attribuutti on pari joka sisältää attribuutin nimen ja tyypin sekä jokaiseen attribuuttiin liittyy sen arvojoukko. Monikko on järjestetty joukko attribuuttien arvoja. Relaatio koostuu otsakkeesta ja sisällöstä, jossa otsake on joukko attribuutteja ja keho on joukko monikkoja. Relaation otsake on myös jokaisen monikon otsake. Visuaalisessa esityksissä relaatio on taulukko ja monikko taulukon rivi. 
@@ -156,7 +139,7 @@ Resurssin merkitys riippuu tietokantatyypistä. Jarke ja Koch erittelivät hajau
 
 \subsection{Optimoijan historia}
 Kun Coddin relaatiomallin pohjalle luotiin sitä toteuttavia kieliä, nousi vuonna 1974 kehitetty SQL nopeasti käytetyimmäksi. SQL:n myötä optimoinnista tuli osa järjestelmän toiminnallisuutta, sillä SQL tarjosi deklaratiivisuutensa vuoksi useita tapoja toteuttaa kukin kysely. Ennen relaatiomallin käyttöä optimointi tehtiin käsin.
-Selinger et al esittelivät artikkelissaan \cite{selinger1979access} System R-tietokantaohjelmiston OPTIMIZER-komponentin, joka on ensimmäisiä relaatiomalliin pohjautuvia kyselyn optimoijia. System R:n esittelemä dynaaminen ohjelmointi on käytössä eri muodoissa käytännössä kaikissa kaupallisissa järjestelmissä. \cite{ioannidis1996query}
+Selinger et al esittelivät artikkelissaan \cite{selinger1979access} System R-tietokantaohjelmiston OPTIMIZER-komponentin, joka on ensimmäisiä relaatiomalliin pohjautuvia kyselyn optimoijia. OPTIMIZER:n esittelemä dynaaminen ohjelmointi on käytössä eri muodoissa käytännössä kaikissa kaupallisissa järjestelmissä. \cite{ioannidis1996query}
 
 %\section{Kyselyn jäsentäminen} 
 %http://docs.oracle.com/cd/B28359_01/server.111/b28318/sqlplsql.htm#i1243
@@ -171,13 +154,12 @@ Tietokannan hallintajärjestelmän suorittama SQL-kyselyn prosessointi sisältä
 \end{figure}
 
 \subsection{Kyselyn jäsentäminen}
-Kyselyn prosessointi alkaa kyselyn jäsentäjän suorittamalla kyselyn syntaksin ja semantiikan oikeellisuuden validoinnilla. \cite{oracle2009doc}
+Kyselyn prosessointi alkaa kyselyn jäsentäjän suorittamalla kyselyn syntaksin validoinnilla. \cite{selinger1979access} Osa hallintajärjestelmistä, kuten Oracle 11g, validoi myös samalla semantiikan oikeellisuuden. \cite{oracle2009doc}
 Syntaksin validoinnissa jäsentäjä tarkastaa kyselyn lauseopin oikeellisuuden. Semantiikan validoinnissa tarkastetaan objektien aitous, kyselyn yksiselitteisyys, oikeus haettavaan tietoon ja muuttujien tyypin sopivuus sarakkeiden tyyppeihin. Useat hallintajärjestelmät myös
 tallentavat kyselyt validoinnin jälkeen talteen, jotta samaa kyselyä ei tarvitse jäsentää ja optimoida uudelleen. Yksi esimerkki kyselyjä tallentavasta hallintajärjestelmästä on Oracle Database, jossa tallennuspaikkaa kutsutaan nimellä Shared Pool. \cite{oracle2005doc}
 
 Seuraavaksi jäsentäjä jakaa kyselyn lohkoihin(block) siten, että yhdessä lohkossa on täsmälleen yksi SELECT-lause, yksi FROM-lause ja korkeintaan yksi WHERE-, GROUP BY- ja HAVING-lause. \cite{ramakrishnan2003database}
-Kyselyn mahdollisesti sisältämät alikyselyt muodostavat kukin oman lohkonsa. %
-(Alikyselyistä enemmän kappaleessa n?)
+Kyselyn mahdollisesti sisältämät alikyselyt muodostavat kukin oman lohkonsa. Alikyselyitä tarkastellaan kappaleessa 5.
 
 Jokainen lohko jäsennetään puuksi, joka on kyselyn algebrallinen esitysmuoto. \cite{mahajan2012}
 Puun solmu sisältää yhden operaation kyselyn suorittamiseksi, ja sillä on nolla tai useampi alisolmua joiden ulostuloa(output) käytetään sen syötteenä.
@@ -191,7 +173,9 @@ Uudelleenkirjoituksen tarkoitus on helpottaa optimoijan työtä parhaan kyselysu
 %http://www.budaconsulting.com/blog/bid/79324/Query-Rewrite-What-is-MySQL-Doing-To-My-Queries
 
 \subsection{Kyselyn optimointi}
-Kun kysely on uudelleenkirjoitettu, lähetetään se kyselyn optimoijalle. Kyselyn optimoija hakee systeemitaulustosta tilastotietoa kyselyyn liittyvistä relaatioista ja relaatioita vastaavista kyselysuunnitelmista. Optimoija määrittää lohkojen suoritusjärjestyksen ja prosessoi jokaisen lohkon FROM-lauseeseen liittyvät relaatiot. Mikäli lohkossa on useampi relaatio, arvioi optimoija join-operaation permutaatioiden suorituskyvyt. Optimoija rakentaa lohkoja vastaavat kyselysuunnitelmat käyttäen systeemitauluston tilastotietoa ja valitsee niistä pienimmän kustannuksen sisältävän kyselysuunnitelman. (Miten viitataan koko kappaleeseen?) (\cite{selinger1979access})
+Kun kysely on uudelleenkirjoitettu, lähetetään se kyselyn optimoijalle. Kyselyn optimoija hakee systeemitaulustosta tilastotietoa kyselyyn liittyvistä relaatioista ja relaatioihin liittyvistä saantipoluista. Saantipolku on menetelmä jolla taulurivit haetaan taulusta, ja se koostuu joko tiedoston lukemisesta tai indeksistä ja siihen liittyvistä valinnoista. Selinger et. al. tutkivat kattavasti saantipolkujen kustannusarviointia artikkelissaan \cite{selinger1979access}. 
+
+Mikäli kyselyn semantiikkaa ei ole vielä tarkastettu, tarkastaa optimoija kyselyn semantiikan oikeellisuuden ja kyselyn tyyppien sopivuuden sarakkeisiin ja operaatioihin systeemitaulun tiedon pohjalta. Optimoija määrittää lohkojen suoritusjärjestyksen ja prosessoi jokaisen lohkon FROM-lauseeseen liittyvät relaatiot. Mikäli lohkossa on useampi relaatio, arvioi optimoija join-operaation permutaatioiden suorituskyvyt ja valitsee tehokkaimman algoritmin operaation suorittamiseen. Optimoija valitsee jokaiselle lohkolle tehokkaimman saantipolun ja rakentaa niistä kyselysuunnitelman. \cite{selinger1979access} (koko kappaleen viite, korjaa)
 
 \subsection{Kyselyn suorittaminen}
 Seuraavassa vaiheessa kysely suoritetaan käyttämällä optimoijan tuottamaa kyselysuunnitelmaa. Suorittamisessa kyselysuunnitelma muutetaan suoritettavaksi konekieleksi ja kyselyn lähteen mukaan joko suoritetaan tai tallennetaan muistiin myöhempää suorittamista varten. 
@@ -222,7 +206,7 @@ $\pi$$_{nimi}$(\sigma_{kid=5 \wedge arvosana \textgreater 3}(Kirjat$\Join$$ _{ti
 Kysely voidaan suorittaa esimerkiksi käyttäen join-operaatiossa nested loop join-algoritmia, jonka jälkeen jokaiselle riville suoritetaan 
 valinta ja projektio. Kyselyä vastaava esimerkkikyselysuunnitelma esitetään kuvassa 3.
 
-\begin{figure}[!h] %Tottakai parempi tapa tähän olisi hakea vain kid = 5 ja arvosana > 3 matchaavat alkiot ENNEN joinia
+\begin{figure}[!h] 
   \caption{Kyselysuunnitelma erimerkkikyselylle}
   \centering
     \includegraphics[width=\textwidth]{queryevalplan60.png}
@@ -230,7 +214,7 @@ valinta ja projektio. Kyselyä vastaava esimerkkikyselysuunnitelma esitetään k
 \\\newline
 Join-operaatiossa voidaan käyttää hyväksi putkitustekniikkaa (pipelining) \cite{pipelining}, jossa operandi putkitetaan suorituksen aikana toiseen ilman väliaikaista taulua tuloksen tallentamiseen, "lennossa". Ilman putkitusta väliaikaiset tulokset tulee materialisoida. Putkitusta käytetään usein peräkkäisten join-operaatioiden toteuttamiseen, jolloin jokainen operaation palauttama operandi voidaan syöttää seuraavan operaation parametriksi. Putkitusta voidaan käyttää operaation suorittavan algoritmin salliessa sen.
 
-Usein tehokkaampi tapa esimerkkikyselyn suorittamiseen on suorittaa valinnat mahdollisimman aikaisessa vaiheessa. Esimerkkikyselyssä tauluille suoritetaan kullekin valinta erikseen, joten suorittamalla ne ennen join-operaatiota voidaan vähentää yhdistettävien alkioiden määrää. Tehokkaampi kyselysuunnitelma aikaisilla valinnoilla, tallentaen valinnat väliaikaismuuttujiin T1 ja T2, esitetään kuvassa 4.
+Usein tehokkaampi tapa kyselyn suorittamiseen on suorittaa valinnat mahdollisimman aikaisessa vaiheessa. Esimerkkikyselyssä tauluille suoritetaan kullekin valinta erikseen, joten suorittamalla ne ennen join-operaatiota voidaan vähentää yhdistettävien alkioiden määrää. Tehokkaampi kyselysuunnitelma aikaisilla valinnoilla, tallentaen valinnat väliaikaismuuttujiin T1 ja T2, esitetään kuvassa 4.
 
  \begin{figure}[!h] %Tottakai parempi tapa tähän olisi hakea vain kid = 5 ja arvosana > 3 matchaavat alkiot ENNEN joinia
   \caption{Toinen kyselysuunnitelma erimerkkikyselylle}
@@ -241,9 +225,12 @@ Usein tehokkaampi tapa esimerkkikyselyn suorittamiseen on suorittaa valinnat mah
 %
 %Optimoijan tulee arvioida tulosjoukon koko valintojen jälkeen. Kappaleessa 4.3 tutkitaan tarkemmin tulosjoukon koon arviointia.
 
-Valinnan suorittaminen mahdollisimman aikaisin ei kuitenkaan aina tuota parasta tulosta. \cite{ramakrishnan2003database} Mikäli taulut on indeksoitu, voi valinta kadottaa tärkeät indeksit jolloin join-operaation suorittaminen hidastuu. Paras kyselysuunnitelma riippuu siten täysin taulujen koosta ja niiden indeksoinnista.
+Edelleen tehokkaampi tapa olisi väliaikaisen muuttujan käytön sijaan putkittaa valinta-operaatiosta alkiot suoraan join-operaatioon. Valinnan suorittaminen mahdollisimman aikaisin ei kuitenkaan aina tuota parasta tulosta. \cite{ramakrishnan2003database} Mikäli taulut on indeksoitu, voi valinta kadottaa tärkeät indeksit jolloin join-operaation suorittaminen hidastuu. Paras kyselysuunnitelma riippuu siten täysin taulujen koosta ja niiden indeksoinnista.
 
-Optimoija voi suorittaa usean peräkkäisen join-operaation liittämisen monella eri tavalla. Tutkitaan kyselyä $A \Join B \Join C \Join D$. Vasemmalta syväksy (left-deep) puuksi kutsutaan tapaa liittää kyselyt seuraavasti: $(((A \Join B) \Join C) \Join D)$, jossa oikea lapsi on aina kantataulu. Optimoijat käyttävät usein pelkästään vasemmalta syviä puita, sillä eri tapoja liittää join-operaatioita on join-operaatioiden määrän kasvaessa liikaa. Toinen syy on vasemmalta syvien puiden mahdollistama putkitus. \cite{ramakrishnan2003database} Kuva 5 havainnollistaa vasemmalta syvät ja lehtevät puut.
+\subsubsection{Join-operaation toteutustavat}
+Optimoija voi suorittaa usean peräkkäisen join-operaation liittämisen monella eri tavalla. Ono ja Lohman tutkivat join-operaation suorittamisjärjestysten vaikutusta tarkemmin artikkelissaan \cite{ono1990}, ja huomasivat join-operaation järjestyksen olevan hallitseva kustannus kyselyn optimoinnissa. 
+
+Tutkitaan kyselyä $Kirjat \Join Teokset \Join Kirjailijat \Join Maat$. Vasemmalta syväksi (left-deep) puuksi kutsutaan tapaa liittää kyselyt seuraavasti: $(((Kirjat \Join Teokset) \Join Kirjailijat) \Join Maat)$, jossa oikea lapsi on aina kantataulu. Optimoijat käyttävät usein pelkästään vasemmalta syviä puita, sillä eri tapoja liittää join-operaatioita on join-operaatioiden määrän kasvaessa liikaa. Toinen syy on vasemmalta syvien puiden mahdollistama putkitus. Oikea lapsisolmu eli join-operaation sisempi taulu täytyy aina materialisoida, sillä se täytyy käydä läpi jokaiselle ulomman taulun eli vasemman lapsisolmun monikolle. \cite{ramakrishnan2003database} Kuva 5 havainnollistaa vasemmalta syvät ja lehtevät puut.
 
 \begin{figure}[!h]
   \caption{Vasemmalta syvät ja lehtevät puut}
@@ -251,9 +238,11 @@ Optimoija voi suorittaa usean peräkkäisen join-operaation liittämisen monella
     \includegraphics[width=\textwidth]{leftdeepbushytrees.png}
 \end{figure}
 
-Ionaddis tutki artikkelissaan \cite{ioannidis1991left} left-deep puiden ja lehtevien (bushy) puiden suorituskykyeroja, ja huomasi lehtevien puiden optimoinnin olevan helpompaa ja sen tuottavan parempia tuloksia.
+Ionaddis tutki artikkelissaan \cite{ioannidis1991left} left-deep puiden ja lehtevien (bushy) puiden suorituskykyeroja, ja huomasi lehtevien puiden optimoinnin olevan helpompaa ja sen tuottavan parempia tuloksia. 
 
 \subsection{Kyselysuunnitelmien kustannusarviointi}
+\subsubsection{Indeksien käyttö}
+
 
 \subsection{Tulosjoukon koon arviointi}
 Operaation kustannus riippuu syötteen koosta. Tutkitaan seuraavaa tapausta:
@@ -353,28 +342,9 @@ käytetään alikyselyn palauttamaa listaa ylikyselyn predikaattina. Esimerkkiky
 
 \section{Yhteenveto}
 
-% Write some science here.
+\newpage
 
-%CITES
-%\cite{jarke1984}
-%\cite{chaudhuri1998}
-%\cite{freytag1987rule}
-%\cite{ono1990}
-%\cite{graefe1993query}
-%\cite{chu1999least}
-%\cite{aho1979}
-%\cite{cole1994}
-%\cite{mahajan2012}
 
-% --- Back matter ---
-%
-% bibtex is used to generate the bibliography. The babplain style
-% will generate numeric references (e.g. [1]) appropriate for theoretical
-% computer science. If you need alphanumeric references (e.g [Tur90]), use
-%
-% 
-%
-% instead.
 
 %\bibliographystyle{unsrt}
 \bibliographystyle{babalpha}
