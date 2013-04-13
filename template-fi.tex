@@ -108,7 +108,7 @@ Tietokannan suorituskyky on tärkeää koko järjestelmän suorituskyvyn osalta,
 % 
 %Erityisesti olio-relaatiokuvausta (ORM, object-relational mapping) toteuttavissa ohjelmointikielissä puhtaiden SQL-kyselyjen kirjoittaminen on siirretty käyttäjältä alemmalle tasolle.relaatiotietokantaan. Relaatiotietokannan kyselyjen optimoinnilla pystytään siten saavuttamaan .. [viite ois kiva]
 
-Tietokantaa käytetään tietokannan hallintajärjestelmällä, joka on kokoelma ohjelmia tiedon tallentamiseen, muokkaamiseen, analysointiin ja keräämiseen tietokannasta. Hallintajärjestelmää käytetään kyselykielellä, joista esimerkiksi SQL \cite{5391051} on suunniteltu relaatiotietokantojen hallintajärjestelmille. Hallintajärjestelmän vastuulla on kyselyn muuttaminen tietokannan ymmärtämään muotoon säilyttäen kyselyn alkuperäisen tarkoituksen. Kyselyn optimointi on toteutettu automaattisena toimenpiteenä hallintojärjestelmän sisältämässä kyselyn optimoijassa, ja kaikista hallintajärjestelmän komponenteista optimoijalla on suurin merkitys tietokannan suorituskykyyn. \cite{mor2012} Kyselyn optimoijan tavoitteena on minimoida itse optimointiin käytetty aika ja maksimoida optimoinnista saatu hyöty. \cite{jarke1984} 
+Tietokantaa käytetään tietokannan hallintajärjestelmällä, joka on kokoelma ohjelmia tiedon tallentamiseen, muokkaamiseen, analysoimiseen ja keräämiseen tietokannasta. Hallintajärjestelmää käytetään kyselykielellä, joista esimerkiksi SQL \cite{5391051} on suunniteltu relaatiotietokantojen hallintajärjestelmille. Hallintajärjestelmän vastuulla on kyselyn muuttaminen tietokannan ymmärtämään muotoon säilyttäen kyselyn alkuperäisen tarkoituksen. Kyselyn optimointi on toteutettu automaattisena toimenpiteenä hallintojärjestelmän sisältämässä kyselyn optimoijassa, ja kaikista hallintajärjestelmän komponenteista optimoijalla on suurin merkitys tietokannan suorituskykyyn. \cite{mor2012} Kyselyn optimoijan tavoitteena on minimoida itse optimointiin käytetty aika ja maksimoida optimoinnista saatu hyöty. \cite{jarke1984} 
 
 Optimoija toimii arvioimalla mahdolliset menetelmät kyselyn suorittamiseen ja valitsemalla niistä tehokkaimman. \cite{selinger1979access} Menetelmää kyselyn suorittamiseksi sanotaan kyselysuunnitelmaksi, ja se sisältää sarjan algebrallisia operaatioita tietokannan relaatioille jotka tuottavat tulokseksi halutun vastauksen. Tietokantakyselyä vastaavia kyselysuunnitelmia voi olla useita, sillä kysely voidaan usein esittää monena algebrallisesti toisiaan vastaavana esityksenä. \cite{jarke1984} Algebrallista operaatiota kohden voi myös löytyä useita toteutuksia, kuten join-operaatiota toteuttavat merge join, hash join ja nested loop join. Kyselysuunnitelma sisältää operaatioiden lisäksi tiedon ne toteuttavista algoritmeista. Saman kyselyn sisältämät mahdolliset kyselysuunnitelmat voivat olla suorituskyvyltään jopa eri suuruusluokassa. \cite{ioannidis1996query, oracle2013refman}
 %Ongelma
@@ -133,13 +133,15 @@ Relaatiotietokanta on relaatiomalliin \cite{codd1970relational} perustuva tietok
 \end{figure}
 
 \subsection{Optimoijan tavoitteet}
-Tietokantakyselyjen optimoinnilla viitataan tietokantakyselyn suorittamiseen mahdollisimman tehokkaasti. Optimoinnin tavoitteena on joko maksimoida suorituskyky annetuilla resursseilla tai minimodia resurssien käyttö. Jarke ja Koch määrittelivät artikkelissaan \cite{jarke1984} mitattaviksi resursseiksi suorittimen ja muistin käytön sekä kommunikointikustannukset. Teorey ja Fry \cite{teorey1982design} huomasivat optimoijan vaikuttavan suorittimen palveluaikaan (service time), suorittimen jonotusaikaan, I/O:n palveluaikaan, I/O:n jonotusaikaan ja lukittumisen viiveeseen. Muistin käyttö jakautuu tallennuskustannukseen sekä ulkomuistiin pääsyn kustannukseen. Tallennuskustannuksella tarkoitetaan ulkomuistin sekä puskurimuistin käyttöä, ja se tulee aiheelliseksi kun muistin käyttö aiheutuu pullonkaulaksi. Kommunikointikustannukset käsittävät tiedon viennin tallennuspaikasta laskentapaikkaan ja edelleen tulosten esityspaikkaan. Ne jakautuvat kommunikaatioväylän käyttökustannukseen ja tiedonsiirrosta aiheutuvaan suorittamisen viiveeseen.
+Tietokantakyselyjen optimoinnilla viitataan tietokantakyselyn suorittamiseen mahdollisimman tehokkaasti. Optimoinnin tavoitteena on joko maksimoida suorituskyky annetuilla resursseilla tai minimodia resurssien käyttö. Jarke ja Koch määrittelivät artikkelissaan \cite{jarke1984} mitattaviksi resursseiksi suorittimen ja muistin käytön sekä kommunikointikustannukset. Teorey ja Fry \cite{teorey1982design} huomasivat optimoijan vaikuttavan suorittimen palveluaikaan (service time), suorittimen jonotusaikaan, I/O:n palveluaikaan, I/O:n jonotusaikaan ja lukittumisen viiveeseen. 
+
+Muistin käyttö jakautuu tallennuskustannukseen sekä ulkomuistiin pääsyn kustannukseen. Tallennuskustannuksella tarkoitetaan ulkomuistin sekä puskurimuistin käyttöä, ja se tulee aiheelliseksi kun muistin käyttö aiheutuu pullonkaulaksi. Kommunikointikustannukset käsittävät tiedon viennin tallennuspaikasta laskentapaikkaan ja edelleen tulosten esityspaikkaan. Ne jakautuvat kommunikaatioväylän käyttökustannukseen ja tiedonsiirrosta aiheutuvaan suorittamisen viiveeseen.
 
 Resurssin merkitys riippuu tietokantatyypistä. Jarke ja Koch erittelivät hajautetuissa tietokannoissa kommunikointikustannukset hallitseviksi kustannuksiksi, kun taas paikallisesti hajautetuissa tietokannoissa kaikilla resursseilla on sama painoarvo. Jarken ja Kochin mukaan keskitetyissä tietokannoissa ulkomuistiin pääsyn kustannus ja prosessorin käyttö ovat oleellisia. Tässä tutkielmassa keskitymme erityisesti keskitettyjen tietokantojen optimointiin.
 
 \subsection{Optimoijan historia}
 Kun Coddin relaatiomallin pohjalle luotiin sitä toteuttavia kieliä, nousi vuonna 1974 kehitetty SQL nopeasti käytetyimmäksi. SQL:n myötä optimoinnista tuli osa järjestelmän toiminnallisuutta, sillä SQL tarjosi deklaratiivisuutensa vuoksi useita tapoja toteuttaa kukin kysely. Ennen relaatiomallin käyttöä optimointi tehtiin käsin.
-Selinger et al esittelivät artikkelissaan \cite{selinger1979access} System R-tietokantaohjelmiston OPTIMIZER-komponentin, joka on ensimmäisiä relaatiomalliin pohjautuvia kyselyn optimoijia. OPTIMIZER:n esittelemä dynaaminen ohjelmointi on käytössä eri muodoissa käytännössä kaikissa kaupallisissa järjestelmissä. \cite{ioannidis1996query}
+Selinger et al. esittelivät artikkelissaan \cite{selinger1979access} System R-tietokantaohjelmiston OPTIMIZER-komponentin, joka on ensimmäisiä relaatiomalliin pohjautuvia kyselyn optimoijia. OPTIMIZER esittely dynaamisen hakualgoritmin kyselysuunnitelmien luomiseen, ja se on käytössä hieman muunneltuna käytännössä kaikissa kaupallisissa järjestelmissä. \cite{ioannidis1996query}
 
 %\section{Kyselyn jäsentäminen} 
 %http://docs.oracle.com/cd/B28359_01/server.111/b28318/sqlplsql.htm#i1243
@@ -167,22 +169,25 @@ Esimerkiksi join-operaatiossa solmulla on kaksi alisolmua, joille toteutetaan jo
 Lehtisolmut ovat solmuja jotka suorittavat hakuja (scan) levyltä ja palauttavat saadut tulokset. 
 Puu suoritetaan lehtisolmuista juureen.
 
-Tämän jälkeen kysely uudelleenkirjoitetaan (rewrite)\cite{ioannidis1996query} valitsemalla hakumetodit (access method), liittämisjärjestyksen (join orders) ja liittämistavat (join methods) tietokannan käyttämien heuristiikkojen pohjalta. Monimutkaisille kyselyille sovelletaan myös muunnossääntöjä. \cite{mahajan2012}
-Uudelleenkirjoituksen tarkoitus on helpottaa optimoijan työtä parhaan kyselysuunnitelman valinnassa.
+Tämän jälkeen monimutkaiset kyselyt uudelleenkirjoitetaan (rewrite) soveltamalla niihin muutossääntöjä \cite{ioannidis1996query}. Pirahesh et al tutkivat uudelleenkirjotusta Starburst-hallintajärjestelmän osalta artikkelissa \cite{pirahesh1992extensible}, ja määrittivät uudelleenkirjoituksen tavoitteiksi tehdä kyselyistä mahdollisimman deklaratiivisia ja suorittaa luonnollisia heuristiikkoja, kuten predikaattien siirtämistä mahdollisimman aikaiseen vaiheeseen.
+%Viitteiden käytöstä: aiemmassa artikkelissa määritellään uudelleenkirjoituksen paikka, toisessa sen toiminta.
+
+% valitsemalla hakumetodit (access method), liittämisjärjestyksen (join orders) ja liittämistavat (join methods) tietokannan käyttämien heuristiikkojen pohjalta.  Monimutkaisille kyselyille sovelletaan myös muunnossääntöjä. \cite{mahajan2012}
+%Uudelleenkirjoituksen tarkoitus on helpottaa optimoijan työtä parhaan kyselysuunnitelman valinnassa.
 %todo: http://docs.oracle.com/cd/A97630_01/server.920/a96520/qr.htm
 %http://www.budaconsulting.com/blog/bid/79324/Query-Rewrite-What-is-MySQL-Doing-To-My-Queries
 
 \subsection{Kyselyn optimointi}
-Kun kysely on uudelleenkirjoitettu, lähetetään se kyselyn optimoijalle. Kyselyn optimoija hakee systeemitaulustosta tilastotietoa kyselyyn liittyvistä relaatioista ja relaatioihin liittyvistä saantipoluista. Saantipolku on menetelmä jolla taulurivit haetaan taulusta, ja se koostuu joko tiedoston lukemisesta tai indeksistä ja siihen liittyvistä valinnoista. Selinger et. al. tutkivat kattavasti saantipolkujen kustannusarviointia artikkelissaan \cite{selinger1979access}. 
+Kun kysely on jäsennetty ja mahdollisesti uudelleenkirjoitettu, lähetetään se kyselyn optimoijalle. Kyselyn optimoija hakee tietokannan systeemitaulustoon tallennettua tilastotietoa kyselyyn liittyvistä relaatioista ja relaatioihin liittyvistä saantipoluista. Tilastotietoa käytetään kyselyn suorituskyvyn arviointiin. Saantipolku on menetelmä jolla taulurivit haetaan taulusta, ja se koostuu joko tiedoston lukemisesta tai indeksistä ja siihen liittyvistä valinnoista. Selinger et. al. tutkivat kattavasti saantipolkujen kustannusarviointia artikkelissaan \cite{selinger1979access}. 
 
-Mikäli kyselyn semantiikkaa ei ole vielä tarkastettu, tarkastaa optimoija kyselyn semantiikan oikeellisuuden ja kyselyn tyyppien sopivuuden sarakkeisiin ja operaatioihin systeemitaulun tiedon pohjalta. Optimoija määrittää lohkojen suoritusjärjestyksen ja prosessoi jokaisen lohkon FROM-lauseeseen liittyvät relaatiot. Mikäli lohkossa on useampi relaatio, arvioi optimoija join-operaation permutaatioiden suorituskyvyt ja valitsee tehokkaimman algoritmin operaation suorittamiseen. Optimoija valitsee jokaiselle lohkolle tehokkaimman saantipolun ja rakentaa niistä kyselysuunnitelman. \cite{selinger1979access} (koko kappaleen viite, korjaa)
+Mikäli kyselyn semantiikkaa ei ole vielä tarkastettu, tarkastaa optimoija kyselyn semantiikan oikeellisuuden ja kyselyn tyyppien sopivuuden sarakkeisiin ja operaatioihin systeemitaulun tiedon pohjalta. (Selvennä tästä kappaleen loppuun) Optimoija määrittää lohkojen suoritusjärjestyksen ja prosessoi jokaisen lohkon FROM-lauseeseen liittyvät relaatiot. Mikäli lohkossa on useampi relaatio, arvioi optimoija join-operaation permutaatioiden suorituskyvyt ja valitsee tehokkaimman algoritmin operaation suorittamiseen. Optimoija valitsee jokaiselle lohkolle tehokkaimman saantipolun ja rakentaa niistä kyselysuunnitelman. \cite{selinger1979access} (koko kappaleen viite, korjaa)
 
 \subsection{Kyselyn suorittaminen}
 Seuraavassa vaiheessa kysely suoritetaan käyttämällä optimoijan tuottamaa kyselysuunnitelmaa. Suorittamisessa kyselysuunnitelma muutetaan suoritettavaksi konekieleksi ja kyselyn lähteen mukaan joko suoritetaan tai tallennetaan muistiin myöhempää suorittamista varten. 
 
 \section{Optimoijan toiminta} %Komponenteittain? Kyselysuunnitelman kustannusarvioijan tulee . . .
-Kyselyn optimoijan tulee arvioida kustannus jokaiselle kyselysuunnitelmalle. Kustannusarviointi koostuu kahdesta vaiheesta: ensiksi arvioidaan jäsennetyn puun jokaisen alkion operaation suorittamiseen kuluva aika. (pipelining, temppirelaatiot.)
-Tämän jälkeen arvioidaan jokaisen alkion tulosjoukon koko, sekä lisäksi tarkastetaan onko tulosjoukko järjestetty. Solmun tulosjoukko on ylisolmun syöte, joten sen koko ja järjestys vaikuttavat suoraan ylisolmun arviointiin.
+Kyselyn optimoijan tulee arvioida kustannus jokaiselle kyselysuunnitelmalle. Kustannusarviointi koostuu kahdesta vaiheesta: ensiksi arvioidaan jäsennetyn puun jokaisen alkion operaation suorittamiseen kuluva aika.
+Tämän jälkeen arvioidaan jokaisen alkion tulosjoukon koko, sekä tarkastetaan onko tulosjoukko järjestetty. Solmun tulosjoukko on ylisolmun syöte, joten sen koko ja järjestys vaikuttavat suoraan ylisolmun arviointiin.
 
 \subsection{Kyselysuunnitelmien tuottaminen}
 Kyselysuunnitelma koostuu laajennetusta relaatioalgebrapuusta, jossa jokainen solmu kuvaa algebrallista operaatiota. Solmuun on liitetty tieto käytettävästä hakumetodista tiedon hakemiseen taulusta ja suoritusmetodista relaatio-operaation suoritukseen. Tutkitaan seuraavaa SQL-kyselyä:
@@ -230,7 +235,7 @@ Edelleen tehokkaampi tapa olisi väliaikaisen muuttujan käytön sijaan putkitta
 \subsubsection{Join-operaation toteutustavat}
 Optimoija voi suorittaa usean peräkkäisen join-operaation liittämisen monella eri tavalla. Ono ja Lohman tutkivat join-operaation suorittamisjärjestysten vaikutusta tarkemmin artikkelissaan \cite{ono1990}, ja huomasivat join-operaation järjestyksen olevan hallitseva kustannus kyselyn optimoinnissa. 
 
-Tutkitaan kyselyä $Kirjat \Join Teokset \Join Kirjailijat \Join Maat$. Vasemmalta syväksi (left-deep) puuksi kutsutaan tapaa liittää kyselyt seuraavasti: $(((Kirjat \Join Teokset) \Join Kirjailijat) \Join Maat)$, jossa oikea lapsi on aina kantataulu. Optimoijat käyttävät usein pelkästään vasemmalta syviä puita, sillä eri tapoja liittää join-operaatioita on join-operaatioiden määrän kasvaessa liikaa. Toinen syy on vasemmalta syvien puiden mahdollistama putkitus. Oikea lapsisolmu eli join-operaation sisempi taulu täytyy aina materialisoida, sillä se täytyy käydä läpi jokaiselle ulomman taulun eli vasemman lapsisolmun monikolle. \cite{ramakrishnan2003database} Kuva 5 havainnollistaa vasemmalta syvät ja lehtevät puut.
+Tutkitaan kyselyä $Kirjat \Join Teokset \Join Kirjailijat \Join Maat$. Vasemmalta syväksi (left-deep) puuksi kutsutaan tapaa liittää kyselyt seuraavasti: $(((Kirjat \Join Teokset) \Join Kirjailijat) \Join Maat)$, jossa oikea lapsi on aina kantataulu. Optimoijat käyttävät usein pelkästään vasemmalta syviä puita, sillä eri tapoja liittää join-operaatioita on join-operaatioiden määrän kasvaessa erittäin paljon. Käyttämällä vain vasemmalta syviä puita voidaan pienentää hakualuetta merkittävästi. \cite(left-deeppejä tutkiva artikkeli) Toinen syy on vasemmalta syvien puiden mahdollistama putkitus. Oikea lapsisolmu eli join-operaation sisempi taulu täytyy aina materialisoida, sillä se täytyy käydä läpi jokaiselle ulomman taulun eli vasemman lapsisolmun monikolle. \cite{ramakrishnan2003database} Kuva 5 havainnollistaa vasemmalta syvät ja lehtevät puut.
 
 \begin{figure}[!h]
   \caption{Vasemmalta syvät ja lehtevät puut}
@@ -240,13 +245,21 @@ Tutkitaan kyselyä $Kirjat \Join Teokset \Join Kirjailijat \Join Maat$. Vasemmal
 
 Ionaddis tutki artikkelissaan \cite{ioannidis1991left} left-deep puiden ja lehtevien (bushy) puiden suorituskykyeroja, ja huomasi lehtevien puiden optimoinnin olevan helpompaa ja sen tuottavan parempia tuloksia. 
 
-\subsection{Kyselysuunnitelmien kustannusarviointi}
-Kyselysuunnitelman kustannusarvioijan tulee arvioida mahdollisten kyselysuunnitelmien joukko. Hakualueen läpikäymiseen on useita algoritmeja, joista kuitenkin System R:lle Selinger et al:n esittelemä dynaaminen hakualgoritmi \cite{selinger1979access}on käytetyin. 
-\subsubsection{Dynaamiset algoritmit}
-Selinger et al:n esittelemä algoritmi on dynaaminen karsiva ja tyhjentävä (exhaustive) hakualgoritmi. Algoritmi rakentaa kaikki mahdolliset join-puut ja karsii alioptimaalisiksi tiedetyt puut.
-\subsubsection{Muut algoritmit}
+\subsection{Hakualueen läpikäynti}
+Kyselyn optimoijan tulee rakentaa mahdollisten kyselysunnitelmien joukko. Kyselysuunnitelmat sisältävä hakualue voi kasvaa erittäin suureksi kyselyn ollessa laaja. Optimoija käyttää heuristiikkoja pienentääkseen hakualueen kokoa, kuten keskittymällä vain vasemmalta syviin puihin. Optimoija voi näin karsia tarkasteltavia kyselysuunnitelmia merkittävästi.
+Kappaleessa tutustutaan Selinger et al esittelemään dynaamiseen algoritmiin \cite{selinger1979access} sekä vaihtoehtoisiin algoritmeihin hakualueen läpikäymiseen, kuten sääntöihin perustuvaan Starburst-hallintajärjestelmälle kehitettyyn algoritmiin \cite{lohman1988grammar}.
 
-\subsection{Tulosjoukon koon arviointi}
+\subsubsection{Dynaamiset algoritmit}
+Selinger et al. System R:lle esittelemä algoritmi on dynaaminen karsiva ja tyhjentävä (exhaustive) hakualgoritmi. Dynaamista algoritmia pidetään standardina algoritmina optimoijalle, ja usean hallintajärjestelmän hakualgoritmi pohjautuu dynaamiseen algoritmiin sisältäen kuitenkin hieman variaatioita. Algoritmi rakentaa kaikki mahdolliset join-puut ja karsii alioptimaalisiksi tiedetyt puut.
+\subsubsection{Muut algoritmit}
+Dynaamisia algoritmeja on kritisoitu tästä ja tästä \cite{tähän}...
+
+\subsection{Kyselysuunnitelmien kustannusarviointi}
+Kyselysuunnitelman kustannus on sen sisältämien operaatioiden kustannusten summa. Yksittäisten operaatioiden kustannus arvioidaan käyttämällä systeemitaulustoon tallennettua tilastotietoa operaation relaatioihin liittyvistä tiedoista, kuten järjestyksestä ja koosta. Manning et al. tutkivat kattavasti tilastotiedon käyttöä kyselyn optimoinnissa artikkelissaan \cite{mannino1988statistical}. Manning et al. mukaan tarkka tilastotiedon tallentaminen on tärkeää kyselyn optimoinnille, mutta liian täsmällinen tallentaminen aiheutuu rasitteeksi.
+(1) Taulujen luku
+(2) Väliaikaisten taulujen luoti
+(3) sort
+\subsubsection{Tulosjoukon koon arviointi}
 Operaation kustannus riippuu syötteen koosta. Tutkitaan seuraavaa tapausta:
 \newline
 
@@ -285,7 +298,7 @@ tapauksessa voidaan käyttää kaavaa $F = \frac{\textit{suurin avain - arvo}}{\
 \\
 $F = koko(lista) \times (sarake = arvo)$
 
-\subsection{Systeemitaulustoon tallennettu tilastotieto}
+\subsubsection{Systeemitaulustoon tallennettu tilastotieto}
 Kustannusten arviointi vaatii tilastotietoa. \cite{ramakrishnan2003database}
 
 %Eka osa tähän
