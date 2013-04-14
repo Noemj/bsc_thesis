@@ -186,8 +186,17 @@ Mikäli kyselyn semantiikkaa ei ole vielä tarkastettu, tarkastaa optimoija kyse
 Seuraavassa vaiheessa kysely suoritetaan käyttämällä optimoijan tuottamaa kyselysuunnitelmaa. Suorittamisessa kyselysuunnitelma muutetaan suoritettavaksi konekieleksi ja kyselyn lähteen mukaan joko suoritetaan tai tallennetaan muistiin myöhempää suorittamista varten. 
 
 \section{Optimoijan toiminta} %Komponenteittain? Kyselysuunnitelman kustannusarvioijan tulee . . .
-Kyselyn optimoijan tulee arvioida kustannus jokaiselle kyselysuunnitelmalle. Kustannusarviointi koostuu kahdesta vaiheesta: ensiksi arvioidaan jäsennetyn puun jokaisen alkion operaation suorittamiseen kuluva aika.
-Tämän jälkeen arvioidaan jokaisen alkion tulosjoukon koko, sekä tarkastetaan onko tulosjoukko järjestetty. Solmun tulosjoukko on ylisolmun syöte, joten sen koko ja järjestys vaikuttavat suoraan ylisolmun arviointiin.
+Kyselyn optimoijan tulee hakea mahdolliset kyselysuunnitelmat ja arvioida niiden kustannus. Kappale on jaettu kolmeen osa-alueeseen, joista aluksi perehdymme hakualueen läpikäymiseen ja siihen käytettäviin yleisiin algoritmeihin. Tämän jälkeen tutkimme kyselysuunnitelman tuottamista esimerkin avulla, ja lopetamme kappaleen kyselysuunnitelmien kustannusarviointiin.
+
+\subsection{Hakualueen läpikäynti}
+%Kyselyn optimoijan tulee rakentaa mahdollisten kyselysunnitelmien joukko. 
+Kyselysuunnitelmat sisältävä hakualue voi kasvaa erittäin suureksi kyselyn ollessa laaja. Optimoija käyttää heuristiikkoja pienentääkseen hakualueen kokoa, kuten keskittymällä vain vasemmalta syviin puihin. Optimoija voi näin karsia tarkasteltavia kyselysuunnitelmia merkittävästi. Tavoitteena on pitää hakualue mahdollisimman pienenä, sisältäen kuitenkin optimaalisen suunnitelman. \cite{jarke1984} Kappaleessa tutustutaan Selinger et al esittelemään dynaamiseen algoritmiin \cite{selinger1979access} sekä vaihtoehtoisiin algoritmeihin hakualueen läpikäymiseen, kuten sääntöihin perustuvaan Starburst-hallintajärjestelmälle kehitettyyn algoritmiin \cite{lohman1988grammar}.
+
+%Chaudhurilla paljon tietoa http://www.cs.washington.edu/education/courses/cse544/99sp/chaudhuri.pdf
+\subsubsection{Dynaamiset algoritmit}
+Selinger et al. System R:lle esittelemä algoritmi on dynaaminen karsiva ja tyhjentävä (exhaustive) hakualgoritmi. Dynaamista algoritmia pidetään standardina algoritmina optimoijalle, ja usean hallintajärjestelmän hakualgoritmi pohjautuu dynaamiseen algoritmiin sisältäen kuitenkin hieman variaatioita. Algoritmi rakentaa kaikki mahdolliset join-puut ja karsii alioptimaalisiksi tiedetyt puut.
+\subsubsection{Muut algoritmit}
+Dynaamisia algoritmeja on kritisoitu tästä ja tästä \cite{tähän}...
 
 \subsection{Kyselysuunnitelmien tuottaminen}
 Kyselysuunnitelma koostuu laajennetusta relaatioalgebrapuusta, jossa jokainen solmu kuvaa algebrallista operaatiota. Solmuun on liitetty tieto käytettävästä hakumetodista tiedon hakemiseen taulusta ja suoritusmetodista relaatio-operaation suoritukseen. Tutkitaan seuraavaa SQL-kyselyä:
@@ -217,9 +226,9 @@ valinta ja projektio. Kyselyä vastaava esimerkkikyselysuunnitelma esitetään k
     \includegraphics[width=\textwidth]{queryevalplan60.png}
 \end{figure}
 \\\newline
-Join-operaatiossa voidaan käyttää hyväksi putkitustekniikkaa (pipelining) \cite{pipelining}, jossa operandi putkitetaan suorituksen aikana toiseen ilman väliaikaista taulua tuloksen tallentamiseen, "lennossa". Ilman putkitusta väliaikaiset tulokset tulee materialisoida. Putkitusta käytetään usein peräkkäisten join-operaatioiden toteuttamiseen, jolloin jokainen operaation palauttama operandi voidaan syöttää seuraavan operaation parametriksi. Putkitusta voidaan käyttää operaation suorittavan algoritmin salliessa sen.
+Join-operaatiossa voidaan käyttää hyväksi putkitusta (pipelining) \cite{dalvi2001pipelining}, jossa operandi putkitetaan suorituksen aikana toiseen operaatioon ilman väliaikaista taulua tuloksen tallentamiseen, "lennossa". Ilman putkitusta väliaikaiset tulokset tulee materialisoida. Putkitusta käytetään usein peräkkäisten join-operaatioiden toteuttamiseen, jolloin jokainen operaation palauttama operandi voidaan syöttää seuraavan operaation parametriksi. Putkitusta voidaan käyttää operaation suorittavan algoritmin salliessa sen.
 
-Usein tehokkaampi tapa kyselyn suorittamiseen on suorittaa valinnat mahdollisimman aikaisessa vaiheessa. Esimerkkikyselyssä tauluille suoritetaan kullekin valinta erikseen, joten suorittamalla ne ennen join-operaatiota voidaan vähentää yhdistettävien alkioiden määrää. Tehokkaampi kyselysuunnitelma aikaisilla valinnoilla, tallentaen valinnat väliaikaismuuttujiin T1 ja T2, esitetään kuvassa 4.
+Usein tehokkaampi tapa kyselyn suorittamiseen on suorittaa valinnat mahdollisimman aikaisessa vaiheessa. \cite{ramakrishnan2003database} Esimerkkikyselyssä tauluille suoritetaan kullekin valinta erikseen, joten suorittamalla ne ennen join-operaatiota voidaan vähentää yhdistettävien alkioiden määrää. Tehokkaampi kyselysuunnitelma aikaisilla valinnoilla, tallentaen valinnat väliaikaismuuttujiin T1 ja T2, esitetään kuvassa 4.
 
  \begin{figure}[!h] %Tottakai parempi tapa tähän olisi hakea vain kid = 5 ja arvosana > 3 matchaavat alkiot ENNEN joinia
   \caption{Toinen kyselysuunnitelma erimerkkikyselylle}
@@ -245,20 +254,25 @@ Tutkitaan kyselyä $Kirjat \Join Teokset \Join Kirjailijat \Join Maat$. Vasemmal
 
 Ionaddis tutki artikkelissaan \cite{ioannidis1991left} left-deep puiden ja lehtevien (bushy) puiden suorituskykyeroja, ja huomasi lehtevien puiden optimoinnin olevan helpompaa ja sen tuottavan parempia tuloksia. 
 
-\subsection{Hakualueen läpikäynti}
-Kyselyn optimoijan tulee rakentaa mahdollisten kyselysunnitelmien joukko. Kyselysuunnitelmat sisältävä hakualue voi kasvaa erittäin suureksi kyselyn ollessa laaja. Optimoija käyttää heuristiikkoja pienentääkseen hakualueen kokoa, kuten keskittymällä vain vasemmalta syviin puihin. Optimoija voi näin karsia tarkasteltavia kyselysuunnitelmia merkittävästi.
-Kappaleessa tutustutaan Selinger et al esittelemään dynaamiseen algoritmiin \cite{selinger1979access} sekä vaihtoehtoisiin algoritmeihin hakualueen läpikäymiseen, kuten sääntöihin perustuvaan Starburst-hallintajärjestelmälle kehitettyyn algoritmiin \cite{lohman1988grammar}.
-
-\subsubsection{Dynaamiset algoritmit}
-Selinger et al. System R:lle esittelemä algoritmi on dynaaminen karsiva ja tyhjentävä (exhaustive) hakualgoritmi. Dynaamista algoritmia pidetään standardina algoritmina optimoijalle, ja usean hallintajärjestelmän hakualgoritmi pohjautuu dynaamiseen algoritmiin sisältäen kuitenkin hieman variaatioita. Algoritmi rakentaa kaikki mahdolliset join-puut ja karsii alioptimaalisiksi tiedetyt puut.
-\subsubsection{Muut algoritmit}
-Dynaamisia algoritmeja on kritisoitu tästä ja tästä \cite{tähän}...
-
 \subsection{Kyselysuunnitelmien kustannusarviointi}
-Kyselysuunnitelman kustannus on sen sisältämien operaatioiden kustannusten summa. Yksittäisten operaatioiden kustannus arvioidaan käyttämällä systeemitaulustoon tallennettua tilastotietoa operaation relaatioihin liittyvistä tiedoista, kuten järjestyksestä ja koosta. Manning et al. tutkivat kattavasti tilastotiedon käyttöä kyselyn optimoinnissa artikkelissaan \cite{mannino1988statistical}. Manning et al. mukaan tarkka tilastotiedon tallentaminen on tärkeää kyselyn optimoinnille, mutta liian täsmällinen tallentaminen aiheutuu rasitteeksi.
-(1) Taulujen luku
-(2) Väliaikaisten taulujen luoti
-(3) sort
+(todo: siisti tämä alku)
+
+Kustannusarviointi koostuu kahdesta vaiheesta: ensiksi arvioidaan jäsennetyn puun jokaisen alkion operaation suorittamiseen kuluva aika.
+Tämän jälkeen arvioidaan jokaisen alkion tulosjoukon koko, sekä tarkastetaan onko tulosjoukko järjestetty. Solmun tulosjoukko on ylisolmun syöte, joten sen koko ja järjestys vaikuttavat suoraan ylisolmun arviointiin.
+
+Kyselysuunnitelman kustannus on sen sisältämien operaatioiden kustannusten summa. Yksittäisten operaatioiden kustannus arvioidaan käyttämällä systeemitaulustoon tallennettua tilastotietoa operaation relaatioihin liittyvistä tiedoista, kuten järjestyksestä ja koosta. Kappaleessa 4.3.1 tutustutaan tarkemmin systeemitaulustoon, ja kappaleessa 4.3.2 käsitellään tilastotiedon pohjalta tehtävää kyselysuunnitelman kustannusarviointia.
+
+%(1) Taulujen luku
+%(2) Väliaikaisten taulujen luoti
+%(3) sort
+
+\subsubsection{Systeemitaulustoon tallennettu tilastotieto}
+Systeemitaulusto sisältää tietokannan tilastollisen profiilin. Mannino et al. tutkivat kattavasti tilastotiedon käyttöä kyselyn optimoinnissa artikkelissaan \cite{mannino1988statistical}. Mannino et al. mukaan tarkka tilastotiedon tallentaminen on tärkeää kyselyn optimoinnille, mutta liian täsmällinen tallentaminen aiheutuu rasitteeksi.
+
+Mannino et al. jakoivat tilastollisen profiilin neljään kategoriaan: (1) keskitietoihin kuten moodi, mediaani ja keskiarvo,  (2) hajontaan kuten varianssi sekä pienin ja suurin arvo, (3) kokoon kuten mahtavuus ja eri arvojen lukumäärä sekä (4) frekvenssin jakaantumiseen kuten normaalius ja tasaisuus. Systeemitaulusto sisältää myös jokaisesta taulusta tiedot sen nimestä ja tiedoston nimestä,  attribuuttien tyypeistä ja nimistä, indekseistä ja niiden nimistä ja hakuavaimista, sekä yleisistä tiedoista kuten sivukoosta ja puskurimuistin koosta.
+
+todo: content
+
 \subsubsection{Tulosjoukon koon arviointi}
 Operaation kustannus riippuu syötteen koosta. Tutkitaan seuraavaa tapausta:
 \newline
@@ -298,17 +312,16 @@ tapauksessa voidaan käyttää kaavaa $F = \frac{\textit{suurin avain - arvo}}{\
 \\
 $F = koko(lista) \times (sarake = arvo)$
 
-\subsubsection{Systeemitaulustoon tallennettu tilastotieto}
-Kustannusten arviointi vaatii tilastotietoa. \cite{ramakrishnan2003database}
+%Kustannusten arviointi vaatii tilastotietoa. \cite{ramakrishnan2003database}
 
 %Eka osa tähän
-todo: täsmennä ja siisti
-(sis. systeemitaulustoon tallennetun tilastotiedon käytön)
-Tilastotieto on..
-Tilastotiedoilla lasketaan kyselysuunnitelmien kustannusarvio ja valitaan pienimmän kustannusarvion omaava suunnitelma.
-Tietoa ei tallenneta jatkuvasti, sillä se aiheuttaisi esimerkiksi rinnakkaisuusongelmia. Tietokannan valvoja 
-triggeriöi päivityksen esim. komennolla optimize db. Tilastotiedon harvan päivityksen takia valituksi ei aina välttämättä tule 
-tehokkain suunnitelma.
+%todo: täsmennä ja siisti
+%(sis. systeemitaulustoon tallennetun tilastotiedon käytön)
+%Tilastotieto on..
+%Tilastotiedoilla lasketaan kyselysuunnitelmien kustannusarvio ja valitaan pienimmän kustannusarvion omaava suunnitelma.
+%Tietoa ei tallenneta jatkuvasti, sillä se aiheuttaisi esimerkiksi rinnakkaisuusongelmia. Tietokannan valvoja 
+%triggeriöi päivityksen esim. komennolla optimize db. Tilastotiedon harvan päivityksen takia valituksi ei aina välttämättä tule 
+%tehokkain suunnitelma.
 
 %mielenkiintoisia aiheita:
 %NESTED SUBQUERIES
