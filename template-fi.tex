@@ -287,9 +287,9 @@ WHERE ehto 1 $\wedge$ ehto 2 $\wedge$ ... $\wedge$ ehto n
 \end{frame}
 \\\newline
 Kyselyn palauttamien monikkojen maksimimäärä on relaatioiden karteesinen tulo. Jokainen WHERE-ehto harventaa monikkojen määrää. WHERE-ehdon vaikutusta tulosjoukon kokoon voidaan mallintaa lisäämällä jokaiseen ehtoon vähennyskerroin, joka on oletettu suhde lähtöjoukosta tulosjoukkoon vain kyseisen ehdon osalta. 
-Tulosjoukon koko voidaan siten arvioida kertomalla maksimijoukko vähennyskertoimien tulolla. \cite{ramakrishnan2003database}
+Tulosjoukon koko voidaan siten arvioida kertomalla maksimijoukko vähennyskertoimien tulolla \cite{ramakrishnan2003database}. 
 
-WHERE-lauseen ehtojen kertoimia voidaan laskea hyödyntämällä systeemitaulustoon tallennettua tilastotietoa. Mikäli relaatiolle ei ole tilastotietoa saatavilla, oletetaan relaation olevan pieni ja käytetään määriteltyä vakiota lasketun kertoimen sijaan. \cite{selinger1979access} Oletetaan seuraavat tiedot: %source: https://www.cs.duke.edu/courses/compsci516/cps216/spring03/papers/selinger-etal-1979.pdf
+WHERE-lauseen ehtojen kertoimia voidaan laskea hyödyntämällä systeemitaulustoon tallennettua tilastotietoa. Mikäli relaatiolle ei ole tilastotietoa saatavilla, oletetaan relaation olevan pieni ja käytetään määriteltyä vakiota lasketun kertoimen sijaan \cite{selinger1979access}. Oletetaan seuraavat tiedot: %source: https://www.cs.duke.edu/courses/compsci516/cps216/spring03/papers/selinger-etal-1979.pdf
 \\\newline
 NKeys(I) = eri avainten lukumäärä indeksissä I
 \\
@@ -297,16 +297,16 @@ F = vähennyskerroin
 \\\newline
 $sarake = arvo$ 
 \\
-tyyppiselle ehdolle vähennyskerroin voidaan arvioida kaavalla $F = \frac{1}{NKeys(I)}$, jos sarakkeessa on indeksi kyseiselle relaatiolle. \cite{selinger1979access} Ilman indeksiä kyselyn optimoija käyttää kiinteää arvoa vähennyskertoimen arvioimiseen, joka esimerkiksi System R-relaatiotietokantaohjelmassa on 1/10.
+Tämän tyyppiselle ehdolle vähennyskerroin voidaan arvioida kaavalla $F = \frac{1}{NKeys(I)}$, jos sarakkeessa on indeksi kyseiselle relaatiolle. \cite{selinger1979access} Ilman indeksiä kyselyn optimoija käyttää kiinteää arvoa vähennyskertoimen arvioimiseen, joka esimerkiksi System R-relaatiotietokantaohjelmassa on 1/10.
 \\\newline
 $sarake1 = sarake2$ 
 \\
-tapauksessa voidaan vähennyskerroin arvioida kaavalla $F = \frac{1}{MAX (NKeys(I1), NKeys(I2))}$ jos kummassakin sarakkeessa on indeksi. Lisäksi oletetaan, että jokaisesta pienemmän indeksin arvoa vastaa arvo toisesta indeksistä. Mikäli vain toisessa sarakkeessa on indeksi, 
+Tässä tapauksessa voidaan vähennyskerroin arvioida kaavalla $F = \frac{1}{MAX (NKeys(I1), NKeys(I2))}$ jos kummassakin sarakkeessa on indeksi. Lisäksi oletetaan, että jokaisesta pienemmän indeksin arvoa vastaa arvo toisesta indeksistä. Mikäli vain toisessa sarakkeessa on indeksi, 
 voidaan kustannus laskea aiemmalla kaavalla käyttäen indeksin omaavaa saraketta. Mikäli kummassakaan sarakkeessa ei ole indeksiä, arvioidaan arvoksi 1/10.
 \\\newline
 $sarake > arvo$
 \\
-tapauksessa voidaan käyttää kaavaa $F = \frac{\textit{suurin avain - arvo}}{\textit{suurin avain - pienin avain}}$. Mikäli sarake ei ole aritmeettinen tai arvoa ei tiedetä käytetään vakiona arvoa 1/3.
+Vähennyskerroin voidaan arvioida kaavalla $F = \frac{\textit{suurin avain - arvo}}{\textit{suurin avain - pienin avain}}$. Mikäli sarake ei ole aritmeettinen tai arvoa ei tiedetä käytetään vakiona arvoa 1/3.
 \\\newline
 \textit{sarake IN (lista arvoja)}
 \\
