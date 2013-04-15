@@ -150,7 +150,7 @@ Selinger et al. esittelivät artikkelissaan \cite{selinger1979access} System R-t
 Tietokannan hallintajärjestelmän suorittama SQL-kyselyn prosessointi sisältää useita vaiheita. Kuva 2 esittää kyselyn optimointikerroksen ja suorituskerroksen hallintajärjestelmän sisällä. Alempana analysoimme komponenttien toimintaa tarkemmin.
 
 \begin{figure}[!h]
-  \caption{Kyselyn jäsentäminen, optimointi ja suoritus}
+  \caption{Kyselyn jäsentäminen, optimointi ja suoritus \cite{ramakrishnan2003database}}
   \centering
     \includegraphics[width=\textwidth]{optimoija60.png}
 \end{figure}
@@ -231,7 +231,18 @@ Usein tehokkaampi tapa kyselyn suorittamiseen on suorittaa valinnat mahdollisimm
 
 Valinnan suorittaminen mahdollisimman aikaisin ei kuitenkaan aina tuota suorituskykyisintä tulosta. \cite{ramakrishnan2003database} Mikäli taulut on indeksoitu, voi valinta kadottaa tärkeät indeksit jolloin join-operaation suorittaminen hidastuu. Paras kyselysuunnitelma riippuu siten täysin taulujen koosta ja niiden indeksoinnista. Edelleen tehokkaampi tapa olisi väliaikaisen muuttujan käytön sijaan putkittaa valinta-operaatiosta alkiot suoraan join-operaatioon.
 
-\subsubsection{Join-operaation toteutustavat}
+\subsection{Kyselysuunnitelmien tuottaminen}
+%Kyselyn optimoijan tulee rakentaa mahdollisten kyselysunnitelmien joukko. 
+Kyselyn optimoija tarvitsee tehokkaan algoritmin mahdollisten kyselysuunnitelmien luomiseen. Jarke ja Koch määrittelivät artikkelissaan \cite{jarke1984} kaksi tapaa kyselysuunnitelman valintaan. Ensimmäisessä tavassa arvioidaan jokaisen erillisen kyselysuunnitelman kustannus, jolloin hyvä suunnitelma löydetään mutta optimointiin kulunut aika on suuri. Toisessa tavassa kustannus lasketaan inkrementaalisesti niiden rakentamisen aikana, ja suorituskyvyltään huonoksi havaitut kyselysuunnitelmat karsitaan pois. Selinger et al. esittelemä dynaaminen algoritmi \cite{selinger1979access} on toisen tavan laajennus, jossa algoritmi arvioi operaation ja sen mahdolliset vaikutukset seuraaviin operaatioihin kerrallaan. 
+
+Kyselysuunnitelmat sisältävä hakualue voi kasvaa erittäin suureksi kyselyn ollessa laaja. Useat optimoijat käyttävät heuristiikkoja, kuten valinnan suorittamista mahdollisimman aikaisin tai vain tietynlaista join-operaatioiden järjestyksen hyväksymistä, pienentääkseen kyselysuunnitelmien määrää. Optimoija voi näin karsia tarkasteltavien kyselysuunitelmien määrää. Tavoitteena on pitää hakualue mahdollisimman pienenä, sisältäen kuitenkin optimaalisen suunnitelman \cite{jarke1984}. Luvussa tutustutaan tarkemmin dynaamisiin algoritmeihin sekä vaihtoehtoisiin algoritmeihin hakualueen läpikäymiseen, kuten sääntöihin perustuvaan Starburst-hallintajärjestelmälle kehitettyyn algoritmiin \cite{lohman1988grammar}. Luvun lopuksi käsitellään yleisiä optimoijan käyttämiä heuristiikkoja.
+
+%Chaudhurilla paljon tietoa http://www.cs.washington.edu/education/courses/cse544/99sp/chaudhuri.pdf
+\subsubsection{Dynaamiset algoritmit}
+Selinger et al. System R:lle esittelemä algoritmi on dynaaminen karsiva ja tyhjentävä (exhaustive) hakualgoritmi. Dynaamista algoritmia pidetään standardina algoritmina optimoijalle, ja usean hallintajärjestelmän hakualgoritmi pohjautuu dynaamiseen algoritmiin sisältäen kuitenkin hieman variaatioita. Algoritmi rakentaa kaikki mahdolliset join-puut ja karsii alioptimaalisiksi tiedetyt puut.
+\subsubsection{Muut algoritmit}
+Dynaamisia algoritmeja on kritisoitu tästä ja tästä \cite{tähän}...
+\subsubsection{Algoritmien heuristiikat}
 Optimoija voi suorittaa usean peräkkäisen join-operaation liittämisen monella eri tavalla. Ono ja Lohman tutkivat join-operaation suorittamisjärjestysten vaikutusta tarkemmin artikkelissaan \cite{ono1990}, ja huomasivat join-operaation järjestyksen olevan hallitseva kustannus kyselyn optimoinnissa. 
 
 Tutkitaan kyselyä $Kirjat \Join Teokset \Join Kirjailijat \Join Maat$. Vasemmalta syväksi (left-deep) puuksi kutsutaan tapaa liittää kyselyt seuraavasti: $(((Kirjat \Join Teokset) \Join Kirjailijat) \Join Maat)$, jossa oikea lapsi on aina kantataulu. Kuva 5 havainnollistaa vasemmalta syvät ja lehtevät puut. Optimoijat käyttävät usein pelkästään vasemmalta syviä puita, sillä eri tapoja liittää join-operaatioita on join-operaatioiden määrän kasvaessa erittäin paljon. Käyttämällä vain vasemmalta syviä puita voidaan pienentää hakualuetta merkittävästi. \cite{left-deeppejä tutkiva artikkeli} Toinen syy on vasemmalta syvien puiden mahdollistama putkitus. Oikea lapsisolmu eli join-operaation sisempi taulu täytyy aina materialisoida, sillä se täytyy käydä läpi jokaiselle ulomman taulun eli vasemman lapsisolmun monikolle \cite{ramakrishnan2003database}. 
@@ -243,19 +254,6 @@ Tutkitaan kyselyä $Kirjat \Join Teokset \Join Kirjailijat \Join Maat$. Vasemmal
 \end{figure}
 
 Ionaddis tutki artikkelissaan \cite{ioannidis1991left} left-deep puiden ja lehtevien (bushy) puiden suorituskykyeroja, ja huomasi lehtevien puiden optimoinnin olevan helpompaa ja sen tuottavan parempia tuloksia. 
-
-
-\subsection{Kyselysuunnitelmien tuottaminen}
-%Kyselyn optimoijan tulee rakentaa mahdollisten kyselysunnitelmien joukko. 
-Kyselyn optimoija tarvitsee tehokkaan algoritmin mahdollisten kyselysuunnitelmien luomiseen. Jarke ja Koch määrittelivät artikkelissaan \cite{jarke1984} kaksi tapaa kyselysuunnitelman valintaan. Ensimmäisessä tavassa arvioidaan jokaisen erillisen kyselysuunnitelman kustannus, jolloin hyvä suunnitelma löydetään mutta optimointiin kulunut aika on suuri. Toisessa tavassa kustannus lasketaan inkrementaalisesti niiden rakentamisen aikana, ja suorituskyvyltään huonoksi havaitut kyselysuunnitelmat karsitaan pois. Selinger et al. esittelemä dynaaminen algoritmi \cite{selinger1979access} on toisen tavan laajennus, jossa algoritmi arvioi operaation ja sen mahdolliset vaikutukset seuraaviin operaatioihin kerrallaan.
-
-Kyselysuunnitelmat sisältävä hakualue voi kasvaa erittäin suureksi kyselyn ollessa laaja. Usea optimoija käyttää heuristiikkoja pienentääkseen hakualueen kokoa, kuten keskittymällä vain vasemmalta syviin puihin. Optimoija voi näin karsia tarkasteltavia kyselysuunnitelmia merkittävästi. Tavoitteena on pitää hakualue mahdollisimman pienenä, sisältäen kuitenkin optimaalisen suunnitelman. \cite{jarke1984} Kappaleessa tutustutaan tarkemmin dynaamisiin algoritmeihin sekä vaihtoehtoisiin algoritmeihin hakualueen läpikäymiseen, kuten sääntöihin perustuvaan Starburst-hallintajärjestelmälle kehitettyyn algoritmiin \cite{lohman1988grammar}. 
-
-%Chaudhurilla paljon tietoa http://www.cs.washington.edu/education/courses/cse544/99sp/chaudhuri.pdf
-\subsubsection{Dynaamiset algoritmit}
-Selinger et al. System R:lle esittelemä algoritmi on dynaaminen karsiva ja tyhjentävä (exhaustive) hakualgoritmi. Dynaamista algoritmia pidetään standardina algoritmina optimoijalle, ja usean hallintajärjestelmän hakualgoritmi pohjautuu dynaamiseen algoritmiin sisältäen kuitenkin hieman variaatioita. Algoritmi rakentaa kaikki mahdolliset join-puut ja karsii alioptimaalisiksi tiedetyt puut.
-\subsubsection{Muut algoritmit}
-Dynaamisia algoritmeja on kritisoitu tästä ja tästä \cite{tähän}...
 
 \subsection{Kyselysuunnitelmien kustannusarviointi}
 %(todo: siisti tämä alku)
