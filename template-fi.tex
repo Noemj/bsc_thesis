@@ -119,11 +119,11 @@ Tutkielmassa keskitymme kyselyn optimoijan toimintaan ja ongelmiin yleisellä ta
 
 Optimointi on vaikea hakuongelma, jossa hakualue voi nousta erittäin suureksi. Haasteeksi nousee kyselysuunnitelmien hakeminen ja niiden suorituskyvyn ennustaminen. Kaikkien mahdollisten kyselysuunnitelmien arvioiminen on usein liian hidasta, joten optimoijan tulee valita pienin mahdollinen hakualue joka pitää sisällään halvimmat suunnitelmat \cite{chaudhuri1998}. Suorituskyvyn ennustamisen ja hakualueen rajauksen lisäksi optimoija tarvitsee tehokkaan algoritmin koko hakualueen läpikäymiseen. On epärealistista odottaa kyselyn optimoijan aina löytävän parhaan kyselysuunnitelman, ja onkin tärkeämpää välttää huonoimpia suunnitelmia ja löytää hyvä suunnitelma \cite{ramakrishnan2003database}. 
 
-Luku 2 sisältää esitiedot kyselyn optimoijan toiminnalle, jonka lisäksi kappaleessa perehdytään optimoijan historiaan. Luku 3 tiivistää tietokantakyselyn prosessoinnin hallintajärjestelmän sisällä ja esittelee optimoijan toiminnan pääpiirteittäin kyselyn prosessoinnissa. Optimoijan toimintaan tarkemmin syvennytään luvussa 4, jossa käsitellään kyselysuunnitelman luomista, kustannusarviointia ja parhaan kyselysuunnitelman valintaa. Kyselyn sisältämien alikyselyjen prosessointi käydään läpi luvussa 5.
+Luku 2 sisältää esitiedot kyselyn optimoijan toiminnalle, jonka lisäksi luvussa perehdytään optimoijan historiaan ja sen tavoitteisiin. Luku 3 tiivistää tietokantakyselyn prosessoinnin hallintajärjestelmän sisällä ja esittelee optimoijan toiminnan pääpiirteittäin kyselyn prosessoinnissa. Kyselysuunnitelman tuottamiseen syvennytään tarkemmin luvussa 4, jossa käsitellään kyselysuunnitelman rakennetta, tuottamisessa käytettäviä algoritmeja sekä heuristiikkoja epäoptimaalisten kyselysuunnitelmien karsimiseen ja parhaan kyselysuunnitelman valintaa. Kyselysuunnitelman kustannusarviointi ja siihen liittyvä tilastotiedon käyttö käydään läpi luvussa 5. 
 
 \section{Taustaluku}
+Luvussa käydään läpi relaatiomallin käsite sekä relaatioalgebran operaatiot, jotka ovat optimoijan keskeisimmät esitiedot. Lisäksi luvussa tutustutaan tarkemmin optimoijan tavoitteisiin ja sen vaikutuksen alaisiin resursseihin, sekä annetaan lyhyt katsaus optimoijan historiaan.
 \subsection{Relaatiomalli}
-
 Relaatiotietokanta on relaatiomalliin \cite{codd1970relational} perustuva tietokanta. Relaatiomallin keskeinen piirre on kaiken datan esittäminen n-paikkaisen karteesisen tulon osajoukkona, ja se tarjoaa deklaratiivisen menetelmän datan ja kyselyjen määrittämiseen. Relaatiomalli koostuu attribuuteista, monikoista ja relaatioista. Matemaattisessa määritelmässä attribuutti on pari joka sisältää attribuutin nimen ja tyypin sekä jokaiseen attribuuttiin liittyy sen arvojoukko. Monikko on järjestetty joukko attribuuttien arvoja. Relaatio koostuu otsakkeesta ja sisällöstä, jossa otsake on joukko attribuutteja ja keho on joukko monikkoja. Relaation otsake on myös jokaisen monikon otsake. Visuaalisessa esityksissä relaatio on taulukko ja monikko taulukon rivi. 
 
 \begin{figure}[!h]
@@ -131,6 +131,9 @@ Relaatiotietokanta on relaatiomalliin \cite{codd1970relational} perustuva tietok
   \centering
     \includegraphics[width=\textwidth]{rlt_wiki.png}
 \end{figure}
+
+\subsection{Relaatioalgebra}
+$\bowtie \sigma \pi$
 
 \subsection{Optimoijan tavoitteet}
 Tietokantakyselyjen optimoinnilla viitataan tietokantakyselyn suorittamiseen mahdollisimman tehokkaasti. Optimoinnin tavoitteena on joko maksimoida suorituskyky annetuilla resursseilla tai minimodia resurssien käyttö. Jarke ja Koch määrittelivät artikkelissaan \cite{jarke1984} mitattaviksi resursseiksi suorittimen ja muistin käytön sekä kommunikointikustannukset. Teorey ja Fry \cite{teorey1982design} huomasivat optimoijan vaikuttavan suorittimen palveluaikaan (service time), suorittimen jonotusaikaan, I/O:n palveluaikaan, I/O:n jonotusaikaan ja lukittumisen viiveeseen. Osa tutkimuksista, kuten Kooi:n väitöskirja \cite{kooi1980optimization} kuitenkin sivuuttavat suorittimen käytön kokonaan.
@@ -161,7 +164,7 @@ Syntaksin validoinnissa jäsentäjä tarkastaa kyselyn lauseopin oikeellisuuden.
 tallentavat kyselyt validoinnin jälkeen talteen, jotta samaa kyselyä ei tarvitse jäsentää ja optimoida uudelleen. Yksi esimerkki kyselyjä tallentavasta hallintajärjestelmästä on Oracle Database, jossa tallennuspaikkaa kutsutaan nimellä Shared Pool \cite{oracle2005doc}. 
 
 Seuraavaksi jäsentäjä jakaa kyselyn lohkoihin (block) siten, että yhdessä lohkossa on täsmälleen yksi SELECT-lause, yksi FROM-lause ja korkeintaan yksi WHERE-, GROUP BY- ja HAVING-lause \cite{ramakrishnan2003database}. 
-Kyselyn mahdollisesti sisältämät alikyselyt muodostavat kukin oman lohkonsa. Alikyselyitä tarkastellaan kappaleessa 5.
+Kyselyn mahdollisesti sisältämät alikyselyt muodostavat kukin oman lohkonsa. Alikyselyitä tarkastellaan kappaleessa 4.3.
 
 Jokainen lohko jäsennetään puuksi, joka on kyselyn algebrallinen esitysmuoto \cite{mahajan2012}. 
 Puun solmu sisältää yhden operaation kyselyn suorittamiseksi, ja sillä on nolla tai useampi alisolmua joiden ulostuloa (output) käytetään sen syötteenä.
@@ -180,13 +183,13 @@ Tämän jälkeen monimutkaiset kyselyt uudelleenkirjoitetaan (rewrite) soveltama
 \subsection{Kyselyn optimointi}
 Kun kysely on jäsennetty ja mahdollisesti uudelleenkirjoitettu, lähetetään se kyselyn optimoijalle. Kyselyn optimoija hakee tietokannan systeemitaulustoon tallennettua tilastotietoa kyselyyn liittyvistä relaatioista ja relaatioihin liittyvistä saantipoluista. Tilastotietoa käytetään kyselyn suorituskyvyn arviointiin. Saantipolku on menetelmä jolla taulurivit haetaan taulusta, ja se koostuu joko tiedoston lukemisesta tai indeksistä ja siihen liittyvistä valinnoista. Selinger et. al. tutkivat kattavasti saantipolkujen kustannusarviointia artikkelissaan \cite{selinger1979access}. 
 
-Mikäli kyselyn semantiikkaa ei ole vielä tarkastettu, tarkastaa optimoija kyselyn semantiikan oikeellisuuden ja kyselyn tyyppien sopivuuden sarakkeisiin ja operaatioihin systeemitaulun tiedon pohjalta. (Selvennä tästä kappaleen loppuun) Optimoija määrittää lohkojen suoritusjärjestyksen ja prosessoi jokaisen lohkon FROM-lauseeseen liittyvät relaatiot. Mikäli lohkossa on useampi relaatio, arvioi optimoija join-operaation permutaatioiden suorituskyvyt ja valitsee tehokkaimman algoritmin operaation suorittamiseen. Optimoija valitsee jokaiselle lohkolle tehokkaimman saantipolun ja rakentaa niistä kyselysuunnitelman. \cite{selinger1979access} (koko kappaleen viite, korjaa)
+Mikäli kyselyn semantiikkaa ei ole vielä tarkastettu, tarkastaa optimoija kyselyn semantiikan oikeellisuuden ja kyselyn tyyppien sopivuuden sarakkeisiin ja operaatioihin systeemitaulun tiedon pohjalta. (Selvennä tästä kappaleen loppuun) Optimoija määrittää lohkojen suoritusjärjestyksen ja prosessoi jokaisen lohkon FROM-lauseeseen liittyvät relaatiot. Mikäli lohkossa on useampi relaatio, arvioi optimoija join-operaation permutaatioiden suorituskyvyt ja valitsee tehokkaimman algoritmin operaation suorittamiseen. Optimoija valitsee jokaiselle lohkolle tehokkaimman saantipolun ja rakentaa niistä kyselysuunnitelman \cite{selinger1979access}. (koko kappaleen viite)
 
 \subsection{Kyselyn suorittaminen}
 Seuraavassa vaiheessa kysely suoritetaan käyttämällä optimoijan tuottamaa kyselysuunnitelmaa. Suorittamisessa kyselysuunnitelma muutetaan suoritettavaksi konekieleksi ja kyselyn lähteen mukaan joko suoritetaan tai tallennetaan muistiin myöhempää suorittamista varten. 
 
-\section{Optimoijan toiminta} %Komponenteittain? Kyselysuunnitelman kustannusarvioijan tulee . . .
-Kyselyn optimoijan tulee hakea mahdolliset kyselysuunnitelmat ja arvioida niiden kustannus. Kappale on jaettu kolmeen osa-alueeseen, joista aluksi perehdymme kyselysuunnitelman rakenteeseen. Tämän jälkeen tutkimme kyselysuunnitelmien tuottamista ja siihen käytettäviä yleisiä algoritmeja. Lopuksi perehdymme kyselysuunnitelmien kustannusarviointiin.
+\section{Kyselysuunnitelmien tuottaminen} %Komponenteittain? Kyselysuunnitelman kustannusarvioijan tulee . . .
+Kyselyn optimoijan tulee tuottaa mahdollisimman hyvän kyselysuunnitelman sisältämä joukko käyttämättä tuottamiseen liikaa resursseja. Kappale on jaettu kolmeen osa-alueeseen, joista aluksi perehdymme kyselysuunnitelman rakenteeseen. Tämän jälkeen tutkimme algoritmeja kyselysuunnitelmien joukon luomiseen, sekä heuristiikkoja epäoptimaalisten kyselysuunnitelmien karsimiseen. Kappaleen lopuksi tutkimme alikyselyjen suorittamista.
 
 \subsection{Kyselysuunnitelma}
 Kyselysuunnitelma koostuu laajennetusta relaatioalgebrapuusta, jossa jokainen solmu kuvaa algebrallista operaatiota. Solmuun on liitetty tieto käytettävästä hakumetodista tiedon hakemiseen taulusta ja suoritusmetodista relaatio-operaation suoritukseen. Tutkitaan seuraavaa SQL-kyselyä:
@@ -218,7 +221,7 @@ valinta ja projektio. Kyselyä vastaava esimerkkikyselysuunnitelma esitetään k
 \\\newline
 Join-operaatiossa voidaan käyttää hyväksi putkitusta (pipelining) \cite{dalvi2001pipelining}, jossa operandi putkitetaan suorituksen aikana toiseen operaatioon ilman väliaikaista taulua tuloksen tallentamiseen, lennossa. Ilman putkitusta väliaikaiset tulokset tulee materialisoida. Putkitusta käytetään usein peräkkäisten join-operaatioiden toteuttamiseen, jolloin jokainen operaation palauttama operandi voidaan syöttää seuraavan operaation parametriksi. Putkitusta voidaan käyttää operaation suorittavan algoritmin salliessa sen.
 
-Usein tehokkaampi tapa kyselyn suorittamiseen on suorittaa valinnat mahdollisimman aikaisessa vaiheessa. \cite{ramakrishnan2003database} Esimerkkikyselyssä tauluille suoritetaan kullekin valinta erikseen, joten suorittamalla ne ennen join-operaatiota voidaan vähentää yhdistettävien alkioiden määrää. Tehokkaampi kyselysuunnitelma aikaisilla valinnoilla, tallentaen valinnat väliaikaismuuttujiin T1 ja T2, esitetään kuvassa 4.
+Usein tehokkaampi tapa kyselyn suorittamiseen on suorittaa valinnat mahdollisimman aikaisessa vaiheessa \cite{ramakrishnan2003database}. Esimerkkikyselyssä tauluille suoritetaan kullekin valinta erikseen, joten suorittamalla ne ennen join-operaatiota voidaan vähentää yhdistettävien alkioiden määrää. Tehokkaampi kyselysuunnitelma aikaisilla valinnoilla, tallentaen valinnat väliaikaismuuttujiin T1 ja T2, esitetään kuvassa 4.
 
  \begin{figure}[!h] %Tottakai parempi tapa tähän olisi hakea vain kid = 5 ja arvosana > 3 matchaavat alkiot ENNEN joinia
   \caption{Toinen kyselysuunnitelma erimerkkikyselylle}
@@ -231,7 +234,7 @@ Usein tehokkaampi tapa kyselyn suorittamiseen on suorittaa valinnat mahdollisimm
 
 Valinnan suorittaminen mahdollisimman aikaisin ei kuitenkaan aina tuota suorituskykyisintä tulosta. \cite{ramakrishnan2003database} Mikäli taulut on indeksoitu, voi valinta kadottaa tärkeät indeksit jolloin join-operaation suorittaminen hidastuu. Paras kyselysuunnitelma riippuu siten täysin taulujen koosta ja niiden indeksoinnista. Edelleen tehokkaampi tapa olisi väliaikaisen muuttujan käytön sijaan putkittaa valinta-operaatiosta alkiot suoraan join-operaatioon.
 
-\subsection{Kyselysuunnitelmien tuottaminen}
+\subsection{Hakualgoritmit}
 %Kyselyn optimoijan tulee rakentaa mahdollisten kyselysunnitelmien joukko. 
 Kyselyn optimoija tarvitsee tehokkaan algoritmin mahdollisten kyselysuunnitelmien luomiseen. Jarke ja Koch määrittelivät artikkelissaan \cite{jarke1984} kaksi tapaa kyselysuunnitelman valintaan. Ensimmäisessä tavassa arvioidaan jokaisen erillisen kyselysuunnitelman kustannus, jolloin hyvä suunnitelma löydetään mutta optimointiin kulunut aika on suuri. Toisessa tavassa kustannus lasketaan inkrementaalisesti niiden rakentamisen aikana, ja suorituskyvyltään huonoksi havaitut kyselysuunnitelmat karsitaan pois. Selinger et al. esittelemä dynaaminen algoritmi \cite{selinger1979access} on toisen tavan laajennus, jossa algoritmi arvioi operaation ja sen mahdolliset vaikutukset seuraaviin operaatioihin kerrallaan. 
 
@@ -255,10 +258,53 @@ Tutkitaan kyselyä $Kirjat \Join Teokset \Join Kirjailijat \Join Maat$. Vasemmal
 
 Ionaddis tutki artikkelissaan \cite{ioannidis1991left} left-deep puiden ja lehtevien (bushy) puiden suorituskykyeroja, ja huomasi lehtevien puiden optimoinnin olevan helpompaa ja sen tuottavan parempia tuloksia. 
 
-\subsection{Kyselysuunnitelmien kustannusarviointi}
+\subsection{Alikyselyt}
+
+Kyselyn predikaatin operandin ollessa toinen kysely puhutaan alikyselystä. Alikyselyt suoritetaan..
+
+Alikysely voi palauttaa yhden arvon tai listan arvoja riippuen sen operandista. Tutkitaan seuraavaa kyselyä:
+
+\newline
+
+\begin{frame}
+
+SELECT nimi
+
+FROM Kirjat
+
+WHERE hinta = 
+
+(SELECT AVG(hinta)
+		
+FROM Kirjat)
+\end{frame}
+\\\newline
+Esimerkkikyselyssä alikysely palauttaa yhden arvon, AVG(hinta). Tämä arvo lisätään ylikyselyyn predikaatiksi niinkuin se olisi ollut osa ylempää kyselyä. Esimerkkitapauksessa keskiarvon ollessa 10 predikaatti on "hinta = 10".
+
+Mikäli alikysely palauttaa useamman arvon, kuten seuraavassa tapauksessa:
+
+\newline
+
+\begin{frame}
+
+SELECT nimi
+
+FROM Kirjat
+
+WHERE hinta IN (SELECT hinta
+		
+	FROM Kirjat
+
+	WHERE genre = 'scifi')
+\end{frame}
+\\\newline
+käytetään alikyselyn palauttamaa listaa ylikyselyn predikaattina. Esimerkkikyselyn palauttaessa listan (5,15) vastaava ylikyselin predikaatti on "hinta IN (5,15).
+
+
+\section{Kyselysuunnitelmien kustannusarviointi}
 %(todo: siisti tämä alku)
 
-Kyselysuunnitelmien kustannusarvioinnissa optimoijan tulee arvioida kyselysuunnitelman operaatioiden suorittamiseen kuluva aika sekä niiden tulosjoukon koko. Kyselysuunnitelman kustannus on sen sisältämien operaatioiden kustannusten summa, ja operaatioiden kustannukseen vaikuttaa olennaisesti sen operandien koko. Yksittäisten operaatioiden kustannus arvioidaan käyttämällä systeemitaulustoon tallennettua tilastotietoa operandeihin liittyvistä tiedoista, kuten järjestyksestä ja koosta. Kappaleessa 4.3.1 tutustutaan tarkemmin systeemitaulustoon, ja kappaleessa 4.3.2 käsitellään systeemitauluston tilastotiedon pohjalta tehtävää kyselysuunnitelman kustannusarviointia.
+Kyselysuunnitelmien kustannusarvioinnissa optimoijan tulee arvioida kyselysuunnitelman operaatioiden suorittamiseen kuluva aika sekä niiden tulosjoukon koko. Kyselysuunnitelman kustannus on sen sisältämien operaatioiden kustannusten summa, ja operaatioiden kustannukseen vaikuttaa olennaisesti sen operandien koko. Yksittäisten operaatioiden kustannus arvioidaan käyttämällä systeemitaulustoon tallennettua tilastotietoa operandeihin liittyvistä tiedoista, kuten järjestyksestä ja koosta. Kappaleessa 5.1 tutustutaan tarkemmin systeemitaulustoon, ja kappaleessa 5.2 käsitellään systeemitauluston tilastotiedon pohjalta tehtävää kyselysuunnitelman kustannusarviointia.
 
 %Kustannusarviointi koostuu kahdesta vaiheesta: ensiksi arvioidaan jäsennetyn puun jokaisen alkion operaation suorittamiseen kuluva aika.
 %Tämän jälkeen arvioidaan jokaisen alkion tulosjoukon koko, sekä tarkastetaan onko tulosjoukko järjestetty. Solmun tulosjoukko on ylisolmun syöte, joten sen koko ja järjestys vaikuttavat suoraan ylisolmun arviointiin.
@@ -266,14 +312,14 @@ Kyselysuunnitelmien kustannusarvioinnissa optimoijan tulee arvioida kyselysuunni
 %(2) Väliaikaisten taulujen luoti
 %(3) sort
 
-\subsubsection{Systeemitaulustoon tallennettu tilastotieto}
+\subsection{Systeemitaulustoon tallennettu tilastotieto}
 Systeemitaulusto sisältää tietokannan tilastollisen profiilin. Tilastotiedon avulla pyritään arvioimaan predikaattien ja operaatioiden kustannuksia käyttämällä tilastotietoa niiden operandeista. Mannino et al. tutkivat kattavasti tilastotiedon käyttöä kyselyn optimoinnissa artikkelissaan \cite{mannino1988statistical}. Heidän mukaan tarkka tilastotiedon tallentaminen on tärkeää kyselyn optimoinnille, mutta liian täsmällinen tallentaminen aiheutuu rasitteeksi.
 
 Artikkelissa tilastollinen profiili jaettiin neljään kategoriaan: (1) keskitietoihin kuten moodi, mediaani ja keskiarvo,  (2) hajontaan kuten varianssi sekä pienin ja suurin arvo, (3) kokoon kuten mahtavuus ja eri arvojen lukumäärä sekä (4) frekvenssin jakaantumiseen kuten normaalius ja tasaisuus. Systeemitaulusto sisältää myös jokaisesta taulusta tiedot sen nimestä ja tiedoston nimestä,  attribuuttien tyypeistä ja nimistä, indekseistä ja niiden nimistä ja hakuavaimista sekä yleisistä tiedoista kuten sivukoosta ja puskurimuistin koosta.
 
 Bruno et al. tarkastelivat tutkimuksessaan \cite{bruno2002exploiting} tilastotiedon laajentamista väliaikaisiin tuloksiin, ja he huomasivat ratkaisun tuottavan parempia kyselysuunnitelmia kuin pelkän tietokannan taulun tilastotiedon käytön.
 
-\subsubsection{Tulosjoukon koon arviointi}
+\subsection{Tulosjoukon koon arviointi}
 Operaation kustannus riippuu syötteen koosta. Tutkitaan seuraavaa tapausta:
 \newline
 
@@ -326,47 +372,6 @@ $F = koko(lista) \times (sarake = arvo)$
 %mielenkiintoisia aiheita:
 %NESTED SUBQUERIES
 %\section{Fyysinen optimointi (physical optimization)}
-\section{Alikyselyt}
-
-Kyselyn predikaatin operandin ollessa toinen kysely puhutaan alikyselystä. Alikyselyt suoritetaan..
-
-Alikysely voi palauttaa yhden arvon tai listan arvoja riippuen sen operandista. Tutkitaan seuraavaa kyselyä:
-
-\newline
-
-\begin{frame}
-
-SELECT nimi
-
-FROM Kirjat
-
-WHERE hinta = 
-
-(SELECT AVG(hinta)
-		
-FROM Kirjat)
-\end{frame}
-\\\newline
-Esimerkkikyselyssä alikysely palauttaa yhden arvon, AVG(hinta). Tämä arvo lisätään ylikyselyyn predikaatiksi niinkuin se olisi ollut osa ylempää kyselyä. Esimerkkitapauksessa keskiarvon ollessa 10 predikaatti on "hinta = 10".
-
-Mikäli alikysely palauttaa useamman arvon, kuten seuraavassa tapauksessa:
-
-\newline
-
-\begin{frame}
-
-SELECT nimi
-
-FROM Kirjat
-
-WHERE hinta IN (SELECT hinta
-		
-	FROM Kirjat
-
-	WHERE genre = 'scifi')
-\end{frame}
-\\\newline
-käytetään alikyselyn palauttamaa listaa ylikyselyn predikaattina. Esimerkkikyselyn palauttaessa listan (5,15) vastaava ylikyselin predikaatti on "hinta IN (5,15).
 
 \section{Yhteenveto}
 
@@ -380,3 +385,11 @@ käytetään alikyselyn palauttamaa listaa ylikyselyn predikaattina. Esimerkkiky
 
 
 \end{document}
+
+% TODO:
+% join-operaatio -> yhdiste-operaatio?
+%
+%
+%
+%
+
