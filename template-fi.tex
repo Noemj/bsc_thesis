@@ -133,7 +133,14 @@ Relaatiotietokanta on relaatiomalliin \cite{codd1970relational} perustuva tietok
 \end{figure}
 
 \subsection{Relaatioalgebra}
-$\bowtie \sigma \pi$
+Liitos (join) on operaatio muotoa $A\bowtie B$, jossa A ja B ovat relaatioita. Liitos tuottaa relaation, joka on kaikkien kombinaatioiden joukko A:n ja B:n samoista yhteisistä attribuuteista.
+
+Valinta (selection) on muotoa $\sigma_{ehto}(A)$, jossa $ehto$ on jokin loogisilla operaatioilla $=$, $\neq$, $\leq$, $\geq$, $\wedge$, $\vee$ vertailtavissa oleva ehto. Valinta tuottaa relaation, joka on joukko kaikista relaation monikoista joille pätee valinnan ehto.	
+
+Projektio (projection) on muotoa $\pi_{a_1,...a_n}(A)$, jossa $a_1,..a_n$ on joukko attribuuttien nimiä. Projektio poimii relaatiosta alijoukon joka sisältää annetut attribuutit.
+
+%Yhdiste (union) $\bowtie$ on operaatio joka muodostaa relaation yhdistämällä kahden relaation monikot. Ol. A ja B ovat monikoita. Nyt yhdiste C = $A \cup B = \{ x | x \in A \cup x \in B \} $
+%$\bowtie \sigma \pi$
 
 \subsection{Optimoijan tavoitteet}
 Tietokantakyselyjen optimoinnilla viitataan tietokantakyselyn suorittamiseen mahdollisimman tehokkaasti. Optimoinnin tavoitteena on joko maksimoida suorituskyky annetuilla resursseilla tai minimodia resurssien käyttö. Jarke ja Koch määrittelivät artikkelissaan \cite{jarke1984} mitattaviksi resursseiksi suorittimen ja muistin käytön sekä kommunikointikustannukset. Teorey ja Fry \cite{teorey1982design} huomasivat optimoijan vaikuttavan suorittimen palveluaikaan (service time), suorittimen jonotusaikaan, I/O:n palveluaikaan, I/O:n jonotusaikaan ja lukittumisen viiveeseen. Osa tutkimuksista, kuten Kooi:n väitöskirja \cite{kooi1980optimization} kuitenkin sivuuttavat suorittimen käytön kokonaan.
@@ -312,7 +319,7 @@ Kyselysuunnitelmien kustannusarvioinnissa optimoijan tulee arvioida kyselysuunni
 %(2) Väliaikaisten taulujen luoti
 %(3) sort
 
-\subsection{Systeemitaulustoon tallennettu tilastotieto}
+\subsection{Systeemitauluston tilastotieto}
 Systeemitaulusto sisältää tietokannan tilastollisen profiilin. Tilastotiedon avulla pyritään arvioimaan predikaattien ja operaatioiden kustannuksia käyttämällä tilastotietoa niiden operandeista. Mannino et al. tutkivat kattavasti tilastotiedon käyttöä kyselyn optimoinnissa artikkelissaan \cite{mannino1988statistical}. Heidän mukaan tarkka tilastotiedon tallentaminen on tärkeää kyselyn optimoinnille, mutta liian täsmällinen tallentaminen aiheutuu rasitteeksi.
 
 Artikkelissa tilastollinen profiili jaettiin neljään kategoriaan: (1) keskitietoihin kuten moodi, mediaani ja keskiarvo,  (2) hajontaan kuten varianssi sekä pienin ja suurin arvo, (3) kokoon kuten mahtavuus ja eri arvojen lukumäärä sekä (4) frekvenssin jakaantumiseen kuten normaalius ja tasaisuus. Systeemitaulusto sisältää myös jokaisesta taulusta tiedot sen nimestä ja tiedoston nimestä,  attribuuttien tyypeistä ja nimistä, indekseistä ja niiden nimistä ja hakuavaimista sekä yleisistä tiedoista kuten sivukoosta ja puskurimuistin koosta.
@@ -387,7 +394,7 @@ $F = koko(lista) \times (sarake = arvo)$
 \end{document}
 
 % TODO:
-% join-operaatio -> yhdiste-operaatio?
+% join-operaatio -> liitos-operaatio?
 %
 %
 %
