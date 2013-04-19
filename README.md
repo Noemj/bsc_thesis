@@ -1,57 +1,23 @@
-tktl2tiki2 LaTeX class
-======================
+Contents
 
-This is a thesis and course report LaTeX class following the conventions at the Computer Science Department of the University of Helsinki. The class is intended to be used for the bachelor's thesis, master's thesis and various course and seminar reports.
-
-The tktltiki2 class is appearance-wise largely based on the older tktltiki class, but nearly all features have been rewritten to make it less likely to break. Some of the features, most notably the automatic appendix page counting, are not included at least in the current version. The tktltiki-specifix bibtex style has been dropped in favour of babelbib package included in most recent LaTeX installations.
-
-Usage
------
-
-Simply download tktltiki2.cls and put it in your project folder to get started. You may also install it to your LaTeX distribution tree if you intend to use it frequently.
-
-Documentation
--------------
-
-For now, refer to template-en.tex (English) or template-fi.tex (Finnish) to see how the class is used and what options are available. A more detailed documentation, along with full worked examples, will be published hopefully during January 2013.
-
-
-Compiling with latexmk
-----------------------
-
-Re-compile everything as needed:
-
-    latexmk template-en.tex
-
-Clean up everything:
-
-    latexmk -C template-en.tex
-
-
-Compiling with rubber
----------------------
-
-Re-compile everything as needed:
-
-    rubber -Wall template-en.tex
-
-Clean up everything:
-
-    rubber --clean template-en.tex
-
-
-Compiling manually
-------------------
-
-Compile everything:
-
-    pdflatex template-en
-    bibtex template-en
-    pdflatex template-en
-    pdflatex template-en
-
-
-Known issues
-------------
-
-The current version of the class requires the latest version of the geometry package to be installed. This may cause issues if your LaTeX installation is not up to date.
+1 Introduction
+2 Background
+  2.1 Relational model
+  2.2 Relational algebra operations
+  2.3 Purpose of query optimization
+  2.3 History of query optimization
+3 Query processing
+  3.1 Query evaluation
+  3.2 Query optimization
+  3.3 Query execution
+4 Query plan generation
+  4.1 Query plan
+  4.2 Search algorithms
+    4.2.1 Dynamic algorithms
+    4.2.2 Other algorithms
+    4.2.3 Heuristics
+  4.3 Subquery processing
+5 Query plan cost estimation
+  5.1 System catalog
+  5.2 Result size estimation
+6 Summary
