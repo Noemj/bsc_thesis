@@ -200,6 +200,7 @@ Kyselyn optimoijan tulee tuottaa mahdollisimman suorituskykyisen kyselysuunnitel
 
 \subsection{Kyselysuunnitelma}
 Kyselysuunnitelma koostuu laajennetusta relaatioalgebrapuusta, jossa jokainen solmu kuvaa algebrallista operaatiota. Solmuun on liitetty tieto käytettävästä hakumetodista tiedon hakemiseen taulusta ja suoritusmetodista operaation suoritukseen. Kyselysuunnitelma sisältää kaikki tiedot jotka hallintajärjestelmä tarvitsee halutun tiedon hakemiseen tietokannasta. Tutkitaan seuraavaa SQL-kyselyä:
+\newline
 
 \begin{frame}
 
@@ -211,6 +212,7 @@ WHERE K.tid = T.tid AND K.kid = 5 AND T.arvosana $\textgreater$  3
 \end{frame}
 \\\newline
 Kysely voidaan tulkita relaatioalgebrassa seuraavasti:
+\newline
 
 \begin{frame}
 
@@ -269,7 +271,6 @@ Laajennetuissa optimoijissa heuristiikkoja voidaan vaihtaa kyselykohtaisesti \ci
 \subsection{Alikyselyt}
 Kyselyn predikaatin operandin ollessa toinen kysely puhutaan alikyselystä. Won Kim esitteli strategian \cite{kim1982optimizing}, jossa alikysely suoritetaan ennen ylikyselyä ja saatu tulos liitetään ylikyselyn predikaatiksi.
 Alikysely voi palauttaa yhden arvon tai listan arvoja riippuen sen operandista. Tutkitaan seuraavaa kyselyä:
-
 \newline
 
 \begin{frame}
@@ -286,7 +287,6 @@ WHERE hinta =
 \end{frame}
 \\\newline
 Esimerkkikyselyssä alikysely palauttaa yhden arvon, AVG(hinta). Tämä arvo lisätään ylikyselyyn predikaatiksi niinkuin se olisi ollut osa ylempää kyselyä. Esimerkkitapauksessa AVG(hinta) palauttaessa arvon 10 predikaatiksi saadaan "hinta = 10". Mikäli alikysely palauttaa useamman arvon, kuten seuraavassa tapauksessa:
-
 \newline
 
 \begin{frame}
@@ -295,7 +295,9 @@ SELECT nimi
 
 FROM Kirjat
 
-WHERE hinta IN (SELECT hinta
+WHERE hinta IN 
+
+\hspace*{5mm}(SELECT hinta
 		
 \hspace*{5mm}FROM Kirjat
 
