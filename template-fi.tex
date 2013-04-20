@@ -196,7 +196,7 @@ Mikäli kyselyn semantiikkaa ei ole vielä tarkastettu, tarkastaa optimoija kyse
 Seuraavassa vaiheessa kysely suoritetaan käyttämällä optimoijan tuottamaa kyselysuunnitelmaa. Suorittamisessa kyselysuunnitelma muutetaan suoritettavaksi konekieleksi ja kyselyn lähteen mukaan joko suoritetaan tai tallennetaan muistiin myöhempää suorittamista varten. 
 
 \section{Kyselysuunnitelmien tuottaminen} 
-Kyselyn optimoijan tulee tuottaa mahdollisimman suorituskykyisen kyselysuunnitelman sisältämä joukko käyttämättä tuottamiseen liikaa resursseja. Kappale on jaettu kolmeen osa-alueeseen, joista aluksi perehdymme kyselysuunnitelman rakenteeseen. Tämän jälkeen tutkimme algoritmeja kyselysuunnitelmien joukon luomiseen, sekä heuristiikkoja epäoptimaalisten kyselysuunnitelmien karsimiseen. Kappaleen lopuksi tutkimme alikyselyjen suorittamista.
+Kyselyn optimoijan tulee tuottaa mahdollisimman suorituskykyisen kyselysuunnitelman sisältämä joukko käyttämättä tuottamiseen liikaa resursseja. Kappale on jaettu kolmeen osa-alueeseen, joista aluksi perehdymme kyselysuunnitelman rakenteeseen. Tämän jälkeen tutkimme algoritmeja kyselysuunnitelmien joukon luomiseen, sekä heuristiikkoja epäoptimaalisten kyselysuunnitelmien karsimiseen. Luvun lopuksi tutkimme alikyselyjen suorittamista.
 
 \subsection{Kyselysuunnitelma}
 Kyselysuunnitelma koostuu laajennetusta relaatioalgebrapuusta, jossa jokainen solmu kuvaa algebrallista operaatiota. Solmuun on liitetty tieto käytettävästä hakumetodista tiedon hakemiseen taulusta ja suoritusmetodista operaation suoritukseen. Kyselysuunnitelma sisältää kaikki tiedot jotka hallintajärjestelmä tarvitsee halutun tiedon hakemiseen tietokannasta. Tutkitaan seuraavaa SQL-kyselyä:
@@ -228,24 +228,20 @@ valinta ja projektio. Kyselyä vastaava esimerkkikyselysuunnitelma esitetään k
 \\\newline
 Join-operaatiossa voidaan käyttää hyväksi putkitusta (pipelining) \cite{dalvi2001pipelining}, jossa operandi putkitetaan suorituksen aikana toiseen operaatioon ilman väliaikaista taulua tuloksen tallentamiseen, lennossa. Ilman putkitusta väliaikaiset tulokset tulee materialisoida. Putkitusta käytetään usein peräkkäisten join-operaatioiden toteuttamiseen, jolloin jokainen operaation palauttama operandi voidaan syöttää seuraavan operaation parametriksi. Putkitusta voidaan käyttää operaation suorittavan algoritmin salliessa sen.
 
-Usein tehokkaampi tapa kyselyn suorittamiseen on suorittaa valinnat mahdollisimman aikaisessa vaiheessa \cite{ramakrishnan2003database}. Esimerkkikyselyssä tauluille suoritetaan kullekin valinta erikseen, joten suorittamalla ne ennen join-operaatiota voidaan vähentää yhdistettävien alkioiden määrää. Tehokkaampi kyselysuunnitelma aikaisilla valinnoilla, tallentaen valinnat väliaikaismuuttujiin T1 ja T2, esitetään kuvassa 4.
+Usein tehokkaampi tapa kyselyn suorittamiseen on suorittaa valinnat mahdollisimman aikaisessa vaiheessa \cite{ramakrishnan2003database}. Esimerkkikyselyssä tauluille suoritetaan kullekin valinta erikseen, joten suorittamalla ne ennen join-operaatiota voidaan vähentää yhdistettävien alkioiden määrää. Tehokkaampi kyselysuunnitelma aikaisilla valinnoilla, tallentaen valinnat väliaikaismuuttujiin T1 ja T2, esitetään kuvassa 4. Edelleen tehokkaampi tapa olisi välikaikaiseen muuttujaan tallentamisen sijaan putkittaa valinta-operaatiosta alkiot suoraan join-operaatioon.
 
- \begin{figure}[!h] %Tottakai parempi tapa tähän olisi hakea vain kid = 5 ja arvosana > 3 matchaavat alkiot ENNEN joinia
-  \caption{Toinen kyselysuunnitelma erimerkkikyselylle}
+ \begin{figure}[!h] 
+  \caption{Suorituskykyisempi kyselysuunnitelma erimerkkikyselylle}
   \centering
     \includegraphics[width=\textwidth]{queryevalplan60better.png}
 \end{figure}
 \\\newline
 %
-%Optimoijan tulee arvioida tulosjoukon koko valintojen jälkeen. Kappaleessa 4.3 tutkitaan tarkemmin tulosjoukon koon arviointia.
-
-Valinnan suorittaminen mahdollisimman aikaisin ei kuitenkaan aina tuota suorituskykyisintä tulosta. \cite{ramakrishnan2003database} Mikäli taulut on indeksoitu, voi valinta kadottaa tärkeät indeksit jolloin join-operaation suorittaminen hidastuu. Paras kyselysuunnitelma riippuu siten täysin taulujen koosta ja niiden indeksoinnista. Edelleen tehokkaampi tapa olisi väliaikaisen muuttujan käytön sijaan putkittaa valinta-operaatiosta alkiot suoraan join-operaatioon.
-
 \subsection{Hakualgoritmit}
 %Kyselyn optimoijan tulee rakentaa mahdollisten kyselysunnitelmien joukko. 
 Kyselyn optimoija tarvitsee tehokkaan algoritmin mahdollisten kyselysuunnitelmien luomiseen. Jarke ja Koch määrittelivät artikkelissaan \cite{jarke1984} kaksi tapaa kyselysuunnitelman valintaan. Ensimmäisessä tavassa arvioidaan jokaisen erillisen kyselysuunnitelman kustannus, jolloin hyvä suunnitelma löydetään mutta optimointiin kulunut aika on suuri. Toisessa tavassa kustannus lasketaan inkrementaalisesti niiden rakentamisen aikana, ja suorituskyvyltään huonoksi havaitut kyselysuunnitelmat karsitaan pois. Selinger et al. esittelemä dynaaminen algoritmi \cite{selinger1979access} on toisen tavan laajennus, jossa algoritmi arvioi operaation ja sen mahdolliset vaikutukset seuraaviin operaatioihin kerrallaan. 
 
-Kyselysuunnitelmat sisältävä hakualue voi kasvaa erittäin suureksi kyselyn ollessa laaja. Useat optimoijat käyttävät heuristiikkoja, kuten valinnan suorittamista mahdollisimman aikaisin tai vain tietynlaista join-operaatioiden järjestyksen hyväksymistä, pienentääkseen kyselysuunnitelmien määrää. Optimoija voi näin karsia tarkasteltavien kyselysuunitelmien määrää. Tavoitteena on pitää hakualue mahdollisimman pienenä, sisältäen kuitenkin optimaalisen suunnitelman \cite{jarke1984}. Luvussa tutustutaan tarkemmin dynaamisiin algoritmeihin sekä vaihtoehtoisiin algoritmeihin hakualueen läpikäymiseen, kuten sääntöihin perustuvaan Starburst-hallintajärjestelmälle kehitettyyn algoritmiin \cite{lohman1988grammar}. Luvun lopuksi käsitellään yleisiä optimoijan käyttämiä heuristiikkoja.
+Kyselysuunnitelmat sisältävä hakualue voi kasvaa erittäin suureksi kyselyn ollessa laaja. Useat optimoijat käyttävät heuristiikkoja, kuten valinnan suorittamista mahdollisimman aikaisin tai vain tietynlaista join-operaatioiden järjestyksen hyväksymistä, pienentääkseen kyselysuunnitelmien määrää. Optimoija voi näin karsia tarkasteltavien kyselysuunitelmien määrää. Tavoitteena on pitää hakualue mahdollisimman pienenä, sisältäen kuitenkin optimaalisen suunnitelman \cite{jarke1984}. Kappaleessa 4.2.1 tutustutaan tarkemmin dynaamisiin algoritmeihin sekä kappaleessa 4.2.2 vaihtoehtoisiin algoritmeihin hakualueen läpikäymiseen, kuten sääntöihin perustuvaan Starburst-hallintajärjestelmälle kehitettyyn algoritmiin \cite{lohman1988grammar}. Lopuksi kappaleessa 4.2.3 käsitellään yleisiä optimoijan käyttämiä heuristiikkoja.
 
 %Chaudhurilla paljon tietoa http://www.cs.washington.edu/education/courses/cse544/99sp/chaudhuri.pdf
 \subsubsection{Dynaamiset algoritmit}
@@ -265,7 +261,7 @@ Tutkitaan kyselyä $Kirjat \Join Teokset \Join Kirjailijat \Join Maat$. Vasemmal
 
 Ionaddis tutki artikkelissaan \cite{ioannidis1991left} left-deep puiden ja lehtevien (bushy) puiden suorituskykyeroja, ja huomasi lehtevien puiden optimoinnin olevan helpompaa ja sen tuottavan parempia tuloksia. 
 
-Yleinen optimoijien käyttämä heuristiikka on myös predikaattien suorittaminen samaan aikaan relaatioiden ensimmäisen haun yhteydessä. Projektio pyritään suorittamaan suoraan muiden operaatioiden tulosjoukolle. Levy et al. esittelivät artikkelissaan \cite{levy1994query} tavan siirtää predikaatteja lohkojen välillä, jolloin predikaatit voidaan suorittaa yhä aiemmin ja siten vähentää väliaikaisen tulosjoukon kokoa. He myös esittelivät aritmeettisesti vertailtavissa olevien predikaattien lisäksi tavan siirtää negatiivisia predikaatteja, kuten NOT EXISTS ja EXCEPT.
+Yleinen optimoijien käyttämä heuristiikka on myös predikaattien suorittaminen samaan aikaan relaatioiden ensimmäisen haun yhteydessä. Projektio pyritään suorittamaan suoraan muiden operaatioiden tulosjoukolle. Levy et al. esittelivät artikkelissaan \cite{levy1994query} tavan siirtää predikaatteja lohkojen välillä, jolloin predikaatit voidaan suorittaa yhä aiemmin ja siten vähentää väliaikaisen tulosjoukon kokoa. He myös esittelivät aritmeettisesti vertailtavissa olevien predikaattien lisäksi tavan siirtää negatiivisia predikaatteja, kuten NOT EXISTS ja EXCEPT. Predikaattien suorittaminen mahdollisimman aikaisin ei kuitenkaan aina tuota suorituskykyisintä tulosta. \cite{ramakrishnan2003database} Mikäli taulut on indeksoitu, voi valinta kadottaa tärkeät indeksit jolloin join-operaation suorittaminen hidastuu.
 
 Tärkeä heuristiikka on lisäksi karteesisten tulojen välttäminen join-operaation suorituksessa mikäli kysely ei erityisesti vaadi niitä. Heuristiikkaa toteuttava algoritmi tuottaa join-operaation suoritukseen vain vaihtoehdot jotka eivät sisällä karteesista tuloa. Chaudhuri määritteli artikkelissaan \cite{chaudhuri1998} karteesisten tulojen välttämisen toisinaan johtavan huonompaan suorituskykyyn. 
 
