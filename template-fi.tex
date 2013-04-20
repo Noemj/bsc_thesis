@@ -119,7 +119,7 @@ Tutkielmassa keskitymme kyselyn optimoijan toimintaan ja ongelmiin yleisellä ta
 
 Optimointi on vaikea hakuongelma, jossa hakualue voi nousta erittäin suureksi. Haasteeksi nousee kyselysuunnitelmien hakeminen ja niiden suorituskyvyn ennustaminen. Kaikkien mahdollisten kyselysuunnitelmien arvioiminen on usein liian hidasta, joten optimoijan tulee valita pienin mahdollinen hakualue joka pitää sisällään halvimmat suunnitelmat \cite{chaudhuri1998}. Suorituskyvyn ennustamisen ja hakualueen rajauksen lisäksi optimoija tarvitsee tehokkaan algoritmin koko hakualueen läpikäymiseen. On epärealistista odottaa kyselyn optimoijan aina löytävän parhaan kyselysuunnitelman, ja onkin tärkeämpää välttää huonoimpia suunnitelmia ja löytää hyvä suunnitelma \cite{ramakrishnan2003database}. 
 
-Luku 2 sisältää esitiedot kyselyn optimoijan toiminnalle, jonka lisäksi luvussa perehdytään optimoijan historiaan ja sen tavoitteisiin. Luku 3 tiivistää tietokantakyselyn prosessoinnin hallintajärjestelmän sisällä ja esittelee optimoijan toiminnan pääpiirteittäin kyselyn prosessoinnissa. Kyselysuunnitelman tuottamiseen syvennytään tarkemmin luvussa 4, jossa käsitellään kyselysuunnitelman rakennetta, tuottamisessa käytettäviä algoritmeja sekä heuristiikkoja epäoptimaalisten kyselysuunnitelmien karsimiseen ja parhaan kyselysuunnitelman valintaa. Kyselysuunnitelman kustannusarviointi ja siihen liittyvä tilastotiedon käyttö käydään läpi luvussa 5. 
+Luku 2 sisältää esitiedot kyselyn optimoijan toiminnalle, joiden lisäksi luvussa perehdytään optimoijan historiaan ja sen tavoitteisiin. Luku 3 tiivistää tietokantakyselyn prosessoinnin hallintajärjestelmän sisällä ja esittelee optimoijan toiminnan pääpiirteittäin kyselyn prosessoinnissa. Kyselysuunnitelman tuottamiseen syvennytään tarkemmin luvussa 4, jossa käsitellään kyselysuunnitelman rakennetta, niiden tuottamiseen käytettäviä algoritmeja sekä heuristiikkoja epäoptimaalisten kyselysuunnitelmien karsimiseen. Kyselysuunnitelmien kustannusarviointi ja siihen liittyvä tilastotiedon käyttö esitellään luvussa 5. 
 
 \section{Taustaluku}
 Luvussa käydään läpi relaatiomallin käsite sekä relaatioalgebran operaatiot, jotka ovat optimoijan keskeisimmät esitiedot. Lisäksi luvussa tutustutaan tarkemmin optimoijan tavoitteisiin ja sen vaikutuksen alaisiin resursseihin, sekä annetaan lyhyt katsaus optimoijan historiaan.
@@ -151,7 +151,7 @@ Resurssin merkitys riippuu tietokantatyypistä. Jarke ja Koch erittelivät hajau
 
 \subsection{Optimoijan historia}
 Kun Coddin relaatiomallin pohjalle luotiin sitä toteuttavia kieliä, nousi vuonna 1974 kehitetty SQL nopeasti käytetyimmäksi. SQL:n myötä optimoinnista tuli osa järjestelmän toiminnallisuutta, sillä SQL tarjosi deklaratiivisuutensa vuoksi useita tapoja toteuttaa kukin kysely. Ennen relaatiomallin käyttöä optimointi tehtiin käsin.
-Selinger et al. esittelivät artikkelissaan \cite{selinger1979access} System R-tietokantaohjelmiston OPTIMIZER-komponentin, joka on ensimmäisiä relaatiomalliin pohjautuvia kyselyn optimoijia. OPTIMIZER esittely dynaamisen hakualgoritmin kyselysuunnitelmien luomiseen, ja se on käytössä hieman muunneltuna käytännössä kaikissa kaupallisissa järjestelmissä \cite{ioannidis1996query}. 
+Selinger et al. esittelivät artikkelissaan \cite{selinger1979access} System R-tietokantaohjelmiston OPTIMIZER-komponentin, joka on ensimmäisiä relaatiomalliin pohjautuvia kyselyn optimoijia. OPTIMIZER esitteli dynaamisen hakualgoritmin kyselysuunnitelmien luomiseen, ja se on käytössä hieman muunneltuna käytännössä kaikissa kaupallisissa järjestelmissä \cite{ioannidis1996query}. 
 
 %\section{Kyselyn jäsentäminen} 
 %http://docs.oracle.com/cd/B28359_01/server.111/b28318/sqlplsql.htm#i1243
@@ -188,18 +188,18 @@ Tämän jälkeen monimutkaiset kyselyt uudelleenkirjoitetaan (rewrite) soveltama
 %http://www.budaconsulting.com/blog/bid/79324/Query-Rewrite-What-is-MySQL-Doing-To-My-Queries
 
 \subsection{Kyselyn optimointi}
-Kun kysely on jäsennetty ja mahdollisesti uudelleenkirjoitettu, lähetetään se kyselyn optimoijalle. Kyselyn optimoija hakee tietokannan systeemitaulustoon tallennettua tilastotietoa kyselyyn liittyvistä relaatioista ja relaatioihin liittyvistä saantipoluista. Tilastotietoa käytetään kyselyn suorituskyvyn arviointiin. Saantipolku on menetelmä jolla taulurivit haetaan taulusta, ja se koostuu joko tiedoston lukemisesta tai indeksistä ja siihen liittyvistä valinnoista. Selinger et. al. tutkivat kattavasti saantipolkujen kustannusarviointia artikkelissaan \cite{selinger1979access}. 
+Kun kysely on jäsennetty ja mahdollisesti uudelleenkirjoitettu, lähetetään se kyselyn optimoijalle. Kyselyn optimoija hakee tietokannan systeemitaulustoon tallennettua tilastotietoa kyselyyn liittyvistä relaatioista ja relaatioihin liittyvistä saantipoluista (access path). Tilastotietoa käytetään kyselyn suorituskyvyn arviointiin. Saantipolku on menetelmä jolla taulurivit haetaan taulusta, ja se muodostuu joko tiedoston lukemisesta tai indiksien käytöstä. Selinger et. al. tutkivat kattavasti saantipolkujen kustannusarviointia artikkelissaan \cite{selinger1979access}. 
 
-Mikäli kyselyn semantiikkaa ei ole vielä tarkastettu, tarkastaa optimoija kyselyn semantiikan oikeellisuuden ja kyselyn tyyppien sopivuuden sarakkeisiin ja operaatioihin systeemitaulun tiedon pohjalta. (Selvennä tästä kappaleen loppuun) Optimoija määrittää lohkojen suoritusjärjestyksen ja prosessoi jokaisen lohkon FROM-lauseeseen liittyvät relaatiot. Mikäli lohkossa on useampi relaatio, arvioi optimoija join-operaation permutaatioiden suorituskyvyt ja valitsee tehokkaimman algoritmin operaation suorittamiseen. Optimoija valitsee jokaiselle lohkolle tehokkaimman saantipolun ja rakentaa niistä kyselysuunnitelman \cite{selinger1979access}. (koko kappaleen viite)
+Mikäli kyselyn semantiikkaa ei ole vielä tarkastettu, tarkastaa optimoija kyselyn semantiikan oikeellisuuden ja kyselyn tyyppien sopivuuden sarakkeisiin ja operaatioihin systeemitaulun tiedon pohjalta.  Optimoija määrittää lohkojen suoritusjärjestyksen ja käy läpi saantipolut jokaisen lohkon FROM-lauseen relaatioiden lukemiseen. Mikäli lohkossa on useampi relaatio, arvioi optimoija join-operaation järjestyksen ja suoritustapojen suorituskyvyt ja valitsee tehokkaimman algoritmin operaatioiden suorittamiseen. Optimoija valitsee jokaiselle lohkolle valikoivimman, vähiten resursseja käyttävän saantipolun ja rakentaa niistä kyselysuunnitelman \cite{selinger1979access}.
 
 \subsection{Kyselyn suorittaminen}
 Seuraavassa vaiheessa kysely suoritetaan käyttämällä optimoijan tuottamaa kyselysuunnitelmaa. Suorittamisessa kyselysuunnitelma muutetaan suoritettavaksi konekieleksi ja kyselyn lähteen mukaan joko suoritetaan tai tallennetaan muistiin myöhempää suorittamista varten. 
 
-\section{Kyselysuunnitelmien tuottaminen} %Komponenteittain? Kyselysuunnitelman kustannusarvioijan tulee . . .
-Kyselyn optimoijan tulee tuottaa mahdollisimman hyvän kyselysuunnitelman sisältämä joukko käyttämättä tuottamiseen liikaa resursseja. Kappale on jaettu kolmeen osa-alueeseen, joista aluksi perehdymme kyselysuunnitelman rakenteeseen. Tämän jälkeen tutkimme algoritmeja kyselysuunnitelmien joukon luomiseen, sekä heuristiikkoja epäoptimaalisten kyselysuunnitelmien karsimiseen. Kappaleen lopuksi tutkimme alikyselyjen suorittamista.
+\section{Kyselysuunnitelmien tuottaminen} 
+Kyselyn optimoijan tulee tuottaa mahdollisimman suorituskykyisen kyselysuunnitelman sisältämä joukko käyttämättä tuottamiseen liikaa resursseja. Kappale on jaettu kolmeen osa-alueeseen, joista aluksi perehdymme kyselysuunnitelman rakenteeseen. Tämän jälkeen tutkimme algoritmeja kyselysuunnitelmien joukon luomiseen, sekä heuristiikkoja epäoptimaalisten kyselysuunnitelmien karsimiseen. Kappaleen lopuksi tutkimme alikyselyjen suorittamista.
 
 \subsection{Kyselysuunnitelma}
-Kyselysuunnitelma koostuu laajennetusta relaatioalgebrapuusta, jossa jokainen solmu kuvaa algebrallista operaatiota. Solmuun on liitetty tieto käytettävästä hakumetodista tiedon hakemiseen taulusta ja suoritusmetodista relaatio-operaation suoritukseen. Tutkitaan seuraavaa SQL-kyselyä:
+Kyselysuunnitelma koostuu laajennetusta relaatioalgebrapuusta, jossa jokainen solmu kuvaa algebrallista operaatiota. Solmuun on liitetty tieto käytettävästä hakumetodista tiedon hakemiseen taulusta ja suoritusmetodista operaation suoritukseen. Kyselysuunnitelma sisältää kaikki tiedot jotka hallintajärjestelmä tarvitsee halutun tiedon hakemiseen tietokannasta. Tutkitaan seuraavaa SQL-kyselyä:
 
 \begin{frame}
 
@@ -249,7 +249,7 @@ Kyselysuunnitelmat sisältävä hakualue voi kasvaa erittäin suureksi kyselyn o
 
 %Chaudhurilla paljon tietoa http://www.cs.washington.edu/education/courses/cse544/99sp/chaudhuri.pdf
 \subsubsection{Dynaamiset algoritmit}
-Selinger et al. System R:lle esittelemä algoritmi on dynaaminen karsiva ja tyhjentävä (exhaustive) hakualgoritmi. Dynaamista algoritmia pidetään standardina algoritmina optimoijalle, ja usean hallintajärjestelmän hakualgoritmi pohjautuu dynaamiseen algoritmiin sisältäen kuitenkin hieman variaatioita. Algoritmi rakentaa kaikki mahdolliset join-puut ja karsii alioptimaalisiksi tiedetyt puut.
+Selinger et al. System R:lle esittelemä algoritmi on dynaaminen karsiva ja tyhjentävä (exhaustive) hakualgoritmi. Dynaamista algoritmia pidetään standardina algoritmina optimoijalle, ja usean hallintajärjestelmän hakualgoritmi pohjautuu dynaamiseen algoritmiin sisältäen kuitenkin hieman variaatioita. Algoritmi rakentaa kaikki mahdolliset join-puut käyttämällä heuristiikkoja ja karsii alioptimaalisiksi tiedetyt puut. Selinger et al. esittelemän algoritmin käyttämät heuristiikat ovat predikaattien ja valintojen suorittaminen mahdollisimman aikaisin ja niiden putkitus, karteesisten tulojen välttäminen sekä pelkästään vasemmalta syvien puiden käyttö join-operaation suorituksessa. Heuristiikkoja tutkitaan takremmin kappaleessa 4.2.3.
 \subsubsection{Muut algoritmit}
 Dynaamisia algoritmeja on kritisoitu tästä ja tästä \cite{tähän}...
 \subsubsection{Algoritmien heuristiikat}
@@ -265,6 +265,11 @@ Tutkitaan kyselyä $Kirjat \Join Teokset \Join Kirjailijat \Join Maat$. Vasemmal
 
 Ionaddis tutki artikkelissaan \cite{ioannidis1991left} left-deep puiden ja lehtevien (bushy) puiden suorituskykyeroja, ja huomasi lehtevien puiden optimoinnin olevan helpompaa ja sen tuottavan parempia tuloksia. 
 
+Yleinen optimoijien käyttämä heuristiikka on myös predikaattien suorittaminen samaan aikaan relaatioiden ensimmäisen haun yhteydessä. Projektio pyritään suorittamaan suoraan muiden operaatioiden tulosjoukolle. Levy et al. esittelivät artikkelissaan \cite{levy1994query} tavan siirtää predikaatteja lohkojen välillä, jolloin predikaatit voidaan suorittaa yhä aiemmin ja siten vähentää väliaikaisen tulosjoukon kokoa. He myös esittelivät aritmeettisesti vertailtavissa olevien predikaattien lisäksi tavan siirtää negatiivisia predikaatteja, kuten NOT EXISTS ja EXCEPT.
+
+Tärkeä heuristiikka on myös karteesisten tulojen välttäminen join-operaation suorituksessa mikäli kysely ei vaadi niitä. Heuristiikkaa toteuttava algoritmi tuottaa käy join-operaation suoritukseen läpi vain vaihtoehdot jotka eivät sisällä karteesista tuloa. Chaudhuri määritteli artikkelissaan \cite{chaudhuri1998} karteesisten tulojen välttämisen toisinaan johtavan huonompaan suorituskykyyn. 
+
+Laajennetuissa optimoijissa heuristiikkoja voidaan vaihtaa kyselykohtaisesti \cite{chaudhuri1998}, kuten sallimalla lehtevien puiden läpikäyminen tai karteesisten tulojen käyttäminen. On kuitenkin erittäin vaikeaa määritellä heuristiikkojen vaikutukset etukäteen. Yksi ratkaisu ongelmaan on geneettisten algoritmien \cite{bennett1991genetic} käyttö parhaiden heuristiikkojen määrittämiseen.
 \subsection{Alikyselyt}
 
 Kyselyn predikaatin operandin ollessa toinen kysely puhutaan alikyselystä. Alikyselyt suoritetaan..
@@ -381,6 +386,9 @@ $F = koko(lista) \times (sarake = arvo)$
 %\section{Fyysinen optimointi (physical optimization)}
 
 \section{Yhteenveto}
+Kyselysuunnitelman tehtävä on tuottaa mahdollisten kyselysuunnitelmien joukko, arvioida niiden kustannus tilastotiedon pohjalta ja valita niistä paras. Kustannus on arvio resurssien käytöstä kyselysuunnitelman suorittamiseen. 
+
+Kaikkien suunnitelmien läpikäyminen liian hidasta, käytetään heuristiikkoja.
 
 \newpage
 
