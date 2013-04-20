@@ -269,8 +269,7 @@ Tärkeä heuristiikka on lisäksi karteesisten tulojen välttäminen join-operaa
 
 Laajennetuissa optimoijissa heuristiikkoja voidaan vaihtaa kyselykohtaisesti \cite{chaudhuri1998}, kuten toisinaan sallimalla lehtevien puiden läpikäyminen tai karteesisten tulojen käyttäminen. On kuitenkin erittäin vaikeaa määritellä heuristiikkojen vaikutukset etukäteen. Yksi ratkaisu ongelmaan on geneettisten algoritmien \cite{bennett1991genetic} käyttö parhaiden heuristiikkojen määrittämiseen.
 \subsection{Alikyselyt}
-Kyselyn predikaatin operandin ollessa toinen kysely puhutaan alikyselystä. Won Kim esitteli strategian \cite{kim1982optimizing}, jossa alikysely suoritetaan ennen ylikyselyä ja saatu tulos liitetään ylikyselyn predikaatiksi.
-Alikysely voi palauttaa yhden arvon tai listan arvoja riippuen sen operandista. Tutkitaan seuraavaa kyselyä:
+Kyselyn predikaatin operandin ollessa toinen kysely puhutaan alikyselystä. Won Kim esitteli strategian \cite{kim1982optimizing}, jossa alikysely suoritetaan ennen ulompaa kyselyä ja saatu tulos liitetään ulomman kyselyn predikaatiksi. Kim jakoi alikyselyt viiteen luokkaan niiden sisältämien predikaattien mukaan. Tutkimme seuraavaksi näistä viidestä luokasta kahta luokkaa, joissa alikysely ei sisällä join-operaatiota joka viittaa ulompaan kyselyyn. Tällaisessa tapauksessa alikysely voidaan suorittaa omana lohkonaan. 
 \newline
 
 \begin{frame}
@@ -286,7 +285,7 @@ WHERE hinta =
 \hspace*{5mm}FROM Kirjat)
 \end{frame}
 \\\newline
-Esimerkkikyselyssä alikysely palauttaa yhden arvon, AVG(hinta). Tämä arvo lisätään ylikyselyyn predikaatiksi niinkuin se olisi ollut osa ylempää kyselyä. Esimerkkitapauksessa AVG(hinta) palauttaessa arvon 10 predikaatiksi saadaan "hinta = 10". Mikäli alikysely palauttaa useamman arvon, kuten seuraavassa tapauksessa:
+Esimerkkikyselyssä alikyselyn palauttama arvo lisätään ulompaan kyselyyn predikaatiksi niinkuin se olisi ollut osa ulompaa kyselyä. Esimerkkitapauksessa AVG(hinta) palauttaessa arvon 10 predikaatiksi saadaan "hinta = 10". Mikäli alikysely palauttaa joukon monikkoja, kuten seuraavassa tapauksessa:
 \newline
 
 \begin{frame}
@@ -295,16 +294,16 @@ SELECT nimi
 
 FROM Kirjat
 
-WHERE hinta IN 
+WHERE tid IS IN 
 
-\hspace*{5mm}(SELECT hinta
+\hspace*{5mm}(SELECT tid
 		
-\hspace*{5mm}FROM Kirjat
+\hspace*{5mm}FROM Teokset
 
-\hspace*{5mm}WHERE genre = 'scifi')
+\hspace*{5mm}WHERE arvosana $>$ 3)
 \end{frame}
 \\\newline
-käytetään alikyselyn palauttamaa listaa ylikyselyn predikaattina. Alikyselyn palauttaessa arvojoukon (5,15) muodostetaan ylikyselyn predikaatiksi "hinta IN (5,15)".
+Ulompaan kyselyyn liitetään predikaatti "tid IS IN X", jossa X on alikyselyn palauttama joukko monikoita. Mikäli alikysely sisältää join-operaation viitaten ulompaan kyselyyn, joudutaan join-operaatio suorittamaan ennen alikyselyn suorittamista. Alikyselyn paluuarvo voidaan kuitenkin edelleen liittää ulomman kyselyn predikaatiksi.
 
 %Ganski ja Wong (Optimization of nested SQL queries revisited) löysivät algoritmeista bugeja ja kehittivät hieman, ei ehkä mainitsemisen arvoista.
 
