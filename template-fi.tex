@@ -267,13 +267,11 @@ Ionaddis tutki artikkelissaan \cite{ioannidis1991left} left-deep puiden ja lehte
 
 Yleinen optimoijien käyttämä heuristiikka on myös predikaattien suorittaminen samaan aikaan relaatioiden ensimmäisen haun yhteydessä. Projektio pyritään suorittamaan suoraan muiden operaatioiden tulosjoukolle. Levy et al. esittelivät artikkelissaan \cite{levy1994query} tavan siirtää predikaatteja lohkojen välillä, jolloin predikaatit voidaan suorittaa yhä aiemmin ja siten vähentää väliaikaisen tulosjoukon kokoa. He myös esittelivät aritmeettisesti vertailtavissa olevien predikaattien lisäksi tavan siirtää negatiivisia predikaatteja, kuten NOT EXISTS ja EXCEPT.
 
-Tärkeä heuristiikka on myös karteesisten tulojen välttäminen join-operaation suorituksessa mikäli kysely ei vaadi niitä. Heuristiikkaa toteuttava algoritmi tuottaa käy join-operaation suoritukseen läpi vain vaihtoehdot jotka eivät sisällä karteesista tuloa. Chaudhuri määritteli artikkelissaan \cite{chaudhuri1998} karteesisten tulojen välttämisen toisinaan johtavan huonompaan suorituskykyyn. 
+Tärkeä heuristiikka on lisäksi karteesisten tulojen välttäminen join-operaation suorituksessa mikäli kysely ei erityisesti vaadi niitä. Heuristiikkaa toteuttava algoritmi tuottaa join-operaation suoritukseen vain vaihtoehdot jotka eivät sisällä karteesista tuloa. Chaudhuri määritteli artikkelissaan \cite{chaudhuri1998} karteesisten tulojen välttämisen toisinaan johtavan huonompaan suorituskykyyn. 
 
-Laajennetuissa optimoijissa heuristiikkoja voidaan vaihtaa kyselykohtaisesti \cite{chaudhuri1998}, kuten sallimalla lehtevien puiden läpikäyminen tai karteesisten tulojen käyttäminen. On kuitenkin erittäin vaikeaa määritellä heuristiikkojen vaikutukset etukäteen. Yksi ratkaisu ongelmaan on geneettisten algoritmien \cite{bennett1991genetic} käyttö parhaiden heuristiikkojen määrittämiseen.
+Laajennetuissa optimoijissa heuristiikkoja voidaan vaihtaa kyselykohtaisesti \cite{chaudhuri1998}, kuten toisinaan sallimalla lehtevien puiden läpikäyminen tai karteesisten tulojen käyttäminen. On kuitenkin erittäin vaikeaa määritellä heuristiikkojen vaikutukset etukäteen. Yksi ratkaisu ongelmaan on geneettisten algoritmien \cite{bennett1991genetic} käyttö parhaiden heuristiikkojen määrittämiseen.
 \subsection{Alikyselyt}
-
-Kyselyn predikaatin operandin ollessa toinen kysely puhutaan alikyselystä. Alikyselyt suoritetaan..
-
+Kyselyn predikaatin operandin ollessa toinen kysely puhutaan alikyselystä. Won Kim esitteli strategian \cite{kim1982optimizing}, jossa alikysely suoritetaan ennen ylikyselyä ja saatu tulos liitetään ylikyselyn predikaatiksi.
 Alikysely voi palauttaa yhden arvon tai listan arvoja riippuen sen operandista. Tutkitaan seuraavaa kyselyä:
 
 \newline
@@ -286,14 +284,12 @@ FROM Kirjat
 
 WHERE hinta = 
 
-(SELECT AVG(hinta)
+\hspace*{5mm}(SELECT AVG(hinta)
 		
-FROM Kirjat)
+\hspace*{5mm}FROM Kirjat)
 \end{frame}
 \\\newline
-Esimerkkikyselyssä alikysely palauttaa yhden arvon, AVG(hinta). Tämä arvo lisätään ylikyselyyn predikaatiksi niinkuin se olisi ollut osa ylempää kyselyä. Esimerkkitapauksessa keskiarvon ollessa 10 predikaatti on "hinta = 10".
-
-Mikäli alikysely palauttaa useamman arvon, kuten seuraavassa tapauksessa:
+Esimerkkikyselyssä alikysely palauttaa yhden arvon, AVG(hinta). Tämä arvo lisätään ylikyselyyn predikaatiksi niinkuin se olisi ollut osa ylempää kyselyä. Esimerkkitapauksessa AVG(hinta) palauttaessa arvon 10 predikaatiksi saadaan "hinta = 10". Mikäli alikysely palauttaa useamman arvon, kuten seuraavassa tapauksessa:
 
 \newline
 
@@ -305,13 +301,14 @@ FROM Kirjat
 
 WHERE hinta IN (SELECT hinta
 		
-	FROM Kirjat
+\hspace*{5mm}FROM Kirjat
 
-	WHERE genre = 'scifi')
+\hspace*{5mm}WHERE genre = 'scifi')
 \end{frame}
 \\\newline
-käytetään alikyselyn palauttamaa listaa ylikyselyn predikaattina. Esimerkkikyselyn palauttaessa listan (5,15) vastaava ylikyselin predikaatti on "hinta IN (5,15).
+käytetään alikyselyn palauttamaa listaa ylikyselyn predikaattina. Alikyselyn palauttaessa arvojoukon (5,15) muodostetaan ylikyselyn predikaatiksi "hinta IN (5,15)".
 
+%Ganski ja Wong (Optimization of nested SQL queries revisited) löysivät algoritmeista bugeja ja kehittivät hieman, ei ehkä mainitsemisen arvoista.
 
 \section{Kyselysuunnitelmien kustannusarviointi}
 %(todo: siisti tämä alku)
@@ -388,8 +385,9 @@ $F = koko(lista) \times (sarake = arvo)$
 \section{Yhteenveto}
 Kyselysuunnitelman tehtävä on tuottaa mahdollisten kyselysuunnitelmien joukko, arvioida niiden kustannus tilastotiedon pohjalta ja valita niistä paras. Kustannus on arvio resurssien käytöstä kyselysuunnitelman suorittamiseen. 
 
-Kaikkien suunnitelmien läpikäyminen liian hidasta, käytetään heuristiikkoja.
+Kyselysuunnitelmien tuottamisessa kaikkien suunnitelmien läpikäyminen on kuitenkin usein liian hidasta, joten kyselysuunnitelmien joukkoa pyritään karsimaan heuristiikkojen avulla. Heuristiikkojen käyttäminen ei ole triviaalia, sillä toisinaan paras kyselysuunnitelma karsitaan heuristiikan takia.
 
+Kyselysuunnitelmien kustannusarviossa ajankohtainen ongelma on tilastotiedon optimaalinen tallentaminen. Liian tarkka tilastotiedon tallentaminen rasittaa tietokannan käyttöä, mutta auttaa kyselysuunnitelmien optimoinnissa.
 \newpage
 
 
