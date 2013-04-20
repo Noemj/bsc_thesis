@@ -1,5 +1,5 @@
 1.   Introduction
-*   Background
+*   Prerequisite
     *  Relational model
     *  Relational algebra operations
     *  Purpose of query optimization
