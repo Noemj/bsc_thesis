@@ -31,6 +31,9 @@
 \usepackage{amsfonts,amsmath,amssymb,amsthm,booktabs,color,enumitem,graphicx}
 \usepackage[pdftex,hidelinks]{hyperref}
 \usepackage{setspace}
+\usepackage[ansinew]{inputenc}   % Windows
+\usepackage[T1]{fontenc}
+\usepackage[finnish]{babel}
 \doublespacing
 
 % Automatically set the PDF metadata fields
@@ -96,6 +99,10 @@
 \makeabstract
 \tableofcontents
 \newpage
+
+\setlength{\parskip}{\medskipamount}
+\setlength{\parindent}{0pt}
+
 
 
 % --- Main matter ---
