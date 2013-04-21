@@ -360,7 +360,7 @@ voidaan kustannus laskea aiemmalla kaavalla käyttäen indeksin omaavaa sarakett
 
 Join-predikaatin suorittamisessa merkittävää kustannusarvioinnin kannalta on sen suorittava algoritmi sekä join-predikaattien järjestys. Nested loop join- sekä merging scans-algoritmit ovat yleisesti käytettyjä, ja jälkimmäinen vaatii liitettävien relaatioiden olevan järjestyksessä liitettävien attribuuttien mukaan. Optimoijan tulee tällöin ottaa arvioinnissa huomioon relaation järjestämiseen kuluvat resurssit. Mahdolliset indeksit vaikuttavat myös olennaisesti algoritmien kustannuksiin. 
 \section{Yhteenveto}
-Kyselysuunnitelman tehtävä on tuottaa mahdollisten kyselysuunnitelmien joukko, arvioida niiden kustannus tilastotiedon pohjalta ja valita niistä paras. Kustannus on arvio resurssien käytöstä kyselysuunnitelman suorittamiseen. 
+Kyselyn optimoijan tehtävä on tuottaa mahdollisten kyselysuunnitelmien joukko, arvioida niiden kustannus tilastotiedon pohjalta ja valita niistä paras. Kustannus koostuu kyselysuunnitelman suorittamiseen käytetyistä resursseista. 
 
 Kyselysuunnitelmien tuottamisessa kaikkien suunnitelmien läpikäyminen on kuitenkin usein liian hidasta, joten kyselysuunnitelmien joukkoa pyritään karsimaan heuristiikkojen avulla. Heuristiikkojen käyttäminen ei ole triviaalia, sillä toisinaan paras kyselysuunnitelma karsitaan heuristiikan takia.
 
