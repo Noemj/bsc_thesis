@@ -247,7 +247,7 @@ Kyselysuunnitelmat sisältävä hakualue voi kasvaa erittäin suureksi kyselyn o
 
 %Chaudhurilla paljon tietoa http://www.cs.washington.edu/education/courses/cse544/99sp/chaudhuri.pdf
 \subsubsection{Dynaamiset algoritmit}
-Selinger et al. System R:lle esittelemä algoritmi on dynaaminen karsiva ja tyhjentävä (exhaustive) hakualgoritmi. Dynaamista algoritmia pidetään standardina algoritmina optimoijalle, ja usean hallintajärjestelmän hakualgoritmi pohjautuu dynaamiseen algoritmiin sisältäen kuitenkin hieman variaatioita. Algoritmi rakentaa kaikki mahdolliset join-puut käyttämällä heuristiikkoja ja karsii alioptimaalisiksi tiedetyt puut. Selinger et al. esittelemän algoritmin käyttämät heuristiikat ovat predikaattien ja valintojen suorittaminen mahdollisimman aikaisin ja niiden putkitus, karteesisten tulojen välttäminen sekä pelkästään vasemmalta syvien puiden käyttö join-operaation suorituksessa. Heuristiikkoja tutkitaan tarkemmin kappaleessa 4.2.3. Algoritmi myös huomioi join-operaation suorittamiseen vain kahta metodia, nested loops-metodia sekä merging scans-metodia, joiden Selinger et al. huomasivat lähes aina tuottavan optimaalisen tai lähes optimaalisen suorituskyvyn muille paitsi erittäin pienille relaatioille.
+Selinger et al. System R:lle esittelemä algoritmi on dynaaminen karsiva ja tyhjentävä (exhaustive) hakualgoritmi. Dynaamista algoritmia pidetään standardina algoritmina optimoijalle, ja usean hallintajärjestelmän hakualgoritmi pohjautuu dynaamiseen algoritmiin sisältäen kuitenkin hieman variaatioita. Algoritmi rakentaa kaikki mahdolliset join-puut käyttämällä heuristiikkoja ja karsii alioptimaalisiksi tiedetyt puut. Selinger et al. esittelemän algoritmin käyttämät heuristiikat ovat predikaattien ja valintojen suorittaminen mahdollisimman aikaisin ja niiden putkitus, karteesisten tulojen välttäminen sekä pelkästään vasemmalta syvien puiden käyttö join-operaation suorituksessa. Heuristiikkoja tutkitaan tarkemmin kappaleessa 4.2.3. Algoritmi huomioi join-operaation suorittamiseen vain nested loop join- ja merging scans-algoritmit, joiden Selinger et al. huomasivat lähes aina tuottavan optimaalisimman tai lähes optimaalisimman suorituskyvyn muille paitsi erittäin pienille relaatioille.
 \subsubsection{Muut algoritmit}
 Dynaamisten algoritmien kilpailijoita ovat satunnaistetut algoritmit, kuten Iterative Improvement \cite{nahar1986simulated}, jossa algoritmi pyrkii dynaamisten algoritmien kyselysuunnitelmien tuottamisen sijaan rakentamaan yhden mahdollisimman hyvän suunnitelman. Algoritmi käy satunnaisesti läpi verkon solmuja, jossa jokainen solmu kuvaa yhtä kyselysuunnitelmaa johon on liitetty sen kustannus. Iterative Improvement valitsee vain siirtoja alamäkeen, jossa kohdesolmun kustannus on pienempi kuin lähtösolmun, ja lopuksi palauttaa reitin varrelta löydetyn pienimmän kustannuksen sisältävän solmun.
 
@@ -255,7 +255,7 @@ Satunnaisten algoritmien lisäksi geneettiset algoritmit, kuten Bennet et al. es
 \subsubsection{Algoritmien heuristiikat}
 Optimoija voi suorittaa usean peräkkäisen join-operaation liittämisen monella eri tavalla. Ono ja Lohman tutkivat join-operaation suorittamisjärjestysten vaikutusta tarkemmin artikkelissaan \cite{ono1990}, ja huomasivat join-operaation järjestyksen olevan hallitseva kustannus kyselyn optimoinnissa. 
 
-Tutkitaan kyselyä $Kirjat \Join Teokset \Join Kirjailijat \Join Maat$. Vasemmalta syväksi (left-deep) puuksi kutsutaan tapaa liittää kyselyt seuraavasti: $(((Kirjat \Join Teokset) \Join Kirjailijat) \Join Maat)$, jossa oikea lapsi on aina kantataulu. Kuva 5 havainnollistaa vasemmalta syvät ja lehtevät puut. Optimoijat käyttävät usein pelkästään vasemmalta syviä puita, sillä eri tapoja liittää join-operaatioita on join-operaatioiden määrän kasvaessa erittäin paljon. Käyttämällä vain vasemmalta syviä puita voidaan pienentää hakualuetta merkittävästi. \cite{left-deeppejä tutkiva artikkeli} Toinen syy on vasemmalta syvien puiden mahdollistama putkitus. Oikea lapsisolmu eli join-operaation sisempi taulu täytyy aina materialisoida, sillä se täytyy käydä läpi jokaiselle ulomman taulun eli vasemman lapsisolmun monikolle \cite{ramakrishnan2003database}. 
+Tutkitaan kyselyä $Kirjat \Join Teokset \Join Kirjailijat \Join Maat$. Vasemmalta syväksi (left-deep) puuksi kutsutaan tapaa liittää kyselyt seuraavasti: $(((Kirjat \Join Teokset) \Join Kirjailijat) \Join Maat)$, jossa oikea lapsi on aina kantataulu. Kuva 5 havainnollistaa vasemmalta syvät ja lehtevät puut. Optimoijat käyttävät usein pelkästään vasemmalta syviä puita, sillä eri tapoja liittää join-operaatioita on join-operaatioiden määrän kasvaessa erittäin paljon. Käyttämällä vain vasemmalta syviä puita voidaan pienentää hakualuetta \cite{ioannidis1991left}, ja vasemmalta syvät puut mahdollistavat putkituksen. Oikea lapsisolmu eli join-operaation sisempi taulu täytyy aina materialisoida, sillä se täytyy käydä läpi jokaiselle ulomman taulun eli vasemman lapsisolmun monikolle \cite{ramakrishnan2003database}. 
 
 \begin{figure}[!h]
   \caption{Vasemmalta syvät ja lehtevät puut}
@@ -263,7 +263,7 @@ Tutkitaan kyselyä $Kirjat \Join Teokset \Join Kirjailijat \Join Maat$. Vasemmal
     \includegraphics[width=\textwidth]{leftdeepbushytrees.png}
 \end{figure}
 
-Ionaddis tutki artikkelissaan \cite{ioannidis1991left} left-deep puiden ja lehtevien (bushy) puiden suorituskykyeroja, ja huomasi lehtevien puiden optimoinnin olevan helpompaa ja sen tuottavan parempia tuloksia. 
+Ioannidis ja Cha Kang tutkivat artikkelissaan \cite{ioannidis1991left} left-deep puiden ja lehtevien (bushy) puiden suorituskykyeroja, ja huomasivat sekä lehtevien puiden että vasemmalta syvien puiden samanaikaisen käytön olevan helpompaa ja sen tuottavan parempia tuloksia kuin vain vasemmalta syvien puiden käytön. Lehtevä puu mahdollistaa suuremman joukon mahdollisia kyselysuunnitelmia, joten se usein sisältää vasemmalta syviin puihin verrattuna huonompia suunnitelmia mutta usein myös optimaalisimman suunnitelman.
 
 Yleinen optimoijien käyttämä heuristiikka on myös predikaattien suorittaminen samaan aikaan relaatioiden ensimmäisen haun yhteydessä. Projektio pyritään suorittamaan suoraan muiden operaatioiden tulosjoukolle. Levy et al. esittelivät artikkelissaan \cite{levy1994query} tavan siirtää predikaatteja lohkojen välillä, jolloin predikaatit voidaan suorittaa yhä aiemmin ja siten vähentää väliaikaisen tulosjoukon kokoa. He myös esittelivät aritmeettisesti vertailtavissa olevien predikaattien lisäksi tavan siirtää negatiivisia predikaatteja, kuten NOT EXISTS ja EXCEPT. Predikaattien suorittaminen mahdollisimman aikaisin ei kuitenkaan aina tuota suorituskykyisintä tulosta. \cite{ramakrishnan2003database} Mikäli taulut on indeksoitu, voi valinta kadottaa tärkeät indeksit jolloin join-operaation suorittaminen hidastuu.
 
@@ -310,9 +310,9 @@ Ulompaan kyselyyn liitetään predikaatti "tid IS IN X", jossa X on alikyselyn p
 %Ganski ja Wong (Optimization of nested SQL queries revisited) löysivät algoritmeista bugeja ja kehittivät hieman, ei ehkä mainitsemisen arvoista.
 
 \section{Kyselysuunnitelmien kustannusarviointi}
-Kyselysuunnitelmien kustannusarvioinnissa optimoijan tulee arvioida kyselysuunnitelman operaatioiden suorittamiseen kuluva aika sekä niiden tulosjoukon koko. Kyselysuunnitelman kustannus on sen sisältämien operaatioiden kustannusten summa, ja operaatioiden kustannukseen vaikuttaa olennaisesti sen operandien koko. Yksittäisten operaatioiden kustannus arvioidaan käyttämällä systeemitaulustoon tallennettua tilastotietoa operandeihin liittyvistä tiedoista, kuten järjestyksestä ja koosta. 
+Kyselysuunnitelmien kustannusarvioinnissa optimoijan tulee arvioida kyselysuunnitelmien operaatioiden suorittamiseen kuluva aika sekä niiden tulosjoukon koko. Kyselysuunnitelman kustannus on sen sisältämien operaatioiden kustannusten summa, ja operaatioiden kustannukseen vaikuttaa olennaisesti sen operandien koko. Yksittäisten operaatioiden kustannus arvioidaan käyttämällä systeemitaulustoon tallennettua tilastotietoa operandeihin liittyvistä tiedoista, kuten järjestyksestä ja koosta. 
 
-Optimoija käyttää kustannusarvointiin joko heuristisia arvioita tai kustannusmallia (cost model) \cite{jarke1984}, joista tutkimme tarkemmin kustannusmallia. Kustannusmallissa optimoija arvioi jokaisen operaation kustannuksen ja tulosjoukon koon, sillä operaation tulosjoukko on usein seuraavan operaation parametri. Kappaleessa 5.1 tutustutaan tarkemmin systeemitaulustoon tallennettavaan tilastotietoon, ja kappaleessa 5.2 käsitellään systeemitauluston tilastotiedon pohjalta tehtävää kyselysuunnitelman kustannusarviointia.
+Optimoija käyttää kustannusarvointiin joko heuristisia arvioita tai kustannusmallia (cost model) \cite{jarke1984}, joista tutkimme tarkemmin kustannusmallia. Kustannusmallissa optimoija arvioi jokaisen operaation kustannuksen ja tulosjoukon koon, sillä operaation tulosjoukko on usein seuraavan operaation parametri. Kustannusmallin tuottaman kustannusarvion perusteella voidaan valita paras kyselysuunnitelma. Kappaleessa 5.1 tutustutaan tarkemmin systeemitaulustoon tallennettavaan tilastotietoon, ja kappaleessa 5.2 käsitellään systeemitauluston tilastotiedon pohjalta tehtävää kyselysuunnitelman kustannusarviointia.
 
 %Kustannusarviointi koostuu kahdesta vaiheesta: ensiksi arvioidaan jäsennetyn puun jokaisen alkion operaation suorittamiseen kuluva aika.
 %Tämän jälkeen arvioidaan jokaisen alkion tulosjoukon koko, sekä tarkastetaan onko tulosjoukko järjestetty. Solmun tulosjoukko on ylisolmun syöte, joten sen koko ja järjestys vaikuttavat suoraan ylisolmun arviointiin.
@@ -358,17 +358,7 @@ $sarake1 = sarake2$
 Tässä tapauksessa voidaan vähennyskerroin arvioida käyttäen kaavaa $F = \frac{1}{MAX (NKeys(I1), NKeys(I2))}$ jos kummassakin sarakkeessa on indeksi. Lisäksi oletetaan, että jokaisesta pienemmän indeksin arvoa vastaa arvo toisesta indeksistä. Mikäli vain toisessa sarakkeessa on indeksi, 
 voidaan kustannus laskea aiemmalla kaavalla käyttäen indeksin omaavaa saraketta. Mikäli kummassakaan sarakkeessa ei ole indeksiä, arvioidaan arvoksi 1/10.
 
-Join-predikaatin suorittamisessa merkittävää kustannusarvioinnin kannalta on sen suorittava metodi sekä predikaattien järjestys. System R:n optimoijan käyttämät nested loop join- sekä merging scans-metodit ovat yleisiä optimoijan käyttämiä metodeja join-predikaatin suorittamiseen. 
-
-%Eka osa tähän
-%todo: täsmennä ja siisti
-%(sis. systeemitaulustoon tallennetun tilastotiedon käytön)
-%Tilastotieto on..
-%Tilastotiedoilla lasketaan kyselysuunnitelmien kustannusarvio ja valitaan pienimmän kustannusarvion omaava suunnitelma.
-%Tietoa ei tallenneta jatkuvasti, sillä se aiheuttaisi esimerkiksi rinnakkaisuusongelmia. Tietokannan valvoja 
-%triggeriöi päivityksen esim. komennolla optimize db. Tilastotiedon harvan päivityksen takia valituksi ei aina välttämättä tule 
-%tehokkain suunnitelma.
-
+Join-predikaatin suorittamisessa merkittävää kustannusarvioinnin kannalta on sen suorittava algoritmi sekä join-predikaattien järjestys. Nested loop join- sekä merging scans-algoritmit ovat yleisesti käytettyjä, ja jälkimmäinen vaatii liitettävien relaatioiden olevan järjestyksessä liitettävien attribuuttien mukaan. Optimoijan tulee tällöin ottaa arvioinnissa huomioon relaation järjestämiseen kuluvat resurssit. Mahdolliset indeksit vaikuttavat myös olennaisesti algoritmien kustannuksiin. 
 \section{Yhteenveto}
 Kyselysuunnitelman tehtävä on tuottaa mahdollisten kyselysuunnitelmien joukko, arvioida niiden kustannus tilastotiedon pohjalta ja valita niistä paras. Kustannus on arvio resurssien käytöstä kyselysuunnitelman suorittamiseen. 
 
@@ -388,8 +378,5 @@ Kyselysuunnitelmien kustannusarviossa ajankohtainen ongelma on tilastotiedon opt
 
 % TODO:
 % join-operaatio -> liitos-operaatio?
-%
-%
-%
-%
+
 
