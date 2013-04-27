@@ -79,7 +79,7 @@
 \author{Olli Rissanen}
 \date{\today}
 \level{Kandidaatintutkielma}
-\abstract{Tietokantakyselyn optimointi on kriittistä relaatiotietokannan suorituskyvyn kannalta. Tutkielmassa tutustutaan tietokantakyselyjen optimointiin relaatiotietokantojen hallintajärjestelmien osalta sekä optimoinnin vaikutukseen kyselyjen suorituskyvyssä. Kyselyn optimointia tarkastellaan vaikeana hakuongelmana, ja tutkitaan olemassa olevia ratkaisuja ongelman ratkaisemiseen. \\\newline ACM Computing Classification System (CCS): \newline \textbf{Information systems $\rightarrow$ Query optimization} \newline \textbf{Theory of computation $\rightarrow$ Database query processing and optimization (theory)}}
+\abstract{Tietokantakyselyn optimointi on prosessi, jossa tietokannan hallintajärjestelmä määrittää suorituskykyisimmän tavan kyselyn suorittamiseen. Keskeisiä optimoinnin osa-alueita ovat mahdollisten suoritustapojen läpikäynti sekä niiden kustannusarviointi. Tutkielmassa tutustumme optimoinnin osa-alueisiin relaatiotietokantojen hallintajärjestelmien osalta sekä optimoinnin vaikutukseen kyselyjen suorituskyvyssä. \\\newline ACM Computing Classification System (CCS): \newline \textbf{Information systems $\rightarrow$ Query optimization} \newline \textbf{Theory of computation $\rightarrow$ Database query processing and optimization (theory)}}
 
 % The following can be used to specify keywords and classification of the paper:
 
@@ -372,11 +372,11 @@ voidaan kustannus laskea aiemmalla kaavalla käyttäen indeksin omaavaa sarakett
 
 Join-predikaatin suorittamisessa merkittävää kustannusarvioinnin kannalta on sen suorittava algoritmi sekä join-predikaattien järjestys. Nested loop join- sekä merging scans-algoritmit ovat yleisesti käytettyjä, ja jälkimmäinen vaatii liitettävien relaatioiden olevan järjestyksessä liitettävien attribuuttien mukaan. Optimoijan tulee tällöin ottaa arvioinnissa huomioon relaation järjestämiseen kuluvat resurssit. Mahdolliset indeksit vaikuttavat myös olennaisesti algoritmien kustannuksiin. 
 \section{Yhteenveto}
-Kyselyn optimoijan tehtävä on tuottaa mahdollisten kyselysuunnitelmien joukko, arvioida niiden kustannus tilastotiedon pohjalta ja valita niistä paras. Kustannus koostuu kyselysuunnitelman suorittamiseen käytetyistä resursseista. 
+Kyselyn optimoijan tehtävä on tuottaa joukko kyselysuunnitelmia kyselyn suorittamiseen, arvioida niiden kustannus tilastotiedon pohjalta ja valita niistä paras. Kustannus koostuu kyselysuunnitelman suorittamiseen käytetyistä resursseista. 
 
-Kyselysuunnitelmien tuottamisessa kaikkien suunnitelmien läpikäyminen on kuitenkin usein liian hidasta, joten kyselysuunnitelmien joukkoa pyritään karsimaan heuristiikkojen avulla. Heuristiikkojen käyttäminen ei ole triviaalia, sillä toisinaan paras kyselysuunnitelma karsitaan heuristiikan takia.
+Kyselysuunnitelmien tuottamisessa kaikkien suunnitelmien läpikäyminen on usein liian hidasta, joten huomioitavien kyselysuunnitelmien joukkoa pyritään rajaamaan. Tutkimme yleisiä hakualgoritmeja kyselysuunnitelmien joukon tuottamiseen, joista dynaamiset algoritmit käyttävät heuristiikkoja kyselysuunnitelmien joukon rajaamiseen. Heuristiikkojen käyttäminen ei ole triviaalia, sillä toisinaan paras kyselysuunnitelma karsitaan heuristiikan takia. Sivusimme myös muita algoritmeja hakuongelman ratkaisuun, kuten geneettistä algoritmia.
 
-Kyselysuunnitelmien kustannusarviossa ajankohtainen ongelma on tilastotiedon optimaalinen tallentaminen. Liian tarkka tilastotiedon tallentaminen rasittaa tietokannan käyttöä, mutta auttaa kyselysuunnitelmien optimoinnissa.
+Kyselysuunnitelmien kustannusarviossa keskeinen ongelma on tilastotiedon optimaalinen tallentaminen. Liian tarkka tilastotiedon tallentaminen rasittaa tietokannan käyttöä, mutta auttaa kyselysuunnitelmien optimoinnissa. Optimaalisen tilastotiedon määritteleminen on edelleen tutkittava ongelma.
 \newpage
 
 %\bibliographystyle{unsrt}
