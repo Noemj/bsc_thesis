@@ -140,7 +140,8 @@ Relaatiotietokanta on relaatiomalliin \cite{codd1970relational} perustuva tietok
 \subsection{Relaatioalgebra}
 Relaatioalgebra on relaatiomalliin pohjautuva joukko relaation käsittelyyn tarkoitettuja operaatioita, ja se muodostaa relaatiotietokantojen teoreettisen pohjan. Relaatioalgebran operandit ovat relaatioita, ja sillä on joukko-opin operaatioiden lisäksi omia operaatioita. Tarkastelemme seuraavaksi tärkeimpiä operaatioita.
 
-Liitos (join) on operaatio muotoa $A\bowtie B$, jossa A ja B ovat relaatioita. Liitos tuottaa relaation, joka on kaikkien kombinaatioiden joukko A:n ja B:n yhteisistä attribuuteista. %TODO: Ehkä muutama esimerkki muista join-operaatioista tähän
+Liitos (join) on operaatio muotoa $A\bowtie B$, jossa A ja B ovat relaatioita. Liitos tuottaa relaation, jonka attribuutit ovat relaatiodien attribuuttien yhdiste: 
+\newline Join($rel_ 1$, A op B, $rel_2$) = [EACH $r_1$ IN $rel_1$, EACH $r_2$ IN $rel_2$: $r_1$.A op $r_2$.B], jossa op on relaatioita vertaileva predikaatti ja $rel_1$ sekä $rel_2$ liitettävät relaatiot \cite{jarke1984}.
 
 Valinta (selection) on muotoa $\sigma_{ehto}(A)$, jossa $ehto$ on jokin loogisilla operaatioilla $=$, $\neq$, $\leq$, $\geq$, $\wedge$, $\vee$ vertailtavissa oleva ehto. Valinta tuottaa relaation, joka on joukko kaikista relaation monikoista joille pätee valinnan ehto.	
 
@@ -160,7 +161,7 @@ Resurssin merkitys riippuu tietokantatyypistä. Jarke ja Koch erittelivät hajau
 Relaatiomallin myötä optimoinnista tuli osa järjestelmän toiminnallisuutta, sillä se tarjosi deklaratiivisuutensa vuoksi useita tapoja toteuttaa kukin kysely. Ennen relaatiomallin käyttöä optimointi tehtiin käsin.
 Selinger et al. esittelivät System R-hallintajärjestelmän OPTIMIZER-komponentin \cite{selinger1979access}, joka on ensimmäisiä relaatiomalliin pohjautuvia kyselyn optimoijia. OPTIMIZER esitteli dynaamisen hakualgoritmin kyselysuunnitelmien luomiseen, ja se on käytössä hieman muunneltuna käytännössä kaikissa kaupallisissa järjestelmissä \cite{ioannidis1996query}. 
 
-%TODO: EXODUS, VOLCANO tähän.
+%TODO: EXODUS, VOLCANO tähän. Halutaanko lisää historiaa?
 
 %\section{Kyselyn jäsentäminen} 
 %http://docs.oracle.com/cd/B28359_01/server.111/b28318/sqlplsql.htm#i1243
@@ -193,7 +194,6 @@ Tämän jälkeen monimutkaiset kyselyt uudelleenkirjoitetaan (rewrite) soveltama
 
 % valitsemalla hakumetodit (access method), liittämisjärjestyksen (join orders) ja liittämistavat (join methods) tietokannan käyttämien heuristiikkojen pohjalta.  Monimutkaisille kyselyille sovelletaan myös muunnossääntöjä \cite{mahajan2012}.
 %Uudelleenkirjoituksen tarkoitus on helpottaa optimoijan työtä parhaan kyselysuunnitelman valinnassa.
-%todo: http://docs.oracle.com/cd/A97630_01/server.920/a96520/qr.htm
 %http://www.budaconsulting.com/blog/bid/79324/Query-Rewrite-What-is-MySQL-Doing-To-My-Queries
 
 \subsection{Kyselyn optimointi}
@@ -319,7 +319,7 @@ Tällöin ulompaan kyselyyn liitetään predikaatti "tid IS IN X", jossa X on al
 %Ganski ja Wong (Optimization of nested SQL queries revisited) löysivät algoritmeista bugeja ja kehittivät hieman, ei ehkä mainitsemisen arvoista.
 
 \section{Kyselysuunnitelmien kustannusarviointi}
-Kyselysuunnitelmien kustannusarvioinnissa optimoijan tulee arvioida kyselysuunnitelmien operaatioiden suorittamiseen kuluva aika sekä niiden tulosjoukon koko. Kyselysuunnitelman kustannus on sen sisältämien operaatioiden kustannusten summa, ja operaatioiden kustannukseen vaikuttaa olennaisesti sen operandien koko. Yksittäisten operaatioiden kustannus arvioidaan käyttämällä systeemitaulustoon tallennettua tilastotietoa operandeihin liittyvistä tiedoista, kuten järjestyksestä ja koosta. %TODO: avaa systeemitaulusto!!!
+Kyselysuunnitelmien kustannusarvioinnissa optimoijan tulee arvioida kyselysuunnitelmien operaatioiden suorittamiseen kuluva aika sekä niiden tulosjoukon koko. Kyselysuunnitelman kustannus on sen sisältämien operaatioiden kustannusten summa, ja operaatioiden kustannukseen vaikuttaa olennaisesti sen operandien koko. Yksittäisten operaatioiden kustannus arvioidaan käyttämällä systeemitaulustoon tallennettua tilastotietoa operandeihin liittyvistä tiedoista, kuten indekseistä ja koosta. Systeemitaulusto koostuu tauluista ja näkymistä (view), ja sisältää kaiken tiedon mitä tietokanta tietää itsestään.
 
 Optimoija käyttää kustannusarvointiin joko heuristisia arvioita tai kustannusmallia (cost model) \cite{jarke1984}, joista tutkimme tarkemmin kustannusmallia. Kustannusmallissa optimoija arvioi jokaisen operaation kustannuksen ja tulosjoukon koon, sillä operaation tulosjoukko on usein seuraavan operaation parametri. Kustannusmallin tuottaman kustannusarvion perusteella voidaan valita paras kyselysuunnitelma. Luvussa 5.1 tutustutaan tarkemmin systeemitaulustoon tallennettavaan tilastotietoon, ja luvussa 5.2 käsitellään systeemitauluston tilastotiedon pohjalta tehtävää kyselysuunnitelman kustannusarviointia.
 
@@ -358,9 +358,12 @@ $NKeys(I)$ = eri avainten lukumäärä indeksissä I
 \\
 $F$ = vähennyskerroin
 \\\newline
+Tutkimme seuraavaksi kahta Selinger et al. määrittelemää laskukaavaa:
+
+\\\newline
 $sarake = arvo$ 
 \\
-Tämän tyyppiselle ehdolle vähennyskerroin voidaan arvioida kaavalla $F = \frac{1}{NKeys(I)}$, jos sarakkeessa on indeksi kyseiselle relaatiolle. \cite{selinger1979access} Ilman indeksiä kyselyn optimoija käyttää kiinteää arvoa vähennyskertoimen arvioimiseen, joka esimerkiksi System R-relaatiotietokantaohjelmassa on 1/10.
+Tämän tyyppiselle ehdolle vähennyskerroin voidaan arvioida kaavalla $F = \frac{1}{NKeys(I)}$, jos sarakkeessa on indeksi kyseiselle relaatiolle. Ilman indeksiä kyselyn optimoija käyttää kiinteää arvoa vähennyskertoimen arvioimiseen, joka esimerkiksi System R-relaatiotietokantaohjelmassa on 1/10.
 \\\newline
 $sarake1 = sarake2$ 
 \\
