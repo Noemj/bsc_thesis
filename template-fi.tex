@@ -266,7 +266,7 @@ Satunnaisten algoritmien lisäksi geneettiset algoritmit, kuten Bennet et al. es
 \subsubsection{Algoritmien heuristiikat}
 Optimoija voi suorittaa usean peräkkäisen join-operaation liittämisen monella eri tavalla. Ono ja Lohman tutkivat join-operaation suorittamisjärjestysten vaikutusta tarkemmin artikkelissaan \cite{ono1990}, ja huomasivat join-operaation järjestyksen olevan hallitseva kustannus kyselyn optimoinnissa. 
 
-Tutkitaan kyselyä $Kirjat \Join Teokset \Join Kirjailijat \Join Maat$. Vasemmalta syväksi (left-deep) puuksi kutsutaan tapaa liittää kyselyt seuraavasti: $(((Kirjat \Join Teokset) \Join Kirjailijat) \Join Maat)$, jossa oikea lapsi on aina kantataulu. Lehtevä puu taas on puu, jossa myös oikea lapsi voi olla join-operaation tulos: $(((Kirjat \Join Teokset) \Join (Kirjailijat \Join Maat)$ Kuva 5 havainnollistaa vasemmalta syvät ja lehtevät puut. Optimoijat käyttävät usein pelkästään vasemmalta syviä puita, sillä eri tapoja liittää join-operaatioita on join-operaatioiden määrän kasvaessa erittäin paljon. Käyttämällä vain vasemmalta syviä puita voidaan pienentää hakualuetta \cite{ioannidis1991left}, ja vasemmalta syvät puut mahdollistavat putkituksen. Oikea lapsisolmu eli join-operaation sisempi taulu täytyy aina materialisoida, sillä se täytyy käydä läpi jokaiselle ulomman taulun eli vasemman lapsisolmun monikolle \cite{ramakrishnan2003database}. 
+Tutkitaan kyselyä $Kirjat \Join Teokset \Join Kirjailijat \Join Maat$. Vasemmalta syväksi (left-deep) puuksi kutsutaan tapaa liittää kyselyt seuraavasti: $(((Kirjat \Join Teokset) \Join Kirjailijat) \Join Maat)$, jossa oikea lapsi on aina kantataulu. Lehtevässä puussa myös oikea lapsi voi olla join-operaation tulos: $(((Kirjat \Join Teokset) \Join (Kirjailijat \Join Maat)$ Kuva 5 havainnollistaa vasemmalta syvät ja lehtevät puut. Optimoijat käyttävät usein pelkästään vasemmalta syviä puita, sillä eri tapoja liittää join-operaatioita on join-operaatioiden määrän kasvaessa erittäin paljon. Käyttämällä vain vasemmalta syviä puita voidaan pienentää hakualuetta \cite{ioannidis1991left}, ja vasemmalta syvät puut mahdollistavat putkituksen. Oikea lapsisolmu eli join-operaation sisempi taulu täytyy aina materialisoida, sillä se täytyy käydä läpi jokaiselle ulomman taulun eli vasemman lapsisolmun monikolle \cite{ramakrishnan2003database}. 
 
 \begin{figure}[!h]
   \caption{Vasemmalta syvät ja lehtevät puut.}
@@ -316,7 +316,7 @@ WHERE tid IS IN
 \hspace*{5mm}WHERE arvosana $>$ 3)
 \end{frame}
 \\\newline
-Tällöin ulompaan kyselyyn liitetään predikaatti "tid IS IN X", jossa X on alikyselyn palauttama joukko monikoita. Mikäli alikysely sisältää join-operaation viitaten ulompaan kyselyyn, joudutaan join-operaatio suorittamaan ennen alikyselyn suorittamista. Alikyselyn paluuarvo voidaan kuitenkin edelleen liittää ulomman kyselyn predikaatiksi.
+Tällöin ulompaan kyselyyn liitetään predikaatti "tid IS IN X", jossa X on alikyselyn palauttama joukko monikoita. Mikäli alikysely sisältää join-operaation joka viittaa ulompaan kyselyyn, joudutaan join-operaatio suorittamaan ennen alikyselyn suorittamista. Alikyselyn paluuarvo voidaan kuitenkin edelleen liittää ulomman kyselyn predikaatiksi. Kim esitteli strategiat ulommasta kyselystä riippuvaisten alikyselyjen suorittamiseen kolmessa seuraavassa luokassaan. Yhteistä näille kolmelle luokalle on joidenkin operaatioiden suorittaminen ennen itse alikyselyn suorittamista.
 
 %Ganski ja Wong (Optimization of nested SQL queries revisited) löysivät algoritmeista bugeja ja kehittivät hieman, ei ehkä mainitsemisen arvoista.
 
@@ -376,11 +376,18 @@ Join-predikaatin suorittamisessa merkittävää kustannusarvioinnin kannalta on 
 \section{Yhteenveto}
 Kyselyn optimoijan tehtävä on löytää mahdollisimman tehokas tapa suorittaa kysely. Optimoija tuottaa joukko kyselysuunnitelmia kyselyn suorittamiseen, arvioi niiden kustannuksen tilastotiedon pohjalta ja valitsee niistä parhaan. Kustannus koostuu kyselysuunnitelman suorittamiseen käytetyistä resursseista. 
 
-Kyselysuunnitelmien tuottamisessa kaikkien suunnitelmien läpikäyminen on usein liian hidasta, joten huomioitavien kyselysuunnitelmien joukkoa pyritään rajaamaan. Tutkimme yleisiä hakualgoritmeja kyselysuunnitelmien joukon tuottamiseen, joista dynaamiset algoritmit käyttävät heuristiikkoja kyselysuunnitelmien joukon rajaamiseen. Heuristiikkojen käyttäminen ei ole triviaalia, sillä toisinaan paras kyselysuunnitelma karsitaan heuristiikan takia. 
+Kyselysuunnitelmien tuottamisessa kaikkien suunnitelmien läpikäyminen on usein liian hidasta, joten huomioitavien kyselysuunnitelmien joukkoa pyritään rajaamaan. Tutkimme yleisiä hakualgoritmeja kyselysuunnitelmien joukon tuottamiseen, joista dynaamiset algoritmit käyttävät heuristiikkoja kyselysuunnitelmien joukon rajaamiseen. Heuristiikkojen käyttäminen ei ole triviaalia, sillä toisinaan paras kyselysuunnitelma karsitaan heuristiikan takia. Sivusimme muita algoritmeja, kuten geneettistä algoritmia, vain pintapuolisesti.
 
-Sivusimme myös muita algoritmeja hakuongelman ratkaisuun, kuten geneettistä algoritmia.
+Kyselysuunnitelmien kustannusarviossa keskeinen ongelma on tilastotiedon optimaalinen tallentaminen. Liian tarkka tilastotiedon tallentaminen rasittaa tietokannan käyttöä, mutta auttaa kyselysuunnitelmien optimoinnissa. 
 
-Kyselysuunnitelmien kustannusarviossa keskeinen ongelma on tilastotiedon optimaalinen tallentaminen. Liian tarkka tilastotiedon tallentaminen rasittaa tietokannan käyttöä, mutta auttaa kyselysuunnitelmien optimoinnissa. Optimaalisen tilastotiedon määritteleminen on edelleen tutkittava ongelma.
+%Optimaalisen tilastotiedon määritteleminen on edelleen tutkittava ongelma.
+
+Jätimme tutkimatta suurimman osan tilastotiedon käytön teoriasta, sivuten vain aihetta yksinkertaisin esimerkein. Myös alikyselyn suorittamiseen tutkittiin vain kahta tapausta, sivuten monimutkaisemmat alikyselyt.
+
+Kyselyn optimoinnin tutkimus on yhä laajamittaista. Viimeaikaiset tutkimukset käsittelevät grafiikkaprosessorin sekä rinnakkaisohjelmoinnin hyödyntämistä, mutta myös vaihtoehtoisia algoritmeja dynaamiselle algoritmille. Muita tutkittavia alueita ovat koneoppimisen käyttö suorituskykyisten kyselysuunnitelmien tunnistamiseen sekä tarpeettoman tilastotiedon karsiminen.
+
+%http://www.adms-conf.org/heimel_adms12.pdf GPU
+%ftp://ftp.research.microsoft.com/pub/debull/A12june/declare.pdf machine learning
 \newpage
 
 %\bibliographystyle{unsrt}
