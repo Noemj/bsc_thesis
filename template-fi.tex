@@ -131,8 +131,8 @@ Tässä luvussa käydään läpi relaatiomallin käsite sekä relaatioalgebran o
 \subsection{Relaatiomalli}
 Relaatiotietokanta on relaatiomalliin \cite{codd1970relational} perustuva tietokanta. Relaatiomallin keskeinen piirre on kaiken datan esittäminen n-paikkaisen karteesisen tulon osajoukkona, ja se tarjoaa deklaratiivisen menetelmän datan ja kyselyjen määrittämiseen. Relaatiomalli koostuu attribuuteista, monikoista ja relaatioista, jotka esitetään kuvassa 1. Matemaattisessa määritelmässä attribuutti on pari joka sisältää attribuutin nimen ja tyypin. Jokaiseen attribuuttiin liittyy sen arvojoukko. Monikko on järjestetty joukko attribuuttien arvoja. Relaatio koostuu otsakkeesta ja sisällöstä, jossa otsake on joukko attribuutteja ja sisältö on joukko monikkoja. Relaation otsake on myös jokaisen monikon otsake. Visuaalisessa esityksissä relaatio on taulukko ja monikko taulukon rivi. 
 
-\begin{figure}[!h] %TODO: LISÄÄ VIITE wikipedia relational database
-  \caption{Relaatiomalliin perustuva tietokanta.}
+\begin{figure}[!h] 
+  \caption{Relaatiomalliin perustuva tietokanta \cite{wiki2008}.}
   \centering
     \includegraphics[width=\textwidth]{rlt_wiki.png}
 \end{figure}
@@ -257,6 +257,8 @@ Kyselysuunnitelmat sisältävä hakualue voi kasvaa erittäin suureksi kyselyn o
 %Chaudhurilla paljon tietoa http://www.cs.washington.edu/education/courses/cse544/99sp/chaudhuri.pdf
 \subsubsection{Dynaamiset algoritmit}
 Selinger et al. System R:lle esittelemä algoritmi on dynaaminen karsiva ja tyhjentävä (exhaustive) hakualgoritmi. Dynaamista algoritmia pidetään standardina algoritmina optimoijalle, ja usean hallintajärjestelmän hakualgoritmi pohjautuu dynaamiseen algoritmiin sisältäen kuitenkin hieman variaatioita. Algoritmi rakentaa kaikki mahdolliset join-puut käyttämällä heuristiikkoja ja karsii alioptimaalisiksi tiedetyt puut. Selinger et al. esittelemän algoritmin käyttämät heuristiikat ovat predikaattien ja valintojen suorittaminen mahdollisimman aikaisin ja niiden putkitus, karteesisten tulojen välttäminen sekä pelkästään vasemmalta syvien puiden käyttö join-operaation suorituksessa. Heuristiikkoja tutkitaan tarkemmin luvussa 4.2.3. Algoritmi huomioi join-operaation suorittamiseen vain nested loop join- ja merging scans-algoritmit, joiden Selinger et al. huomasivat lähes aina tuottavan optimaalisen tai lähes optimaalisen suorituskyvyn muille paitsi erittäin pienille relaatioille.
+
+Dynaaminen algoritmi toimii käyden jokaiselle kyselyn relaatiolle läpi jokaisen saantipolun, käyttäen mahdollisia indeksejä sekä tiedoston lukua. Algoritmi arvioi saantipolut, ja valitsee relaatioille suorituskykyisimmän saantipolun. Algoritmi pyrkii valitsemaan järjestetyn tulosjoukon palauttavan saantipolun, ellei järjestämätön tulosjoukko ole tehokkaampi. Järjestetty tulosjoukko mahdollistaa järjestettyä operandia vaativan merging scans-algoritmin käytön join-operaation suorittamiseen. Seuraavaksi algoritmi käy läpi kaikki tavat relaatioiden liittämiseen käyttäen aiemmin saatuja saantipolkuja ja heuristiikkoja, sekä karsii epäoptimaalisiksi huomatut tavat. Algoritmi arvioi edellisen askeleen tuottamat kyselysuunnitelmat ja palauttaa suorituskykyisimmän, jota käytetään kyselyn suorittamiseen.
 \subsubsection{Muut algoritmit}
 Dynaamisten algoritmien kilpailijoita ovat satunnaistetut algoritmit, kuten Iterative Improvement \cite{nahar1986simulated}, jossa algoritmi pyrkii dynaamisten algoritmien kyselysuunnitelmien tuottamisen sijaan rakentamaan yhden mahdollisimman hyvän suunnitelman. Algoritmi käy satunnaisesti läpi verkon solmuja, jossa jokainen solmu kuvaa yhtä kyselysuunnitelmaa johon on liitetty sen kustannus. Iterative Improvement valitsee vain siirtoja alamäkeen, jossa kohdesolmun kustannus on pienempi kuin lähtösolmun, ja lopuksi palauttaa reitin varrelta löydetyn pienimmän kustannuksen sisältävän solmun.
 
@@ -372,9 +374,11 @@ voidaan kustannus laskea aiemmalla kaavalla käyttäen indeksin omaavaa sarakett
 
 Join-predikaatin suorittamisessa merkittävää kustannusarvioinnin kannalta on sen suorittava algoritmi sekä join-predikaattien järjestys. Nested loop join- sekä merging scans-algoritmit ovat yleisesti käytettyjä, ja jälkimmäinen vaatii liitettävien relaatioiden olevan järjestyksessä liitettävien attribuuttien mukaan. Optimoijan tulee tällöin ottaa arvioinnissa huomioon relaation järjestämiseen kuluvat resurssit. Mahdolliset indeksit vaikuttavat myös olennaisesti algoritmien kustannuksiin. 
 \section{Yhteenveto}
-Kyselyn optimoijan tehtävä on tuottaa joukko kyselysuunnitelmia kyselyn suorittamiseen, arvioida niiden kustannus tilastotiedon pohjalta ja valita niistä paras. Kustannus koostuu kyselysuunnitelman suorittamiseen käytetyistä resursseista. 
+Kyselyn optimoijan tehtävä on löytää mahdollisimman tehokas tapa suorittaa kysely. Optimoija tuottaa joukko kyselysuunnitelmia kyselyn suorittamiseen, arvioi niiden kustannuksen tilastotiedon pohjalta ja valitsee niistä parhaan. Kustannus koostuu kyselysuunnitelman suorittamiseen käytetyistä resursseista. 
 
-Kyselysuunnitelmien tuottamisessa kaikkien suunnitelmien läpikäyminen on usein liian hidasta, joten huomioitavien kyselysuunnitelmien joukkoa pyritään rajaamaan. Tutkimme yleisiä hakualgoritmeja kyselysuunnitelmien joukon tuottamiseen, joista dynaamiset algoritmit käyttävät heuristiikkoja kyselysuunnitelmien joukon rajaamiseen. Heuristiikkojen käyttäminen ei ole triviaalia, sillä toisinaan paras kyselysuunnitelma karsitaan heuristiikan takia. Sivusimme myös muita algoritmeja hakuongelman ratkaisuun, kuten geneettistä algoritmia.
+Kyselysuunnitelmien tuottamisessa kaikkien suunnitelmien läpikäyminen on usein liian hidasta, joten huomioitavien kyselysuunnitelmien joukkoa pyritään rajaamaan. Tutkimme yleisiä hakualgoritmeja kyselysuunnitelmien joukon tuottamiseen, joista dynaamiset algoritmit käyttävät heuristiikkoja kyselysuunnitelmien joukon rajaamiseen. Heuristiikkojen käyttäminen ei ole triviaalia, sillä toisinaan paras kyselysuunnitelma karsitaan heuristiikan takia. 
+
+Sivusimme myös muita algoritmeja hakuongelman ratkaisuun, kuten geneettistä algoritmia.
 
 Kyselysuunnitelmien kustannusarviossa keskeinen ongelma on tilastotiedon optimaalinen tallentaminen. Liian tarkka tilastotiedon tallentaminen rasittaa tietokannan käyttöä, mutta auttaa kyselysuunnitelmien optimoinnissa. Optimaalisen tilastotiedon määritteleminen on edelleen tutkittava ongelma.
 \newpage
