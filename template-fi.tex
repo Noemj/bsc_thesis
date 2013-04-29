@@ -232,7 +232,7 @@ Kysely voidaan suorittaa esimerkiksi käyttäen join-operaatiossa nested loop jo
 valinta ja projektio. Kyselyä vastaava esimerkkikyselysuunnitelma esitetään kuvassa 3.
 
 \begin{figure}[!h] 
-  \caption{Kyselysuunnitelma erimerkkikyselylle.}
+  \caption{Kyselysuunnitelma esimerkkikyselylle.}
   \centering
     \includegraphics[width=\textwidth]{queryevalplan60.png}
 \end{figure}
@@ -242,7 +242,7 @@ Join-operaatiossa voidaan käyttää hyväksi putkitusta (pipelining) \cite{dalv
 Usein tehokkaampi tapa kyselyn suorittamiseen on suorittaa valinnat mahdollisimman aikaisessa vaiheessa \cite{ramakrishnan2003database}. Esimerkkikyselyssä tauluille suoritetaan kullekin valinta erikseen, joten suorittamalla ne ennen join-operaatiota voidaan vähentää yhdistettävien alkioiden määrää. Tehokkaampi kyselysuunnitelma aikaisilla valinnoilla, tallentaen valinnat väliaikaismuuttujiin T1 ja T2, esitetään kuvassa 4. Edelleen tehokkaampi tapa olisi välikaikaiseen muuttujaan tallentamisen sijaan putkittaa valinta-operaatiosta alkiot suoraan join-operaatioon.
 
  \begin{figure}[!h] 
-  \caption{Suorituskykyisempi kyselysuunnitelma erimerkkikyselylle.}
+  \caption{Suorituskykyisempi kyselysuunnitelma esimerkkikyselylle.}
   \centering
     \includegraphics[width=\textwidth]{queryevalplan60better.png}
 \end{figure}
