@@ -10,7 +10,7 @@
 
 % -- Language options --
 
-\DeclareOption{finnish}{}
+\DeclareOption{finnish}{\@gradingtrue}
 \DeclareOption{swedish}{}
 \DeclareOption{english}{}
 \DeclareOption{grading}{\@gradingtrue}
