@@ -1,5 +1,5 @@
 1.   Introduction
-*   Background
+*   Basics of optimization
     *  Relational model
     *  Relational algebra operations
     *  Purpose of query optimization
@@ -18,4 +18,4 @@
 *   Query plan cost estimation
     *  System catalog
     *  Result size estimation
-*   Summary
+*   Conclusion
