@@ -19,3 +19,5 @@
     *  System catalog
     *  Result size estimation
 *   Conclusion
+
+Please see http://www.cs.helsinki.fi/u/oorissan/kandi.pdf.
